@@ -21,17 +21,10 @@
     padding: 2rem 1.5rem;
     text-align: center;
   }
-  .logo-text {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: #1a1a2e;
-  }
-  .logo-text span { color: #f5a623; }
-  .tagline {
-    font-size: 0.95rem;
-    color: #888;
-    margin-top: 0.25rem;
-    margin-bottom: 2.5rem;
+  .logo {
+    width: 220px;
+    margin: 0 auto 2rem;
+    display: block;
   }
   .card {
     background: white;
@@ -43,6 +36,7 @@
     font-size: 1.1rem;
     font-weight: 600;
     margin-bottom: 0.75rem;
+    color: #1a1a2e;
   }
   p {
     font-size: 0.9rem;
@@ -50,8 +44,20 @@
     line-height: 1.6;
     margin-bottom: 1.5rem;
   }
+  .aceite {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    text-align: left;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: #f7f7f5;
+    border-radius: 10px;
+  }
+  .aceite input { margin-top: 3px; accent-color: #f5a623; }
+  .aceite label { font-size: 0.82rem; color: #555; line-height: 1.5; }
   .btn {
-    display: inline-block;
+    display: block;
     background: #1a1a2e;
     color: white;
     border: none;
@@ -60,8 +66,11 @@
     font-size: 0.95rem;
     cursor: pointer;
     width: 100%;
+    opacity: 0.4;
+    transition: opacity 0.2s, background 0.2s;
   }
-  .btn:hover { background: #f5a623; color: #1a1a2e; }
+  .btn.ativo { opacity: 1; }
+  .btn.ativo:hover { background: #f5a623; color: #1a1a2e; }
   .rodape {
     margin-top: 2rem;
     font-size: 0.75rem;
@@ -71,14 +80,28 @@
 </head>
 <body>
 <div class="container">
-  <div class="logo-text">Si<span>M</span>one</div>
-  <div class="tagline">Sentir, Organizar e Agir</div>
+  <img src="simonelogo.jpg" alt="SiMone" class="logo">
   <div class="card">
     <h2>Bem-vindo</h2>
     <p>Este é um espaço de leitura do seu estado funcional. Não há respostas certas ou erradas — apenas o que você está sentindo agora.</p>
-    <button class="btn">Começar</button>
+    <div class="aceite">
+      <input type="checkbox" id="aceito" onchange="toggleBtn()">
+      <label for="aceito">Concordo que meus dados sejam usados de forma anônima nesta fase de desenvolvimento do SiMone.</label>
+    </div>
+    <button class="btn" id="btnComecar" disabled onclick="comecar()">Começar</button>
   </div>
   <div class="rodape">SiMone V24 · fase de desenvolvimento</div>
 </div>
+<script>
+  function toggleBtn() {
+    const cb = document.getElementById('aceito');
+    const btn = document.getElementById('btnComecar');
+    btn.disabled = !cb.checked;
+    btn.classList.toggle('ativo', cb.checked);
+  }
+  function comecar() {
+    alert('Questionário em construção.');
+  }
+</script>
 </body>
 </html>
