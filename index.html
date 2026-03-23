@@ -32,35 +32,45 @@ body { font-family: 'Segoe UI', sans-serif; background: #f7f7f5; color: #1a1a2e;
 .item { margin-bottom: 2rem; }
 .item:last-child { margin-bottom: 0; }
 .item-texto { font-size: 0.88rem; color: #333; line-height: 1.5; margin-bottom: 1rem; }
-
-.escala-wrap { position: relative; user-select: none; }
-.escala-track-outer { position: relative; padding: 0 10px; margin-bottom: 6px; }
+.escala-wrap { position: relative; }
 .escala-track {
-  position: relative; height: 8px; border-radius: 99px;
+  position: relative; height: 8px; border-radius: 99px; margin: 0 0 6px;
   background: linear-gradient(to right, #b8e4f0 0%, #7dd4c0 25%, #a8e06a 50%, #f5d020 75%, #f5a623 100%);
 }
-.escala-input {
-  position: absolute; top: -8px; left: 0; width: 100%; height: 24px;
-  opacity: 0; cursor: pointer; margin: 0; z-index: 2;
-}
-.escala-thumb {
-  position: absolute; top: 50%; width: 18px; height: 18px;
-  border-radius: 50%; transform: translate(-50%, -50%);
-  pointer-events: none; transition: left 0.08s;
+.escala-neutro {
+  position: absolute; top: 50%; left: -22px;
+  width: 18px; height: 18px; border-radius: 50%;
   background: #ddd; border: 2px solid #bbb;
-  left: -18px;
+  transform: translateY(-50%);
+  pointer-events: none;
 }
-.escala-thumb.ativo { background: #1a1a2e; border-color: white; box-shadow: 0 1px 5px rgba(0,0,0,0.25); }
-
-.escala-ticks {
-  display: flex; justify-content: space-between;
-  padding: 0 10px; margin-top: 5px;
+.escala-neutro.oculto { display: none; }
+input[type=range].escala-input {
+  -webkit-appearance: none; appearance: none;
+  position: absolute; top: 0; left: 0;
+  width: 100%; height: 8px;
+  background: transparent; margin: 0; cursor: pointer;
 }
-.escala-tick { display: flex; flex-direction: column; align-items: center; gap: 3px; }
-.escala-tick-dot { width: 3px; height: 3px; border-radius: 50%; background: #ccc; }
-.escala-tick-num { font-size: 0.62rem; color: #bbb; }
-
-.escala-label { text-align: center; font-size: 0.72rem; color: #999; margin-top: 4px; min-height: 1.1rem; font-style: italic; }
+input[type=range].escala-input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: #1a1a2e; border: 2px solid white;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+  cursor: pointer;
+}
+input[type=range].escala-input::-moz-range-thumb {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: #1a1a2e; border: 2px solid white;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+  cursor: pointer;
+}
+input[type=range].escala-input.nao-tocado::-webkit-slider-thumb { opacity: 0; }
+input[type=range].escala-input.nao-tocado::-moz-range-thumb { opacity: 0; }
+.escala-ticks { display: flex; justify-content: space-between; margin-top: 2px; }
+.escala-tick { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.escala-tick-dot { width: 3px; height: 3px; border-radius: 50%; background: #d0d0d0; }
+.escala-tick-num { font-size: 0.6rem; color: #c0c0c0; }
+.escala-label { text-align: center; font-size: 0.72rem; color: #999; margin-top: 5px; min-height: 1.1rem; font-style: italic; }
 .rodape { text-align: center; font-size: 0.75rem; color: #bbb; margin-top: 2rem; }
 </style>
 </head>
@@ -89,41 +99,13 @@ body { font-family: 'Segoe UI', sans-serif; background: #f7f7f5; color: #1a1a2e;
       <div class="progresso-wrap"><div class="progresso-bar" id="barra"></div></div>
       <div class="progresso-txt" id="prog-txt">0 de 36</div>
     </div>
-    <div class="bloco">
-      <div class="bloco-titulo">S · Sentir — Corpo</div>
-      <div class="bloco-janela">Ontem e hoje</div>
-      <div id="itens-s1"></div>
-    </div>
-    <div class="bloco">
-      <div class="bloco-titulo">S · Sentir — Emocional</div>
-      <div class="bloco-janela">Ontem e hoje</div>
-      <div id="itens-s2"></div>
-    </div>
-    <div class="bloco">
-      <div class="bloco-titulo">O · Organizar — Clareza mental</div>
-      <div class="bloco-janela">Ontem e hoje</div>
-      <div id="itens-o1"></div>
-    </div>
-    <div class="bloco">
-      <div class="bloco-titulo">O · Organizar — Organização</div>
-      <div class="bloco-janela">Ontem e hoje</div>
-      <div id="itens-o2"></div>
-    </div>
-    <div class="bloco">
-      <div class="bloco-titulo">A · Agir — Início</div>
-      <div class="bloco-janela">Ontem e hoje</div>
-      <div id="itens-a1"></div>
-    </div>
-    <div class="bloco">
-      <div class="bloco-titulo">A · Agir — Sustentação</div>
-      <div class="bloco-janela">Ontem e hoje</div>
-      <div id="itens-a2"></div>
-    </div>
-    <div class="bloco">
-      <div class="bloco-titulo">P · Propósito</div>
-      <div class="bloco-janela">Últimas duas semanas</div>
-      <div id="itens-p"></div>
-    </div>
+    <div class="bloco"><div class="bloco-titulo">S · Sentir — Corpo</div><div class="bloco-janela">Ontem e hoje</div><div id="itens-s1"></div></div>
+    <div class="bloco"><div class="bloco-titulo">S · Sentir — Emocional</div><div class="bloco-janela">Ontem e hoje</div><div id="itens-s2"></div></div>
+    <div class="bloco"><div class="bloco-titulo">O · Organizar — Clareza mental</div><div class="bloco-janela">Ontem e hoje</div><div id="itens-o1"></div></div>
+    <div class="bloco"><div class="bloco-titulo">O · Organizar — Organização</div><div class="bloco-janela">Ontem e hoje</div><div id="itens-o2"></div></div>
+    <div class="bloco"><div class="bloco-titulo">A · Agir — Início</div><div class="bloco-janela">Ontem e hoje</div><div id="itens-a1"></div></div>
+    <div class="bloco"><div class="bloco-titulo">A · Agir — Sustentação</div><div class="bloco-janela">Ontem e hoje</div><div id="itens-a2"></div></div>
+    <div class="bloco"><div class="bloco-titulo">P · Propósito</div><div class="bloco-janela">Últimas duas semanas</div><div id="itens-p"></div></div>
     <button class="btn ativo" id="btnConcluir" onclick="enviar()" style="margin-top:1rem;">Concluir</button>
     <div class="rodape">SiMone V24 · fase de desenvolvimento</div>
   </div>
@@ -184,11 +166,9 @@ function item(b,i,t){
   return '<div class="item">'+
     '<div class="item-texto">'+t+'</div>'+
     '<div class="escala-wrap">'+
-    '<div class="escala-track-outer">'+
     '<div class="escala-track">'+
-    '<div class="escala-thumb" id="th-'+id+'"></div>'+
-    '<input type="range" class="escala-input" min="-1" max="4" step="1" value="-1" oninput="mv(\''+id+'\',this.value)">'+
-    '</div>'+
+    '<div class="escala-neutro" id="nt-'+id+'"></div>'+
+    '<input type="range" class="escala-input nao-tocado" id="sl-'+id+'" min="0" max="4" step="1" value="0" oninput="mv(\''+id+'\',this.value)">'+
     '</div>'+
     '<div class="escala-ticks">'+ticks+'</div>'+
     '<div class="escala-label" id="vl-'+id+'"></div>'+
@@ -197,27 +177,19 @@ function item(b,i,t){
 
 function mv(id,v){
   v=parseInt(v);
-  var th=document.getElementById('th-'+id);
+  var sl=document.getElementById('sl-'+id);
+  var nt=document.getElementById('nt-'+id);
   var vl=document.getElementById('vl-'+id);
-  if(v<0){
-    th.style.left='-18px';
-    th.classList.remove('ativo');
-    vl.textContent='';
-    if(R[id]!==null){resp--;atualizar();}
-    R[id]=null;
-    return;
-  }
-  var pct=(v/4)*100;
-th.style.left=pct+'%';
-  th.classList.add('ativo');
+  var eraPrimeira=(R[id]===null);
+  sl.classList.remove('nao-tocado');
+  nt.classList.add('oculto');
   vl.textContent=L[v];
-  if(R[id]===null){resp++;atualizar();}
   R[id]=v;
-}
-
-function atualizar(){
-  document.getElementById('barra').style.width=Math.round(resp/36*100)+'%';
-  document.getElementById('prog-txt').textContent=resp+' de 36';
+  if(eraPrimeira){
+    resp++;
+    document.getElementById('barra').style.width=Math.round(resp/36*100)+'%';
+    document.getElementById('prog-txt').textContent=resp+' de 36';
+  }
 }
 
 function render(){
