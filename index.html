@@ -33,13 +33,13 @@ body { font-family: 'Segoe UI', sans-serif; background: #f7f7f5; color: #1a1a2e;
 .item:last-child { margin-bottom: 0; }
 .item-texto { font-size: 0.88rem; color: #333; line-height: 1.5; margin-bottom: 0.75rem; }
 .escala-wrap { position: relative; padding-bottom: 1.5rem; }
-.escala-track { position: relative; height: 8px; border-radius: 99px; background: linear-gradient(to right, #b8e4f0 0%, #7dd4c0 25%, #a8e06a 50%, #f5d020 75%, #f5a623 100%); margin-bottom: 0.5rem; }
+.escala-track { position: relative; height: 8px; border-radius: 99px; background: linear-gradient(to right, #b8e4f0 0%, #7dd4c0 25%, #a8e06a 50%, #f5d020 75%, #f5a623 100%); margin-bottom: 0.5rem; margin-left: 24px; }
 .escala-input { position: absolute; top: -6px; left: 0; width: 100%; height: 20px; opacity: 0; cursor: pointer; margin: 0; }
-.escala-thumb { position: absolute; top: -6px; width: 20px; height: 20px; border-radius: 50%; background: #1a1a2e; border: 2px solid white; box-shadow: 0 1px 4px rgba(0,0,0,0.2); transform: translateX(-50%); pointer-events: none; transition: left 0.1s; left: 0%; }
-.escala-labels { display: flex; justify-content: space-between; font-size: 0.65rem; color: #aaa; margin-top: 0.35rem; }
+.escala-thumb { position: absolute; top: -6px; width: 20px; height: 20px; border-radius: 50%; background: #ccc; border: 2px solid white; box-shadow: 0 1px 4px rgba(0,0,0,0.2); transform: translateX(-50%); pointer-events: none; transition: left 0.1s; left: -24px; }
+.escala-thumb.tocado { background: #1a1a2e; }
+.escala-labels { display: flex; justify-content: space-between; font-size: 0.65rem; color: #aaa; margin-top: 0.35rem; margin-left: 24px; }
 .escala-valor { text-align: center; font-size: 0.75rem; color: #888; margin-top: 0.25rem; min-height: 1rem; }
 .rodape { text-align: center; font-size: 0.75rem; color: #bbb; margin-top: 2rem; }
-.msg { text-align: center; padding: 2rem; font-size: 0.95rem; color: #555; }
 </style>
 </head>
 <body>
@@ -112,7 +112,7 @@ body { font-family: 'Segoe UI', sans-serif; background: #f7f7f5; color: #1a1a2e;
     <img src="logo.png" alt="SiMone" class="logo">
     <div class="card">
       <h2>Obrigado</h2>
-      <p>Suas respostas foram registradas. Em breve você receberá seu resultado.</p>
+      <p>Suas respostas foram registradas.</p>
       <p style="margin-top:1rem; font-size:0.78rem; color:#aaa;">Este resultado mostra seu estado recente. Não define quem você é.</p>
     </div>
     <div class="rodape">SiMone V24 · fase de desenvolvimento</div>
@@ -135,63 +135,78 @@ var B = {
   p:['O que eu fazia parecia sem sentido','O que eu fazia não combinava comigo','Eu não via motivo no que estava fazendo','Senti que o esforço que fiz não valeu o que produzi']
 };
 
-var L=['não incomoda','incomoda um pouco','já me atrapalha','atrapalha bastante','atrapalha demais'];
-var R={};
-var resp=0;
-var qid=null;
+var L = ['não incomoda','incomoda um pouco','já me atrapalha','atrapalha bastante','atrapalha demais'];
+var R = {};
+var resp = 0;
 
-document.getElementById('aceito').addEventListener('change',function(){
-  var b=document.getElementById('btnComecar');
-  if(this.checked){b.classList.add('ativo');}else{b.classList.remove('ativo');}
+document.getElementById('aceito').addEventListener('change', function() {
+  var b = document.getElementById('btnComecar');
+  if (this.checked) { b.classList.add('ativo'); } else { b.classList.remove('ativo'); }
 });
 
-function iniciar(){
-  if(!document.getElementById('aceito').checked)return;
+function iniciar() {
+  if (!document.getElementById('aceito').checked) return;
   document.getElementById('tela-entrada').classList.remove('ativa');
   document.getElementById('tela-q36').classList.add('ativa');
   render();
-  window.scrollTo(0,0);
+  window.scrollTo(0, 0);
 }
 
-function item(b,i,t){
-  var id=b+'_'+i;
-  R[id]=null;
-  return '<div class="item"><div class="item-texto">'+t+'</div><div class="escala-wrap"><div class="escala-track"><div class="escala-thumb" id="th-'+id+'" style="left:0%"></div>'<input type="range" class="escala-input" min="-1" max="4" step="1" value="-1" oninput="mv(\''+id+'\',this.value)" onchange="rg(\''+id+'\',this.value)"></div><div class="escala-labels"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span></div><div class="escala-valor" id="vl-'+id+'">—</div></div></div>';
+function item(b, i, t) {
+  var id = b + '_' + i;
+  R[id] = null;
+  return '<div class="item">' +
+    '<div class="item-texto">' + t + '</div>' +
+    '<div class="escala-wrap">' +
+    '<div class="escala-track">' +
+    '<div class="escala-thumb" id="th-' + id + '"></div>' +
+    '<input type="range" class="escala-input" min="0" max="4" step="1" value="0"' +
+    ' oninput="mv(\'' + id + '\',this.value)"' +
+    ' onchange="rg(\'' + id + '\',this.value)">' +
+    '</div>' +
+    '<div class="escala-labels"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span></div>' +
+    '<div class="escala-valor" id="vl-' + id + '">— toque para responder —</div>' +
+    '</div></div>';
 }
 
-function mv(id,v){
-  document.getElementById('th-'+id).style.left=(v/4*100)+'%';
-  document.getElementById('vl-'+id).textContent=L[v];
+function mv(id, v) {
+  var th = document.getElementById('th-' + id);
+  th.style.left = (v / 4 * 100) + '%';
+  th.classList.add('tocado');
+  document.getElementById('vl-' + id).textContent = L[v];
 }
 
-function rg(id,v){
-  if(R[id]===null)resp++;
-  R[id]=parseInt(v);
-  var p=Math.round(resp/36*100);
-  document.getElementById('barra').style.width=p+'%';
-  document.getElementById('prog-txt').textContent=resp+' de 36';
+function rg(id, v) {
+  if (R[id] === null) { resp++; atualizarProgresso(); }
+  R[id] = parseInt(v);
 }
 
-function render(){
-  var ks=Object.keys(B);
-  for(var i=0;i<ks.length;i++){
-    var k=ks[i];
-    var el=document.getElementById('itens-'+k);
-    if(!el)continue;
-    var h='';
-    for(var j=0;j<B[k].length;j++)h+=item(k,j+1,B[k][j]);
-    el.innerHTML=h;
+function atualizarProgresso() {
+  var p = Math.round(resp / 36 * 100);
+  document.getElementById('barra').style.width = p + '%';
+  document.getElementById('prog-txt').textContent = resp + ' de 36';
+}
+
+function render() {
+  var ks = Object.keys(B);
+  for (var i = 0; i < ks.length; i++) {
+    var k = ks[i];
+    var el = document.getElementById('itens-' + k);
+    if (!el) continue;
+    var h = '';
+    for (var j = 0; j < B[k].length; j++) h += item(k, j + 1, B[k][j]);
+    el.innerHTML = h;
   }
 }
 
-async function enviar(){
-  var n=0;
-  var ks=Object.keys(R);
-  for(var i=0;i<ks.length;i++){if(R[ks[i]]===null)n++;}
-  if(n>0){alert('Ainda faltam '+n+' respostas.');return;}
+async function enviar() {
+  var n = 0;
+  var ks = Object.keys(R);
+  for (var i = 0; i < ks.length; i++) { if (R[ks[i]] === null) n++; }
+  if (n > 0) { alert('Ainda faltam ' + n + ' respostas.'); return; }
 
-  var btn=document.getElementById('btnConcluir');
-  btn.textContent='Salvando...';
+  var btn = document.getElementById('btnConcluir');
+  btn.textContent = 'Salvando...';
   btn.classList.remove('ativo');
 
   try {
@@ -200,25 +215,24 @@ async function enviar(){
       autoriza_repasse: false
     }).select().single();
 
-    if(qRes.error) throw qRes.error;
-    qid = qRes.data.id;
+    if (qRes.error) throw qRes.error;
 
     var rRes = await sb.from('respostas').insert({
-      questionado_id: qid,
+      questionado_id: qRes.data.id,
       questionario: 'Q36',
       marco: 'D0',
       itens: R
     });
 
-    if(rRes.error) throw rRes.error;
+    if (rRes.error) throw rRes.error;
 
     document.getElementById('tela-q36').classList.remove('ativa');
     document.getElementById('tela-fim').classList.add('ativa');
-    window.scrollTo(0,0);
+    window.scrollTo(0, 0);
 
   } catch(e) {
     alert('Erro ao salvar: ' + e.message);
-    btn.textContent='Concluir';
+    btn.textContent = 'Concluir';
     btn.classList.add('ativo');
   }
 }
