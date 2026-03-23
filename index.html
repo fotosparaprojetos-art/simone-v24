@@ -20,10 +20,29 @@ body { font-family: 'Segoe UI', sans-serif; background: #f7f7f5; color: #1a1a2e;
 .btn { display: block; width: 100%; background: #1a1a2e; color: white; border: none; border-radius: 10px; padding: 0.85rem 2rem; font-size: 0.95rem; cursor: pointer; opacity: 0.4; transition: opacity 0.2s, background 0.2s; }
 .btn.ativo { opacity: 1; }
 .btn.ativo:hover { background: #f5a623; color: #1a1a2e; }
+.questionario { max-width: 620px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+.q-header { text-align: center; margin-bottom: 2rem; }
+.q-header img { width: 140px; margin-bottom: 1rem; }
+.progresso-wrap { background: #eee; border-radius: 99px; height: 6px; margin-bottom: 0.5rem; }
+.progresso-bar { height: 6px; border-radius: 99px; background: #f5a623; transition: width 0.3s; width: 0%; }
+.progresso-txt { font-size: 0.75rem; color: #999; text-align: right; margin-bottom: 2rem; }
+.bloco { background: white; border-radius: 14px; border: 1px solid #eee; padding: 1.5rem; margin-bottom: 1.5rem; }
+.bloco-titulo { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #f5a623; margin-bottom: 1.25rem; }
+.bloco-janela { font-size: 0.72rem; color: #aaa; margin-bottom: 1.25rem; margin-top: -0.75rem; }
+.item { margin-bottom: 1.75rem; }
+.item:last-child { margin-bottom: 0; }
+.item-texto { font-size: 0.88rem; color: #333; line-height: 1.5; margin-bottom: 0.75rem; }
+.escala-wrap { position: relative; padding-bottom: 1.5rem; }
+.escala-track { position: relative; height: 8px; border-radius: 99px; background: linear-gradient(to right, #b8e4f0 0%, #7dd4c0 25%, #a8e06a 50%, #f5d020 75%, #f5a623 100%); margin-bottom: 0.5rem; }
+.escala-input { position: absolute; top: -6px; left: 0; width: 100%; height: 20px; opacity: 0; cursor: pointer; margin: 0; }
+.escala-thumb { position: absolute; top: -6px; width: 20px; height: 20px; border-radius: 50%; background: #1a1a2e; border: 2px solid white; box-shadow: 0 1px 4px rgba(0,0,0,0.2); transform: translateX(-50%); pointer-events: none; transition: left 0.1s; left: 0%; }
+.escala-labels { display: flex; justify-content: space-between; font-size: 0.65rem; color: #aaa; margin-top: 0.35rem; }
+.escala-valor { text-align: center; font-size: 0.75rem; color: #888; margin-top: 0.25rem; min-height: 1rem; }
 .rodape { text-align: center; font-size: 0.75rem; color: #bbb; margin-top: 2rem; }
 </style>
 </head>
 <body>
+
 <div id="tela-entrada" class="tela ativa">
   <div class="entrada">
     <img src="logo.png" alt="SiMone" class="logo">
@@ -39,15 +58,118 @@ body { font-family: 'Segoe UI', sans-serif; background: #f7f7f5; color: #1a1a2e;
     <div class="rodape">SiMone V24 · fase de desenvolvimento</div>
   </div>
 </div>
+
+<div id="tela-q36" class="tela">
+  <div class="questionario">
+    <div class="q-header">
+      <img src="logo.png" alt="SiMone">
+      <div class="progresso-wrap"><div class="progresso-bar" id="barra"></div></div>
+      <div class="progresso-txt" id="prog-txt">0 de 36</div>
+    </div>
+    <div class="bloco">
+      <div class="bloco-titulo">S · Sentir — Corpo</div>
+      <div class="bloco-janela">Ontem e hoje</div>
+      <div id="itens-s1"></div>
+    </div>
+    <div class="bloco">
+      <div class="bloco-titulo">S · Sentir — Emocional</div>
+      <div class="bloco-janela">Ontem e hoje</div>
+      <div id="itens-s2"></div>
+    </div>
+    <div class="bloco">
+      <div class="bloco-titulo">O · Organizar — Clareza mental</div>
+      <div class="bloco-janela">Ontem e hoje</div>
+      <div id="itens-o1"></div>
+    </div>
+    <div class="bloco">
+      <div class="bloco-titulo">O · Organizar — Organização</div>
+      <div class="bloco-janela">Ontem e hoje</div>
+      <div id="itens-o2"></div>
+    </div>
+    <div class="bloco">
+      <div class="bloco-titulo">A · Agir — Início</div>
+      <div class="bloco-janela">Ontem e hoje</div>
+      <div id="itens-a1"></div>
+    </div>
+    <div class="bloco">
+      <div class="bloco-titulo">A · Agir — Sustentação</div>
+      <div class="bloco-janela">Ontem e hoje</div>
+      <div id="itens-a2"></div>
+    </div>
+    <div class="bloco">
+      <div class="bloco-titulo">P · Propósito</div>
+      <div class="bloco-janela">Últimas duas semanas</div>
+      <div id="itens-p"></div>
+    </div>
+    <button class="btn ativo" onclick="enviar()" style="margin-top:1rem;">Concluir</button>
+    <div class="rodape">SiMone V24 · fase de desenvolvimento</div>
+  </div>
+</div>
+
 <script>
-document.getElementById('aceito').addEventListener('change', function() {
-  var btn = document.getElementById('btnComecar');
-  if (this.checked) { btn.classList.add('ativo'); }
-  else { btn.classList.remove('ativo'); }
+var B = {
+  s1:['Já começo o dia com sensação de pouca energia no corpo','Percebo meu corpo tenso ao longo do dia','Mesmo dormindo, acordo sem me sentir recuperado','Perco energia física ao longo do dia para continuar minhas tarefas','Até tarefas simples parecem exigir esforço físico demais','Meu corpo dá sinais de sobrecarga durante o dia'],
+  s2:['Me irritei com facilidade ao longo do dia','Senti inquietação ao longo do dia','Reagei de forma intensa a coisas que normalmente não me afetariam tanto','O peso emocional do dia me deixou esgotado','Tive dificuldade de me acalmar depois de me abalar','O que senti atrapalhou o que eu precisava fazer'],
+  o1:['Minha mente ficou lenta para entender','Minhas ideias ficaram embaralhadas','Fiquei pensando nas mesmas coisas repetidamente','Minha atenção se dispersava','Minha cabeça ficou acelerada'],
+  o2:['Tive dificuldade de organizar o que precisava fazer','Tive dificuldade de definir o que era mais importante fazer primeiro','Fiquei organizando sem avançar nas tarefas','Quando a demanda aumentava, minha organização se perdia','Misturei o que era urgente com o que podia esperar','A ordem das tarefas ficou confusa'],
+  a1:['Tive dificuldade de começar tarefas','Adiei tarefas que eu precisava começar','Evitei iniciar tarefas','Precisei de muito esforço interno para dar o primeiro passo','Resisti a tarefas que exigiam fazer algo diferente do que já conheço'],
+  a2:['Tive dificuldade de manter o que estava fazendo','Eu parava tarefas antes de terminar','Eu perdia o ritmo no meio do que estava fazendo','No fim do dia, tarefas importantes ainda estavam por fazer'],
+  p:['O que eu fazia parecia sem sentido','O que eu fazia não combinava comigo','Eu não via motivo no que estava fazendo','Senti que o esforço que fiz não valeu o que produzi']
+};
+var L=['não incomoda','incomoda um pouco','já me atrapalha','atrapalha bastante','atrapalha demais'];
+var R={};
+var resp=0;
+
+document.getElementById('aceito').addEventListener('change',function(){
+  var b=document.getElementById('btnComecar');
+  if(this.checked){b.classList.add('ativo');}else{b.classList.remove('ativo');}
 });
-function iniciar() {
-  if (!document.getElementById('aceito').checked) return;
-  alert('Funcionou! Checkbox e botão OK.');
+
+function iniciar(){
+  if(!document.getElementById('aceito').checked)return;
+  document.getElementById('tela-entrada').classList.remove('ativa');
+  document.getElementById('tela-q36').classList.add('ativa');
+  render();
+  window.scrollTo(0,0);
+}
+
+function item(b,i,t){
+  var id=b+'_'+i;
+  R[id]=null;
+  return '<div class="item"><div class="item-texto">'+t+'</div><div class="escala-wrap"><div class="escala-track"><div class="escala-thumb" id="th-'+id+'" style="left:0%"></div><input type="range" class="escala-input" min="0" max="4" step="1" value="0" oninput="mv(\''+id+'\',this.value)" onchange="rg(\''+id+'\',this.value)"></div><div class="escala-labels"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span></div><div class="escala-valor" id="vl-'+id+'">—</div></div></div>';
+}
+
+function mv(id,v){
+  document.getElementById('th-'+id).style.left=(v/4*100)+'%';
+  document.getElementById('vl-'+id).textContent=L[v];
+}
+
+function rg(id,v){
+  if(R[id]===null)resp++;
+  R[id]=parseInt(v);
+  var p=Math.round(resp/36*100);
+  document.getElementById('barra').style.width=p+'%';
+  document.getElementById('prog-txt').textContent=resp+' de 36';
+}
+
+function render(){
+  var ks=Object.keys(B);
+  for(var i=0;i<ks.length;i++){
+    var k=ks[i];
+    var el=document.getElementById('itens-'+k);
+    if(!el)continue;
+    var h='';
+    for(var j=0;j<B[k].length;j++)h+=item(k,j+1,B[k][j]);
+    el.innerHTML=h;
+  }
+}
+
+function enviar(){
+  var n=0;
+  var ks=Object.keys(R);
+  for(var i=0;i<ks.length;i++){if(R[ks[i]]===null)n++;}
+  if(n>0){alert('Ainda faltam '+n+' respostas.');return;}
+  alert('Respostas registradas. Em breve você verá seu resultado.');
 }
 </script>
 </body>
