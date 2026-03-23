@@ -33,45 +33,27 @@ body { font-family: 'Segoe UI', sans-serif; background: #f7f7f5; color: #1a1a2e;
 .item:last-child { margin-bottom: 0; }
 .item-texto { font-size: 0.88rem; color: #333; line-height: 1.5; margin-bottom: 1rem; }
 
-.escala-wrap { position: relative; padding-left: 28px; }
-.escala-track {
-  position: relative; height: 8px; border-radius: 99px;
-  background: linear-gradient(to right, #b8e4f0 0%, #7dd4c0 25%, #a8e06a 50%, #f5d020 75%, #f5a623 100%);
+.escala-opcoes { display: flex; justify-content: space-between; gap: 6px; }
+.escala-opcao { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; }
+.escala-bolinha {
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 2px solid #ddd; background: white;
+  transition: transform 0.15s, border-color 0.15s;
+  display: flex; align-items: center; justify-content: center;
 }
-.escala-neutro {
-  position: absolute; left: 0; top: 50%;
-  width: 16px; height: 16px; border-radius: 50%;
-  background: #e0e0e0; border: 2px solid #ccc;
-  transform: translateY(-50%);
-  pointer-events: none;
-  transition: opacity 0.2s;
-}
-.escala-neutro.oculto { opacity: 0; }
-input[type=range].escala-input {
-  -webkit-appearance: none; appearance: none;
-  position: absolute; top: 0; left: 0;
-  width: 100%; height: 8px;
-  background: transparent; margin: 0; cursor: pointer; z-index: 2;
-}
-input[type=range].escala-input::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 18px; height: 18px; border-radius: 50%;
-  background: #1a1a2e; border: 2px solid white;
-  box-shadow: 0 1px 5px rgba(0,0,0,0.25); cursor: pointer;
-}
-input[type=range].escala-input::-moz-range-thumb {
-  width: 18px; height: 18px; border-radius: 50%;
-  background: #1a1a2e; border: 2px solid white;
-  box-shadow: 0 1px 5px rgba(0,0,0,0.25); cursor: pointer; border: none;
-}
-input[type=range].escala-input.nao-tocado::-webkit-slider-thumb { opacity: 0; }
-input[type=range].escala-input.nao-tocado::-moz-range-thumb { opacity: 0; }
+.escala-opcao:hover .escala-bolinha { transform: scale(1.12); border-color: #bbb; }
+.escala-opcao.sel .escala-bolinha { border-color: transparent; transform: scale(1.15); }
+.escala-opcao[data-v="0"] .escala-bolinha { background: #b8e4f0; }
+.escala-opcao[data-v="1"] .escala-bolinha { background: #7dd4c0; }
+.escala-opcao[data-v="2"] .escala-bolinha { background: #a8e06a; }
+.escala-opcao[data-v="3"] .escala-bolinha { background: #f5d020; }
+.escala-opcao[data-v="4"] .escala-bolinha { background: #f5a623; }
+.escala-opcao:not(.sel) .escala-bolinha { opacity: 0.45; }
+.escala-opcao.sel .escala-bolinha { opacity: 1; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+.escala-num { font-size: 0.65rem; color: #bbb; }
+.escala-opcao.sel .escala-num { color: #888; font-weight: 500; }
+.escala-label { text-align: center; font-size: 0.72rem; color: #999; margin-top: 6px; min-height: 1.1rem; font-style: italic; }
 
-.escala-ticks { display: flex; justify-content: space-between; margin-top: 4px; }
-.escala-tick { display: flex; flex-direction: column; align-items: center; gap: 2px; }
-.escala-tick-dot { width: 3px; height: 3px; border-radius: 50%; background: #d5d5d5; }
-.escala-tick-num { font-size: 0.6rem; color: #c5c5c5; }
-.escala-label { text-align: center; font-size: 0.72rem; color: #999; margin-top: 4px; min-height: 1.1rem; font-style: italic; }
 .rodape { text-align: center; font-size: 0.75rem; color: #bbb; margin-top: 2rem; }
 </style>
 </head>
@@ -157,27 +139,31 @@ function iniciar(){
 
 function item(b,i,t){
   var id=b+'_'+i; R[id]=null;
-  var ticks='';
-  for(var n=0;n<=4;n++) ticks+='<div class="escala-tick"><div class="escala-tick-dot"></div><div class="escala-tick-num">'+n+'</div></div>';
+  var ops='';
+  for(var n=0;n<=4;n++){
+    ops+='<div class="escala-opcao" data-v="'+n+'" data-id="'+id+'" onclick="sel(\''+id+'\','+n+',this.parentNode)">'+
+      '<div class="escala-bolinha"></div>'+
+      '<div class="escala-num">'+n+'</div>'+
+      '</div>';
+  }
   return '<div class="item"><div class="item-texto">'+t+'</div>'+
-    '<div class="escala-wrap">'+
-    '<div class="escala-neutro" id="nt-'+id+'"></div>'+
-    '<div class="escala-track">'+
-    '<input type="range" class="escala-input nao-tocado" id="sl-'+id+'" min="0" max="4" step="1" value="0" oninput="mv(\''+id+'\',this.value)">'+
-    '</div>'+
-    '<div class="escala-ticks">'+ticks+'</div>'+
+    '<div class="escala-opcoes" id="op-'+id+'">'+ops+'</div>'+
     '<div class="escala-label" id="vl-'+id+'"></div>'+
-    '</div></div>';
+    '</div>';
 }
 
-function mv(id,v){
-  v=parseInt(v);
+function sel(id,v,container){
   var era=R[id]===null;
-  document.getElementById('sl-'+id).classList.remove('nao-tocado');
-  document.getElementById('nt-'+id).classList.add('oculto');
-  document.getElementById('vl-'+id).textContent=L[v];
   R[id]=v;
-  if(era){ resp++; document.getElementById('barra').style.width=Math.round(resp/36*100)+'%'; document.getElementById('prog-txt').textContent=resp+' de 36'; }
+  var ops=container.querySelectorAll('.escala-opcao');
+  for(var i=0;i<ops.length;i++) ops[i].classList.remove('sel');
+  container.querySelector('[data-v="'+v+'"]').classList.add('sel');
+  document.getElementById('vl-'+id).textContent=L[v];
+  if(era){
+    resp++;
+    document.getElementById('barra').style.width=Math.round(resp/36*100)+'%';
+    document.getElementById('prog-txt').textContent=resp+' de 36';
+  }
 }
 
 function render(){
