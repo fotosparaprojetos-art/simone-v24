@@ -18,29 +18,37 @@ body { font-family: 'Segoe UI', sans-serif; background: #f7f7f5; color: #1a1a2e;
 .aceite input { margin-top: 3px; accent-color: #f5a623; }
 .aceite label { font-size: 0.82rem; color: #555; line-height: 1.5; }
 .btn { display: block; width: 100%; background: #1a1a2e; color: white; border: none; border-radius: 10px; padding: 0.85rem 2rem; font-size: 0.95rem; cursor: pointer; opacity: 0.4; transition: opacity 0.2s, background 0.2s; }
-.btn.ativo { opacity: 1; cursor: pointer; }
+.btn.ativo { opacity: 1; }
 .btn.ativo:hover { background: #f5a623; color: #1a1a2e; }
-.questionario { max-width: 620px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
-.q-header { text-align: center; margin-bottom: 2rem; }
-.q-header img { width: 140px; margin-bottom: 1rem; }
-.progresso-wrap { background: #eee; border-radius: 99px; height: 6px; margin-bottom: 0.5rem; }
-.progresso-bar { height: 6px; border-radius: 99px; background: #f5a623; transition: width 0.3s; width: 0%; }
-.progresso-txt { font-size: 0.75rem; color: #999; text-align: right; margin-bottom: 2rem; }
-.bloco { background: white; border-radius: 14px; border: 1px solid #eee; padding: 1.5rem; margin-bottom: 1.5rem; }
-.bloco-titulo { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #f5a623; margin-bottom: 1.25rem; }
-.bloco-janela { font-size: 0.72rem; color: #aaa; margin-bottom: 1.25rem; margin-top: -0.75rem; }
-.item { margin-bottom: 1.75rem; }
-.item:last-child { margin-bottom: 0; }
-.item-texto { font-size: 0.88rem; color: #333; line-height: 1.5; margin-bottom: 0.75rem; }
-.escala-wrap { position: relative; padding-bottom: 1.5rem; }
-.escala-track { position: relative; height: 8px; border-radius: 99px; background: linear-gradient(to right, #b8e4f0 0%, #7dd4c0 25%, #a8e06a 50%, #f5d020 75%, #f5a623 100%); margin-bottom: 0.5rem; }
-.escala-input { position: absolute; top: -6px; left: 0; width: 100%; height: 20px; opacity: 0; cursor: pointer; margin: 0; }
-.escala-thumb { position: absolute; top: -6px; width: 20px; height: 20px; border-radius: 50%; background: #1a1a2e; border: 2px solid white; box-shadow: 0 1px 4px rgba(0,0,0,0.2); transform: translateX(-50%); pointer-events: none; transition: left 0.1s; left: 0%; }
-.escala-labels { display: flex; justify-content: space-between; font-size: 0.65rem; color: #aaa; margin-top: 0.35rem; }
-.escala-valor { text-align: center; font-size: 0.75rem; color: #888; margin-top: 0.25rem; min-height: 1rem; }
 .rodape { text-align: center; font-size: 0.75rem; color: #bbb; margin-top: 2rem; }
 </style>
 </head>
 <body>
-
-<div
+<div id="tela-entrada" class="tela ativa">
+  <div class="entrada">
+    <img src="logo.png" alt="SiMone" class="logo">
+    <div class="card">
+      <h2>Bem-vindo</h2>
+      <p>Este é um espaço de leitura do seu estado funcional. Não há respostas certas ou erradas — apenas o que você está sentindo agora.</p>
+      <div class="aceite">
+        <input type="checkbox" id="aceito">
+        <label for="aceito">Concordo que meus dados sejam usados de forma anônima nesta fase de desenvolvimento do SiMone.</label>
+      </div>
+      <button class="btn" id="btnComecar" onclick="iniciar()">Começar</button>
+    </div>
+    <div class="rodape">SiMone V24 · fase de desenvolvimento</div>
+  </div>
+</div>
+<script>
+document.getElementById('aceito').addEventListener('change', function() {
+  var btn = document.getElementById('btnComecar');
+  if (this.checked) { btn.classList.add('ativo'); }
+  else { btn.classList.remove('ativo'); }
+});
+function iniciar() {
+  if (!document.getElementById('aceito').checked) return;
+  alert('Funcionou! Checkbox e botão OK.');
+}
+</script>
+</body>
+</html>
