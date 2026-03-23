@@ -29,16 +29,38 @@ body { font-family: 'Segoe UI', sans-serif; background: #f7f7f5; color: #1a1a2e;
 .bloco { background: white; border-radius: 14px; border: 1px solid #eee; padding: 1.5rem; margin-bottom: 1.5rem; }
 .bloco-titulo { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #f5a623; margin-bottom: 1.25rem; }
 .bloco-janela { font-size: 0.72rem; color: #aaa; margin-bottom: 1.25rem; margin-top: -0.75rem; }
-.item { margin-bottom: 1.75rem; }
+.item { margin-bottom: 2rem; }
 .item:last-child { margin-bottom: 0; }
-.item-texto { font-size: 0.88rem; color: #333; line-height: 1.5; margin-bottom: 0.75rem; }
-.escala-wrap { position: relative; padding-bottom: 1.5rem; }
-.escala-track { position: relative; height: 8px; border-radius: 99px; background: linear-gradient(to right, #b8e4f0 0%, #7dd4c0 25%, #a8e06a 50%, #f5d020 75%, #f5a623 100%); margin-bottom: 0.5rem; }
-.escala-input { position: absolute; top: -6px; left: 0; width: 100%; height: 20px; opacity: 0; cursor: pointer; margin: 0; }
-.escala-thumb { position: absolute; top: -6px; width: 20px; height: 20px; border-radius: 50%; background: white; border: 2px solid #ccc; box-shadow: 0 1px 4px rgba(0,0,0,0.15); transform: translateX(-50%); pointer-events: none; transition: left 0.1s; left: -20px; }
-.escala-thumb.tocado { background: #1a1a2e; border-color: white; }
-.escala-labels { display: flex; justify-content: space-between; font-size: 0.65rem; color: #aaa; margin-top: 0.35rem; }
-.escala-valor { text-align: center; font-size: 0.75rem; color: #888; margin-top: 0.25rem; min-height: 1rem; }
+.item-texto { font-size: 0.88rem; color: #333; line-height: 1.5; margin-bottom: 1rem; }
+
+.escala-wrap { position: relative; user-select: none; }
+.escala-track-outer { position: relative; padding: 0 10px; margin-bottom: 6px; }
+.escala-track {
+  position: relative; height: 8px; border-radius: 99px;
+  background: linear-gradient(to right, #b8e4f0 0%, #7dd4c0 25%, #a8e06a 50%, #f5d020 75%, #f5a623 100%);
+}
+.escala-input {
+  position: absolute; top: -8px; left: 0; width: 100%; height: 24px;
+  opacity: 0; cursor: pointer; margin: 0; z-index: 2;
+}
+.escala-thumb {
+  position: absolute; top: 50%; width: 18px; height: 18px;
+  border-radius: 50%; transform: translate(-50%, -50%);
+  pointer-events: none; transition: left 0.08s;
+  background: #ddd; border: 2px solid #bbb;
+  left: -18px;
+}
+.escala-thumb.ativo { background: #1a1a2e; border-color: white; box-shadow: 0 1px 5px rgba(0,0,0,0.25); }
+
+.escala-ticks {
+  display: flex; justify-content: space-between;
+  padding: 0 10px; margin-top: 5px;
+}
+.escala-tick { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.escala-tick-dot { width: 3px; height: 3px; border-radius: 50%; background: #ccc; }
+.escala-tick-num { font-size: 0.62rem; color: #bbb; }
+
+.escala-label { text-align: center; font-size: 0.72rem; color: #999; margin-top: 4px; min-height: 1.1rem; font-style: italic; }
 .rodape { text-align: center; font-size: 0.75rem; color: #bbb; margin-top: 2rem; }
 </style>
 </head>
@@ -155,15 +177,21 @@ function iniciar(){
 function item(b,i,t){
   var id=b+'_'+i;
   R[id]=null;
-  return '<div class="item"><div class="item-texto">'+t+'</div>'+
+  var ticks='';
+  for(var n=0;n<=4;n++){
+    ticks+='<div class="escala-tick"><div class="escala-tick-dot"></div><div class="escala-tick-num">'+n+'</div></div>';
+  }
+  return '<div class="item">'+
+    '<div class="item-texto">'+t+'</div>'+
     '<div class="escala-wrap">'+
+    '<div class="escala-track-outer">'+
     '<div class="escala-track">'+
     '<div class="escala-thumb" id="th-'+id+'"></div>'+
-    '<input type="range" class="escala-input" min="-1" max="4" step="1" value="-1" '+
-    'oninput="mv(\''+id+'\',this.value)">'+
+    '<input type="range" class="escala-input" min="-1" max="4" step="1" value="-1" oninput="mv(\''+id+'\',this.value)">'+
     '</div>'+
-    '<div class="escala-labels"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span></div>'+
-    '<div class="escala-valor" id="vl-'+id+'">—</div>'+
+    '</div>'+
+    '<div class="escala-ticks">'+ticks+'</div>'+
+    '<div class="escala-label" id="vl-'+id+'"></div>'+
     '</div></div>';
 }
 
@@ -172,22 +200,24 @@ function mv(id,v){
   var th=document.getElementById('th-'+id);
   var vl=document.getElementById('vl-'+id);
   if(v<0){
-    th.style.left='-20px';
-    th.classList.remove('tocado');
-    vl.textContent='—';
+    th.style.left='-18px';
+    th.classList.remove('ativo');
+    vl.textContent='';
+    if(R[id]!==null){resp--;atualizar();}
     R[id]=null;
     return;
   }
   var pct=(v/4)*100;
-  th.style.left=pct+'%';
-  th.classList.add('tocado');
+  th.style.left='calc('+pct+'% + '+(10-pct*20/100)+'px)';
+  th.classList.add('ativo');
   vl.textContent=L[v];
-  if(R[id]===null){
-    resp++;
-    document.getElementById('barra').style.width=Math.round(resp/36*100)+'%';
-    document.getElementById('prog-txt').textContent=resp+' de 36';
-  }
+  if(R[id]===null){resp++;atualizar();}
   R[id]=v;
+}
+
+function atualizar(){
+  document.getElementById('barra').style.width=Math.round(resp/36*100)+'%';
+  document.getElementById('prog-txt').textContent=resp+' de 36';
 }
 
 function render(){
@@ -206,26 +236,14 @@ async function enviar(){
   var n=0,ks=Object.keys(R);
   for(var i=0;i<ks.length;i++){if(R[ks[i]]===null)n++;}
   if(n>0){alert('Ainda faltam '+n+' respostas.');return;}
-
   var btn=document.getElementById('btnConcluir');
   btn.textContent='Salvando...';
   btn.classList.remove('ativo');
-
   try{
-    var qRes=await sb.from('questionados').insert({
-      aceite_anonimato:true,
-      autoriza_repasse:false
-    }).select().single();
+    var qRes=await sb.from('questionados').insert({aceite_anonimato:true,autoriza_repasse:false}).select().single();
     if(qRes.error)throw qRes.error;
-
-    var rRes=await sb.from('respostas').insert({
-      questionado_id:qRes.data.id,
-      questionario:'Q36',
-      marco:'D0',
-      itens:R
-    });
+    var rRes=await sb.from('respostas').insert({questionado_id:qRes.data.id,questionario:'Q36',marco:'D0',itens:R});
     if(rRes.error)throw rRes.error;
-
     document.getElementById('tela-q36').classList.remove('ativa');
     document.getElementById('tela-fim').classList.add('ativa');
     window.scrollTo(0,0);
