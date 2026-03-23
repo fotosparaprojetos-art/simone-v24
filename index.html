@@ -39,6 +39,7 @@ body { font-family: 'Segoe UI', sans-serif; background: #f7f7f5; color: #1a1a2e;
 .escala-labels { display: flex; justify-content: space-between; font-size: 0.65rem; color: #aaa; margin-top: 0.35rem; }
 .escala-valor { text-align: center; font-size: 0.75rem; color: #888; margin-top: 0.25rem; min-height: 1rem; }
 .rodape { text-align: center; font-size: 0.75rem; color: #bbb; margin-top: 2rem; }
+.msg { text-align: center; padding: 2rem; font-size: 0.95rem; color: #555; }
 </style>
 </head>
 <body>
@@ -101,12 +102,29 @@ body { font-family: 'Segoe UI', sans-serif; background: #f7f7f5; color: #1a1a2e;
       <div class="bloco-janela">Últimas duas semanas</div>
       <div id="itens-p"></div>
     </div>
-    <button class="btn ativo" onclick="enviar()" style="margin-top:1rem;">Concluir</button>
+    <button class="btn ativo" id="btnConcluir" onclick="enviar()" style="margin-top:1rem;">Concluir</button>
     <div class="rodape">SiMone V24 · fase de desenvolvimento</div>
   </div>
 </div>
 
+<div id="tela-fim" class="tela">
+  <div class="entrada">
+    <img src="logo.png" alt="SiMone" class="logo">
+    <div class="card">
+      <h2>Obrigado</h2>
+      <p>Suas respostas foram registradas. Em breve você receberá seu resultado.</p>
+      <p style="margin-top:1rem; font-size:0.78rem; color:#aaa;">Este resultado mostra seu estado recente. Não define quem você é.</p>
+    </div>
+    <div class="rodape">SiMone V24 · fase de desenvolvimento</div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+var SURL = 'https://dzfpsdbppfvftvamhvok.supabase.co';
+var SKEY = 'sb_publishable_FIyD24LRb4cmOBaUyVLQyw_cdceJWE4';
+var sb = supabase.createClient(SURL, SKEY);
+
 var B = {
   s1:['Já começo o dia com sensação de pouca energia no corpo','Percebo meu corpo tenso ao longo do dia','Mesmo dormindo, acordo sem me sentir recuperado','Perco energia física ao longo do dia para continuar minhas tarefas','Até tarefas simples parecem exigir esforço físico demais','Meu corpo dá sinais de sobrecarga durante o dia'],
   s2:['Me irritei com facilidade ao longo do dia','Senti inquietação ao longo do dia','Reagei de forma intensa a coisas que normalmente não me afetariam tanto','O peso emocional do dia me deixou esgotado','Tive dificuldade de me acalmar depois de me abalar','O que senti atrapalhou o que eu precisava fazer'],
@@ -116,9 +134,11 @@ var B = {
   a2:['Tive dificuldade de manter o que estava fazendo','Eu parava tarefas antes de terminar','Eu perdia o ritmo no meio do que estava fazendo','No fim do dia, tarefas importantes ainda estavam por fazer'],
   p:['O que eu fazia parecia sem sentido','O que eu fazia não combinava comigo','Eu não via motivo no que estava fazendo','Senti que o esforço que fiz não valeu o que produzi']
 };
+
 var L=['não incomoda','incomoda um pouco','já me atrapalha','atrapalha bastante','atrapalha demais'];
 var R={};
 var resp=0;
+var qid=null;
 
 document.getElementById('aceito').addEventListener('change',function(){
   var b=document.getElementById('btnComecar');
@@ -164,12 +184,43 @@ function render(){
   }
 }
 
-function enviar(){
+async function enviar(){
   var n=0;
   var ks=Object.keys(R);
   for(var i=0;i<ks.length;i++){if(R[ks[i]]===null)n++;}
   if(n>0){alert('Ainda faltam '+n+' respostas.');return;}
-  alert('Respostas registradas. Em breve você verá seu resultado.');
+
+  var btn=document.getElementById('btnConcluir');
+  btn.textContent='Salvando...';
+  btn.classList.remove('ativo');
+
+  try {
+    var qRes = await sb.from('questionados').insert({
+      aceite_anonimato: true,
+      autoriza_repasse: false
+    }).select().single();
+
+    if(qRes.error) throw qRes.error;
+    qid = qRes.data.id;
+
+    var rRes = await sb.from('respostas').insert({
+      questionado_id: qid,
+      questionario: 'Q36',
+      marco: 'D0',
+      itens: R
+    });
+
+    if(rRes.error) throw rRes.error;
+
+    document.getElementById('tela-q36').classList.remove('ativa');
+    document.getElementById('tela-fim').classList.add('ativa');
+    window.scrollTo(0,0);
+
+  } catch(e) {
+    alert('Erro ao salvar: ' + e.message);
+    btn.textContent='Concluir';
+    btn.classList.add('ativo');
+  }
 }
 </script>
 </body>
