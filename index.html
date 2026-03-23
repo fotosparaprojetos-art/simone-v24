@@ -141,8 +141,8 @@ function item(b,i,t){
   var id=b+'_'+i; R[id]=null;
   var ops='';
   for(var n=0;n<=4;n++){
-    ops+='<div class="escala-opcao" data-v="'+n+'" data-id="'+id+'" onclick="sel(\''+id+'\','+n+',this.parentNode)">'+
-      '<div class="escala-bolinha"></div>'+
+ops+='<div class="escala-opcao" data-v="'+n+'" data-id="'+id+'" tabindex="0" role="radio" aria-label="'+n+'" onclick="sel(\''+id+'\','+n+',this.parentNode)" onkeydown="if(event.key===\'Enter\'||event.key===\' \')sel(\''+id+'\','+n+',this.parentNode)">'+
+    '<div class="escala-bolinha"></div>'+
       '<div class="escala-num">'+n+'</div>'+
       '</div>';
   }
