@@ -156,7 +156,7 @@ function iniciar(){
 function item(b,i,t){
   var id=b+'_'+i;
   R[id]=null;
-  return '<div class="item"><div class="item-texto">'+t+'</div><div class="escala-wrap"><div class="escala-track"><div class="escala-thumb" id="th-'+id+'" style="left:0%"></div><input type="range" class="escala-input" min="0" max="4" step="1" value="0" oninput="mv(\''+id+'\',this.value)" onchange="rg(\''+id+'\',this.value)"></div><div class="escala-labels"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span></div><div class="escala-valor" id="vl-'+id+'">—</div></div></div>';
+  return '<div class="item"><div class="item-texto">'+t+'</div><div class="escala-wrap"><div class="escala-track"><div class="escala-thumb" id="th-'+id+'" style="left:0%"></div>'<input type="range" class="escala-input" min="-1" max="4" step="1" value="-1" oninput="mv(\''+id+'\',this.value)" onchange="rg(\''+id+'\',this.value)"></div><div class="escala-labels"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span></div><div class="escala-valor" id="vl-'+id+'">—</div></div></div>';
 }
 
 function mv(id,v){
