@@ -32,45 +32,46 @@ body { font-family: 'Segoe UI', sans-serif; background: #f7f7f5; color: #1a1a2e;
 .item { margin-bottom: 2rem; }
 .item:last-child { margin-bottom: 0; }
 .item-texto { font-size: 0.88rem; color: #333; line-height: 1.5; margin-bottom: 1rem; }
-.escala-wrap { position: relative; }
+
+.escala-wrap { position: relative; padding-left: 28px; }
 .escala-track {
-  position: relative; height: 8px; border-radius: 99px; margin: 0 0 6px;
+  position: relative; height: 8px; border-radius: 99px;
   background: linear-gradient(to right, #b8e4f0 0%, #7dd4c0 25%, #a8e06a 50%, #f5d020 75%, #f5a623 100%);
 }
 .escala-neutro {
-  position: absolute; top: 50%; left: -22px;
-  width: 18px; height: 18px; border-radius: 50%;
-  background: #ddd; border: 2px solid #bbb;
+  position: absolute; left: 0; top: 50%;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: #e0e0e0; border: 2px solid #ccc;
   transform: translateY(-50%);
   pointer-events: none;
+  transition: opacity 0.2s;
 }
-.escala-neutro.oculto { display: none; }
+.escala-neutro.oculto { opacity: 0; }
 input[type=range].escala-input {
   -webkit-appearance: none; appearance: none;
   position: absolute; top: 0; left: 0;
   width: 100%; height: 8px;
-  background: transparent; margin: 0; cursor: pointer;
+  background: transparent; margin: 0; cursor: pointer; z-index: 2;
 }
 input[type=range].escala-input::-webkit-slider-thumb {
   -webkit-appearance: none;
   width: 18px; height: 18px; border-radius: 50%;
   background: #1a1a2e; border: 2px solid white;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.25);
-  cursor: pointer;
+  box-shadow: 0 1px 5px rgba(0,0,0,0.25); cursor: pointer;
 }
 input[type=range].escala-input::-moz-range-thumb {
   width: 18px; height: 18px; border-radius: 50%;
   background: #1a1a2e; border: 2px solid white;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.25);
-  cursor: pointer;
+  box-shadow: 0 1px 5px rgba(0,0,0,0.25); cursor: pointer; border: none;
 }
 input[type=range].escala-input.nao-tocado::-webkit-slider-thumb { opacity: 0; }
 input[type=range].escala-input.nao-tocado::-moz-range-thumb { opacity: 0; }
-.escala-ticks { display: flex; justify-content: space-between; margin-top: 2px; }
+
+.escala-ticks { display: flex; justify-content: space-between; margin-top: 4px; }
 .escala-tick { display: flex; flex-direction: column; align-items: center; gap: 2px; }
-.escala-tick-dot { width: 3px; height: 3px; border-radius: 50%; background: #d0d0d0; }
-.escala-tick-num { font-size: 0.6rem; color: #c0c0c0; }
-.escala-label { text-align: center; font-size: 0.72rem; color: #999; margin-top: 5px; min-height: 1.1rem; font-style: italic; }
+.escala-tick-dot { width: 3px; height: 3px; border-radius: 50%; background: #d5d5d5; }
+.escala-tick-num { font-size: 0.6rem; color: #c5c5c5; }
+.escala-label { text-align: center; font-size: 0.72rem; color: #999; margin-top: 4px; min-height: 1.1rem; font-style: italic; }
 .rodape { text-align: center; font-size: 0.75rem; color: #bbb; margin-top: 2rem; }
 </style>
 </head>
@@ -128,7 +129,6 @@ input[type=range].escala-input.nao-tocado::-moz-range-thumb { opacity: 0; }
 var SURL='https://dzfpsdbppfvftvamhvok.supabase.co';
 var SKEY='sb_publishable_FIyD24LRb4cmOBaUyVLQyw_cdceJWE4';
 var sb=supabase.createClient(SURL,SKEY);
-
 var B={
   s1:['Já começo o dia com sensação de pouca energia no corpo','Percebo meu corpo tenso ao longo do dia','Mesmo dormindo, acordo sem me sentir recuperado','Perco energia física ao longo do dia para continuar minhas tarefas','Até tarefas simples parecem exigir esforço físico demais','Meu corpo dá sinais de sobrecarga durante o dia'],
   s2:['Me irritei com facilidade ao longo do dia','Senti inquietação ao longo do dia','Reagei de forma intensa a coisas que normalmente não me afetariam tanto','O peso emocional do dia me deixou esgotado','Tive dificuldade de me acalmar depois de me abalar','O que senti atrapalhou o que eu precisava fazer'],
@@ -138,7 +138,6 @@ var B={
   a2:['Tive dificuldade de manter o que estava fazendo','Eu parava tarefas antes de terminar','Eu perdia o ritmo no meio do que estava fazendo','No fim do dia, tarefas importantes ainda estavam por fazer'],
   p:['O que eu fazia parecia sem sentido','O que eu fazia não combinava comigo','Eu não via motivo no que estava fazendo','Senti que o esforço que fiz não valeu o que produzi']
 };
-
 var L=['não incomoda','incomoda um pouco','já me atrapalha','atrapalha bastante','atrapalha demais'];
 var R={};
 var resp=0;
@@ -157,17 +156,13 @@ function iniciar(){
 }
 
 function item(b,i,t){
-  var id=b+'_'+i;
-  R[id]=null;
+  var id=b+'_'+i; R[id]=null;
   var ticks='';
-  for(var n=0;n<=4;n++){
-    ticks+='<div class="escala-tick"><div class="escala-tick-dot"></div><div class="escala-tick-num">'+n+'</div></div>';
-  }
-  return '<div class="item">'+
-    '<div class="item-texto">'+t+'</div>'+
+  for(var n=0;n<=4;n++) ticks+='<div class="escala-tick"><div class="escala-tick-dot"></div><div class="escala-tick-num">'+n+'</div></div>';
+  return '<div class="item"><div class="item-texto">'+t+'</div>'+
     '<div class="escala-wrap">'+
-    '<div class="escala-track">'+
     '<div class="escala-neutro" id="nt-'+id+'"></div>'+
+    '<div class="escala-track">'+
     '<input type="range" class="escala-input nao-tocado" id="sl-'+id+'" min="0" max="4" step="1" value="0" oninput="mv(\''+id+'\',this.value)">'+
     '</div>'+
     '<div class="escala-ticks">'+ticks+'</div>'+
@@ -177,26 +172,18 @@ function item(b,i,t){
 
 function mv(id,v){
   v=parseInt(v);
-  var sl=document.getElementById('sl-'+id);
-  var nt=document.getElementById('nt-'+id);
-  var vl=document.getElementById('vl-'+id);
-  var eraPrimeira=(R[id]===null);
-  sl.classList.remove('nao-tocado');
-  nt.classList.add('oculto');
-  vl.textContent=L[v];
+  var era=R[id]===null;
+  document.getElementById('sl-'+id).classList.remove('nao-tocado');
+  document.getElementById('nt-'+id).classList.add('oculto');
+  document.getElementById('vl-'+id).textContent=L[v];
   R[id]=v;
-  if(eraPrimeira){
-    resp++;
-    document.getElementById('barra').style.width=Math.round(resp/36*100)+'%';
-    document.getElementById('prog-txt').textContent=resp+' de 36';
-  }
+  if(era){ resp++; document.getElementById('barra').style.width=Math.round(resp/36*100)+'%'; document.getElementById('prog-txt').textContent=resp+' de 36'; }
 }
 
 function render(){
   var ks=Object.keys(B);
   for(var i=0;i<ks.length;i++){
-    var k=ks[i];
-    var el=document.getElementById('itens-'+k);
+    var k=ks[i],el=document.getElementById('itens-'+k);
     if(!el)continue;
     var h='';
     for(var j=0;j<B[k].length;j++)h+=item(k,j+1,B[k][j]);
@@ -209,8 +196,7 @@ async function enviar(){
   for(var i=0;i<ks.length;i++){if(R[ks[i]]===null)n++;}
   if(n>0){alert('Ainda faltam '+n+' respostas.');return;}
   var btn=document.getElementById('btnConcluir');
-  btn.textContent='Salvando...';
-  btn.classList.remove('ativo');
+  btn.textContent='Salvando...'; btn.classList.remove('ativo');
   try{
     var qRes=await sb.from('questionados').insert({aceite_anonimato:true,autoriza_repasse:false}).select().single();
     if(qRes.error)throw qRes.error;
@@ -221,8 +207,7 @@ async function enviar(){
     window.scrollTo(0,0);
   }catch(e){
     alert('Erro ao salvar: '+e.message);
-    btn.textContent='Concluir';
-    btn.classList.add('ativo');
+    btn.textContent='Concluir'; btn.classList.add('ativo');
   }
 }
 </script>
