@@ -208,8 +208,8 @@ function mv(id,v){
     return;
   }
   var pct=(v/4)*100;
-th.style.left='calc(10px + '+pct+'% * (100% - 20px) / 100%)';
- th.classList.add('ativo');
+th.style.left=pct+'%';
+  th.classList.add('ativo');
   vl.textContent=L[v];
   if(R[id]===null){resp++;atualizar();}
   R[id]=v;
