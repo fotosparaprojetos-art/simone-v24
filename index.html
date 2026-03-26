@@ -260,7 +260,6 @@ function calcular(){
 }
 
 function detectarAssinatura(e){
-  if(e.gateA) return {nome:'Padrão Inválido',gravidade:'INVÁLIDO'};
   var x=e.chi;
   if(e.S>=3&&e.O>=3&&e.A>=3&&x>=2) return {nome:'Compensação Estrutural Silenciosa',gravidade:'CRÍTICO'};
   if(e.S>=3&&e.O>=3&&e.A>=3) return {nome:'Colapso Global',gravidade:'CRÍTICO'};
