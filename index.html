@@ -1,5 +1,240 @@
 
-javascript
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SiMone</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', sans-serif; background: #f7f7f5; color: #1a1a2e; min-height: 100vh; }
+.tela { display: none; }
+.tela.ativa { display: block; }
+.entrada { max-width: 480px; margin: 0 auto; padding: 3rem 1.5rem; text-align: center; }
+.logo { width: 200px; margin-bottom: 2rem; }
+.card { background: white; border-radius: 16px; padding: 2rem; border: 1px solid #eee; }
+.card h2 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.75rem; }
+.card p { font-size: 0.9rem; color: #555; line-height: 1.6; margin-bottom: 1.5rem; }
+.aceite { display: flex; align-items: flex-start; gap: 0.75rem; text-align: left; margin-bottom: 1.5rem; padding: 1rem; background: #f7f7f5; border-radius: 10px; }
+.aceite input { margin-top: 3px; accent-color: #f5a623; }
+.aceite label { font-size: 0.82rem; color: #555; line-height: 1.5; }
+.btn { display: block; width: 100%; background: #1a1a2e; color: white; border: none; border-radius: 10px; padding: 0.85rem 2rem; font-size: 0.95rem; cursor: pointer; opacity: 0.4; transition: opacity 0.2s, background 0.2s; }
+.btn.ativo { opacity: 1; }
+.btn.ativo:hover { background: #f5a623; color: #1a1a2e; }
+.prog-fixo { position: fixed; top: 0; left: 0; width: 100%; z-index: 999; background: rgba(247,247,245,0.97); padding: 8px 1.5rem 6px; border-bottom: 1px solid #eee; }
+.prog-fixo .progresso-wrap { background: #eee; border-radius: 99px; height: 5px; margin-bottom: 3px; }
+.prog-fixo .progresso-bar { height: 5px; border-radius: 99px; background: #f5a623; transition: width 0.3s; width: 0%; }
+.prog-fixo .progresso-txt { font-size: 0.7rem; color: #bbb; text-align: right; }
+.questionario { max-width: 620px; margin: 0 auto; padding: 4rem 1.5rem 4rem; }
+.q-header { text-align: center; margin-bottom: 2rem; }
+.q-header img { width: 130px; }
+.bloco { background: white; border-radius: 14px; border: 1px solid #eee; padding: 1.5rem; margin-bottom: 1.5rem; }
+.bloco-titulo { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #f5a623; margin-bottom: 1.25rem; }
+.bloco-janela { font-size: 0.72rem; color: #aaa; margin-bottom: 1.25rem; margin-top: -0.75rem; }
+.item { margin-bottom: 2rem; }
+.item:last-child { margin-bottom: 0; }
+.item-num { font-size: 0.68rem; color: #ccc; margin-bottom: 3px; }
+.item-texto { font-size: 0.88rem; color: #333; line-height: 1.5; margin-bottom: 1rem; }
+.escala-barra { display: flex; height: 36px; border-radius: 8px; overflow: hidden; cursor: pointer; }
+.escala-seg { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 500; color: rgba(0,0,0,0.3); opacity: 0.35; transition: all 0.15s; cursor: pointer; }
+.escala-seg:hover { opacity: 0.65; }
+.escala-seg.sel { opacity: 1; color: rgba(0,0,0,0.55); font-weight: 700; font-size: 0.88rem; transform: scaleY(1.1); }
+.escala-seg[data-v="0"] { background: #b8e4f0; }
+.escala-seg[data-v="1"] { background: #7dd4c0; }
+.escala-seg[data-v="2"] { background: #a8e06a; }
+.escala-seg[data-v="3"] { background: #f5d020; }
+.escala-seg[data-v="4"] { background: #f5a623; }
+.escala-ancora { display: flex; justify-content: space-between; margin-top: 4px; }
+.escala-ancora span { font-size: 0.6rem; color: #bbb; }
+.escala-sel-label { text-align: center; font-size: 0.72rem; color: #333; font-weight: 600; min-height: 1rem; margin-top: 2px; }
+.rodape { text-align: center; font-size: 0.75rem; color: #bbb; margin-top: 2rem; }
+.resultado { max-width: 520px; margin: 0 auto; padding: 3rem 1.5rem 4rem; }
+.resultado-logo { text-align: center; margin-bottom: 2rem; }
+.resultado-logo img { width: 140px; }
+.eixos-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1.5rem; }
+.eixo-card { background: white; border-radius: 12px; border: 1px solid #eee; padding: 1rem; text-align: center; transition: all 0.2s; }
+.eixo-card.dominante { border: 2px solid #f5a623; background: #fffbf2; }
+.eixo-card.recurso { border: 2px solid #b8e4f0; background: #f5fbfe; }
+.eixo-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #ccc; margin-bottom: 4px; }
+.eixo-card.dominante .eixo-label { color: #f5a623; }
+.eixo-card.recurso .eixo-label { color: #7dd4c0; }
+.eixo-valor { font-size: 1.4rem; font-weight: 600; color: #1a1a2e; }
+.eixo-barra-wrap { height: 4px; background: #f0f0f0; border-radius: 99px; margin-top: 6px; }
+.eixo-barra { height: 4px; border-radius: 99px; background: #ddd; }
+.eixo-card.dominante .eixo-barra { background: #f5a623; }
+.eixo-card.recurso .eixo-barra { background: #7dd4c0; }
+.eixo-tag { font-size: 0.55rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 4px; }
+.eixo-card.dominante .eixo-tag { color: #f5a623; }
+.eixo-card.recurso .eixo-tag { color: #7dd4c0; }
+.dev-card { background: white; border-radius: 16px; border: 1px solid #eee; padding: 2rem; margin-bottom: 1.25rem; }
+.dev-titulo { font-size: 1.15rem; font-weight: 700; color: #1a1a2e; margin-bottom: 1rem; line-height: 1.3; }
+.dev-bloco { margin-bottom: 1.25rem; }
+.dev-bloco:last-child { margin-bottom: 0; }
+.dev-label { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #ccc; margin-bottom: 4px; }
+.dev-texto { font-size: 0.88rem; color: #444; line-height: 1.7; }
+.dev-direcao { font-size: 0.88rem; color: #1a1a2e; line-height: 1.7; font-weight: 500; }
+.resultado-rodape { font-size: 0.75rem; color: #bbb; text-align: center; margin-top: 1.5rem; font-style: italic; line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<div id="tela-entrada" class="tela ativa">
+  <div class="entrada">
+    <img src="logo.png" alt="SiMone" class="logo">
+    <div class="card">
+      <h2>Bem-vindo</h2>
+      <p>Este é um espaço de leitura do seu estado funcional. Não há respostas certas ou erradas — apenas o que você está sentindo agora.</p>
+      <div class="aceite">
+        <input type="checkbox" id="aceito">
+        <label for="aceito">Concordo que meus dados sejam usados de forma anônima nesta fase de desenvolvimento do SiMone.</label>
+      </div>
+      <button class="btn" id="btnComecar" onclick="iniciar()">Começar</button>
+    </div>
+    <div class="rodape">SiMone V24 · fase de desenvolvimento</div>
+  </div>
+</div>
+
+<div id="tela-q36" class="tela">
+  <div class="prog-fixo">
+    <div class="progresso-wrap"><div class="progresso-bar" id="barra"></div></div>
+    <div class="progresso-txt" id="prog-txt">0 de 36</div>
+  </div>
+  <div class="questionario">
+    <div class="q-header"><img src="logo.png" alt="SiMone"></div>
+    <div class="bloco"><div class="bloco-titulo">S · Sentir — Corpo</div><div class="bloco-janela">Ontem e hoje</div><div id="itens-s1"></div></div>
+    <div class="bloco"><div class="bloco-titulo">S · Sentir — Emocional</div><div class="bloco-janela">Ontem e hoje</div><div id="itens-s2"></div></div>
+    <div class="bloco"><div class="bloco-titulo">O · Organizar — Clareza mental</div><div class="bloco-janela">Ontem e hoje</div><div id="itens-o1"></div></div>
+    <div class="bloco"><div class="bloco-titulo">O · Organizar — Organização</div><div class="bloco-janela">Ontem e hoje</div><div id="itens-o2"></div></div>
+    <div class="bloco"><div class="bloco-titulo">A · Agir — Início</div><div class="bloco-janela">Ontem e hoje</div><div id="itens-a1"></div></div>
+    <div class="bloco"><div class="bloco-titulo">A · Agir — Sustentação</div><div class="bloco-janela">Ontem e hoje</div><div id="itens-a2"></div></div>
+    <div class="bloco"><div class="bloco-titulo">P · Propósito</div><div class="bloco-janela">Últimas duas semanas</div><div id="itens-p"></div></div>
+    <button class="btn ativo" id="btnConcluir" onclick="enviar()" style="margin-top:1rem;">Concluir</button>
+    <div class="rodape">SiMone V24 · fase de desenvolvimento</div>
+  </div>
+</div>
+
+<div id="tela-resultado" class="tela">
+  <div class="resultado">
+    <div class="resultado-logo"><img src="logo.png" alt="SiMone"></div>
+    <div id="eixos-grid" class="eixos-grid"></div>
+    <div class="dev-card">
+      <div class="dev-titulo" id="dev-titulo"></div>
+      <div class="dev-bloco">
+        <div class="dev-label">Resumo</div>
+        <div class="dev-texto" id="dev-resumo"></div>
+      </div>
+      <div class="dev-bloco">
+        <div class="dev-label">Leitura</div>
+        <div class="dev-texto" id="dev-leitura"></div>
+      </div>
+      <div class="dev-bloco">
+        <div class="dev-label">Direção</div>
+        <div class="dev-direcao" id="dev-direcao"></div>
+      </div>
+    </div>
+    <div class="resultado-rodape">Este resultado mostra seu estado recente. Não define quem você é.</div>
+    <button class="btn ativo" onclick="irAvaliacao()" style="margin-top:1.5rem;">Avaliar esta ferramenta</button>
+  </div>
+</div>
+
+<div id="tela-avaliacao" class="tela">
+  <div class="entrada">
+    <img src="logo.png" alt="SiMone" class="logo">
+    <div class="card">
+      <h2>Como foi sua experiência?</h2>
+      <p>Sua opinião ajuda a melhorar o SiMone.</p>
+      <div style="display:flex;justify-content:center;gap:12px;margin-bottom:1.5rem;" id="notas"></div>
+      <textarea id="comentario" placeholder="Comentário opcional..." style="width:100%;border:1px solid #eee;border-radius:10px;padding:0.75rem;font-size:0.85rem;font-family:inherit;resize:none;height:80px;margin-bottom:1.5rem;"></textarea>
+      <button class="btn ativo" onclick="enviarAvaliacao()">Enviar</button>
+    </div>
+    <div class="rodape">SiMone V24 · fase de desenvolvimento</div>
+  </div>
+</div>
+
+<div id="tela-fim" class="tela">
+  <div class="entrada">
+    <img src="logo.png" alt="SiMone" class="logo">
+    <div class="card">
+      <h2>Obrigado</h2>
+      <p>Sua participação contribui para o desenvolvimento do SiMone.</p>
+      <p style="margin-top:1rem;font-size:0.78rem;color:#aaa;">Este resultado mostra seu estado recente. Não define quem você é.</p>
+    </div>
+    <div class="rodape">SiMone V24 · fase de desenvolvimento</div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+var SURL='https://dzfpsdbppfvftvamhvok.supabase.co';
+var SKEY='sb_publishable_FIyD24LRb4cmOBaUyVLQyw_cdceJWE4';
+var sb=supabase.createClient(SURL,SKEY);
+
+var B={
+  s1:['Já começo o dia com sensação de pouca energia no corpo','Percebo meu corpo tenso ao longo do dia','Mesmo dormindo, acordo sem me sentir recuperado','Perco energia física ao longo do dia para continuar minhas tarefas','Até tarefas simples parecem exigir esforço físico demais','Meu corpo dá sinais de sobrecarga durante o dia'],
+  s2:['Me irritei com facilidade ao longo do dia','Senti inquietação ao longo do dia','Reagi de forma intensa a coisas que normalmente não me afetariam tanto','O peso emocional do dia me deixou esgotado','Tive dificuldade de me acalmar depois de me abalar','O que senti atrapalhou o que eu precisava fazer'],
+  o1:['Minha mente ficou lenta para entender','Minhas ideias ficaram embaralhadas','Fiquei pensando nas mesmas coisas repetidamente','Minha atenção se dispersava','Minha cabeça ficou acelerada'],
+  o2:['Tive dificuldade de organizar o que precisava fazer','Tive dificuldade de definir o que era mais importante fazer primeiro','Fiquei organizando sem avançar nas tarefas','Quando a demanda aumentava, minha organização se perdia','Misturei o que era urgente com o que podia esperar','A ordem das tarefas ficou confusa'],
+  a1:['Tive dificuldade de começar tarefas','Adiei tarefas que eu precisava começar','Evitei iniciar tarefas','Precisei de muito esforço interno para dar o primeiro passo','Resisti a tarefas que exigiam fazer algo diferente do que já conheço'],
+  a2:['Tive dificuldade de manter o que estava fazendo','Eu parava tarefas antes de terminar','Eu perdia o ritmo no meio do que estava fazendo','No fim do dia, tarefas importantes ainda estavam por fazer'],
+  p:['O que eu fazia parecia sem sentido','O que eu fazia não combinava comigo','Eu não via motivo no que estava fazendo','Senti que o esforço que fiz não valeu o que produzi']
+};
+
+var L=['não incomoda','incomoda um pouco','já me atrapalha','atrapalha bastante','atrapalha demais'];
+var R={};
+var resp=0;
+var numQ=0;
+var qid=null;
+var rid=null;
+var notaSel=null;
+
+document.getElementById('aceito').addEventListener('change',function(){
+  var b=document.getElementById('btnComecar');
+  if(this.checked){b.classList.add('ativo');}else{b.classList.remove('ativo');}
+});
+
+function iniciar(){
+  if(!document.getElementById('aceito').checked)return;
+  document.getElementById('tela-entrada').classList.remove('ativa');
+  document.getElementById('tela-q36').classList.add('ativa');
+  render();
+  window.scrollTo(0,0);
+}
+
+function item(b,i,t){
+  var id=b+'_'+i; R[id]=null; numQ++;
+  var n=numQ; var segs='';
+  for(var v=0;v<=4;v++){
+    segs+='<div class="escala-seg" data-v="'+v+'" tabindex="0" role="radio" aria-label="'+L[v]+'" onclick="sel(\''+id+'\','+v+')" onkeydown="if(event.key===\'Enter\'||event.key===\' \')sel(\''+id+'\','+v+')">'+v+'</div>';
+  }
+  return '<div class="item"><div class="item-num">'+n+'</div><div class="item-texto">'+t+'</div><div class="escala-barra" id="bar-'+id+'">'+segs+'</div><div class="escala-ancora"><span>não incomoda</span><span>atrapalha demais</span></div><div class="escala-sel-label" id="vl-'+id+'"></div></div>';
+}
+
+function sel(id,v){
+  var era=R[id]===null; R[id]=v;
+  var bar=document.getElementById('bar-'+id);
+  var segs=bar.querySelectorAll('.escala-seg');
+  for(var i=0;i<segs.length;i++) segs[i].classList.remove('sel');
+  bar.querySelector('[data-v="'+v+'"]').classList.add('sel');
+  document.getElementById('vl-'+id).textContent=L[v];
+  if(era){resp++;document.getElementById('barra').style.width=Math.round(resp/36*100)+'%';document.getElementById('prog-txt').textContent=resp+' de 36';}
+}
+
+function render(){
+  numQ=0;
+  var ks=Object.keys(B);
+  for(var i=0;i<ks.length;i++){
+    var k=ks[i],el=document.getElementById('itens-'+k);
+    if(!el)continue;
+    var h='';
+    for(var j=0;j<B[k].length;j++)h+=item(k,j+1,B[k][j]);
+    el.innerHTML=h;
+  }
+}
+
+function mediaR(ids){
+  var s=0; for(var i=0;i<ids.length;i++) s+=R[ids[i]]; return s/ids.length;
+}
+
 function calcularEixos(){
   var S1=mediaR(['s1_1','s1_2','s1_3','s1_4','s1_5','s1_6']);
   var S2=mediaR(['s2_1','s2_2','s2_3','s2_4','s2_5','s2_6']);
@@ -11,28 +246,143 @@ function calcularEixos(){
   var S=(S1+S2)/2, O=(O1+O2)/2, A=(A1+A2)/2;
   var G=(S+O+A)/3;
   var delta=Math.max(Math.abs(S-G),Math.abs(O-G),Math.abs(A-G));
-  var invalido=false;
   var colapsoGlobal=(S>=3&&O>=3&&A>=3);
   var falsoFuncional=(G>=1.7&&G<=2.4&&delta<0.25);
-  return {sentir:S,organizar:O,agir:A,proposito:P,g:G,delta:delta,flags:{invalido:invalido,falsoFuncional:falsoFuncional,colapsoGlobal:colapsoGlobal}};
+  return {
+    sentir:S, organizar:O, agir:A, proposito:P,
+    g:G, delta:delta,
+    flags:{invalido:false, falsoFuncional:falsoFuncional, colapsoGlobal:colapsoGlobal}
+  };
 }
-```
 
-Depois localiza a função `maiorEixo` e substitui **apenas ela** por:
-
-```javascript
 function maiorEixo(eixos){
   var entries=Object.entries(eixos).sort(function(a,b){return b[1]-a[1];});
   if(entries[0][1]===entries[1][1]) return null;
   return entries[0][0];
 }
-```
 
-Depois localiza a função `menorEixo` e substitui **apenas ela** por:
-
-```javascript
 function menorEixo(eixos){
   var entries=Object.entries(eixos).sort(function(a,b){return a[1]-b[1];});
   if(entries[0][1]===entries[1][1]) return null;
   return entries[0][0];
 }
+
+function nomeBonito(chave){
+  var mapa={sentir:'Sentir',organizar:'Organizar',agir:'Agir',proposito:'Propósito'};
+  return mapa[chave]||chave;
+}
+
+function erroTecnico(mensagem){
+  return {codigo:'erro_tecnico',severidade:'erro',titulo:'Erro técnico',resumo:'Não foi possível processar a devolutiva.',leitura:mensagem,direcao:'Verifique os dados de entrada antes de tentar novamente.',eixoDominante:null,eixoRecurso:null};
+}
+
+function avaliarSimone(entrada){
+  if(!entrada||typeof entrada!=='object') return erroTecnico('Entrada ausente ou inválida');
+  var sentir=entrada.sentir,organizar=entrada.organizar,agir=entrada.agir,proposito=entrada.proposito,g=entrada.g,delta=entrada.delta,flags=entrada.flags||{};
+  var camposNumericos={sentir:sentir,organizar:organizar,agir:agir,proposito:proposito,g:g,delta:delta};
+  for(var campo in camposNumericos){
+    var valor=camposNumericos[campo];
+    if(typeof valor!=='number'||isNaN(valor)) return erroTecnico('Campo numérico inválido: '+campo);
+  }
+  var eixos={sentir:sentir,organizar:organizar,agir:agir,proposito:proposito};
+  var eixoDominante=maiorEixo(eixos);
+  var eixoRecurso=menorEixo(eixos);
+  if(flags.invalido){return {codigo:'padrao_invalido',severidade:'invalido',titulo:'Respostas muito uniformes',resumo:'As respostas ficaram parecidas demais e isso impede identificar onde o peso do dia realmente apareceu.',leitura:'Esse tipo de resultado costuma acontecer quando a marcação sai muito rápida, automática ou sem diferenciação suficiente entre os itens.',direcao:'Vale responder de novo, olhando item por item e marcando o quanto cada um realmente pesou hoje.',eixoDominante:eixoDominante,eixoRecurso:eixoRecurso};}
+  if(flags.colapsoGlobal||(g>=3.5&&sentir>=3.2&&organizar>=3.2&&agir>=3.2)){return {codigo:'colapso_global',severidade:'critico',titulo:'Sobrecarga total',resumo:'Tudo está exigindo mais do que você consegue sustentar agora.',leitura:'O peso não está concentrado em uma área só. Sentir, organizar e agir aparecem sobrecarregados ao mesmo tempo, com pouco espaço de recuperação.',direcao:'Agora o foco não é resolver tudo. É reduzir o que não é essencial e proteger energia.',eixoDominante:eixoDominante,eixoRecurso:eixoRecurso};}
+  if(flags.falsoFuncional||(g>=1.7&&g<=2.4&&delta<0.25)){return {codigo:'falso_funcional',severidade:'alto',titulo:'Equilíbrio com esforço oculto',resumo:'Por fora parece estável, mas há esforço contínuo para manter isso.',leitura:'Os eixos estão próximos entre si, sem variação expressiva. Isso pode indicar equilíbrio real, mas também sustentação por contenção e desgaste silencioso.',direcao:'Antes de aumentar exigência, vale testar se há folga real ou só manutenção no limite.',eixoDominante:eixoDominante,eixoRecurso:eixoRecurso};}
+  if(g<1.4&&delta<0.5){return {codigo:'leve_afastamento',severidade:'leve',titulo:'Estado leve de afastamento',resumo:'Você não está sobrecarregado, mas também não está plenamente conectado ao que faz.',leitura:'Os eixos estão baixos e estáveis. O maior valor apareceu em '+nomeBonito(eixoDominante)+', sugerindo presença discreta desse peso, sem ruptura geral.',direcao:'O próximo passo não é se pressionar mais. É retomar uma ação pequena com sentido claro.',eixoDominante:eixoDominante,eixoRecurso:eixoRecurso};}
+  if(agir>=2.5&&sentir<2.0&&organizar>=2.0){return {codigo:'travamento_operacional',severidade:'moderado',titulo:'Dificuldade para colocar em movimento',resumo:'Você parece entender parte do que precisa, mas está custando transformar isso em ação.',leitura:'O maior peso está em agir. Isso costuma aparecer quando existe energia consumida na tentativa de começar, retomar ou sustentar tarefas.',direcao:'Vale reduzir o tamanho da próxima tarefa e trabalhar com início simples, concreto e imediato.',eixoDominante:eixoDominante,eixoRecurso:eixoRecurso};}
+  if(organizar>=2.5&&agir>=2.0){return {codigo:'sobrecarga_organizacional',severidade:'moderado',titulo:'Excesso de carga na organização',resumo:'O dia parece estar pesado mais na clareza e na estrutura do que na disposição em si.',leitura:'Quando organizar sobe, costuma aparecer confusão de prioridades, acúmulo de frentes ou dificuldade para dar forma ao que precisa ser feito.',direcao:'Antes de produzir mais, vale reduzir frentes abertas e definir uma prioridade principal.',eixoDominante:eixoDominante,eixoRecurso:eixoRecurso};}
+  if(sentir>=2.5&&agir<2.3){return {codigo:'sobrecarga_emocional_corporal',severidade:'moderado',titulo:'Peso maior no sentir',resumo:'O corpo ou o campo emocional estão consumindo mais recurso do que o habitual.',leitura:'O eixo sentir apareceu acima dos demais. Isso costuma puxar energia para dentro e reduzir a disponibilidade para o restante do dia.',direcao:'O mais útil agora é diminuir atrito e observar o que está drenando mais, em vez de tentar compensar no esforço.',eixoDominante:eixoDominante,eixoRecurso:eixoRecurso};}
+  return {codigo:'estado_intermediario',severidade:'moderado',titulo:'Carga presente, sem ruptura principal',resumo:'Há peso no funcionamento, mas sem um padrão dominante suficientemente forte para nomear outro estado.',leitura:'Os eixos mostram esforço real, porém sem concentração crítica em uma única frente.',direcao:'Vale acompanhar tendência nos próximos dias para ver se isso está estabilizando, subindo ou cedendo.',eixoDominante:eixoDominante,eixoRecurso:eixoRecurso};
+}
+
+async function enviar(){
+  var n=0,ks=Object.keys(R);
+  for(var i=0;i<ks.length;i++){if(R[ks[i]]===null)n++;}
+  if(n>0){alert('Ainda faltam '+n+' respostas.');return;}
+  var btn=document.getElementById('btnConcluir');
+  btn.textContent='Calculando...'; btn.classList.remove('ativo');
+  var e=calcularEixos();
+  var resultado=avaliarSimone(e);
+  try{
+    var qRes=await sb.from('questionados').insert({aceite_anonimato:true,autoriza_repasse:false}).select().single();
+    if(qRes.error)throw qRes.error;
+    qid=qRes.data.id;
+    var rRes=await sb.from('respostas').insert({questionado_id:qid,questionario:'Q36',marco:'D0',itens:R}).select().single();
+    if(rRes.error)throw rRes.error;
+    rid=rRes.data.id;
+    await sb.from('resultados').insert({
+      questionado_id:qid,resposta_id:rid,marco:'D0',
+      eixos:{S:e.sentir,O:e.organizar,A:e.agir,P:e.proposito,G:e.g,delta:e.delta},
+      assinatura:resultado.codigo,gravidade:resultado.severidade,
+      flags:e.flags,
+      devolutivo:resultado.titulo+' — '+resultado.resumo
+    });
+    mostrarResultado(e,resultado);
+  }catch(err){
+    alert('Erro ao salvar: '+err.message);
+    btn.textContent='Concluir'; btn.classList.add('ativo');
+  }
+}
+
+function mostrarResultado(e,r){
+  var eixos=[
+    {chave:'sentir',label:'Sentir',valor:e.sentir},
+    {chave:'organizar',label:'Organizar',valor:e.organizar},
+    {chave:'agir',label:'Agir',valor:e.agir},
+    {chave:'proposito',label:'Propósito',valor:e.proposito}
+  ];
+  var html='';
+  for(var i=0;i<eixos.length;i++){
+    var ex=eixos[i];
+    var cls='eixo-card';
+    var tag='';
+    if(r.eixoDominante&&ex.chave===r.eixoDominante){cls+=' dominante';tag='<div class="eixo-tag">maior carga</div>';}
+    else if(r.eixoRecurso&&ex.chave===r.eixoRecurso){cls+=' recurso';tag='<div class="eixo-tag">menor carga</div>';}
+    var pct=Math.round((ex.valor/4)*100);
+    html+='<div class="'+cls+'"><div class="eixo-label">'+ex.label+'</div><div class="eixo-valor">'+ex.valor.toFixed(1)+'</div><div class="eixo-barra-wrap"><div class="eixo-barra" style="width:'+pct+'%"></div></div>'+tag+'</div>';
+  }
+  document.getElementById('eixos-grid').innerHTML=html;
+  document.getElementById('dev-titulo').textContent=r.titulo;
+  document.getElementById('dev-resumo').textContent=r.resumo;
+  document.getElementById('dev-leitura').textContent=r.leitura;
+  document.getElementById('dev-direcao').textContent=r.direcao;
+  document.getElementById('tela-q36').classList.remove('ativa');
+  document.getElementById('tela-resultado').classList.add('ativa');
+  window.scrollTo(0,0);
+}
+
+function irAvaliacao(){
+  document.getElementById('tela-resultado').classList.remove('ativa');
+  document.getElementById('tela-avaliacao').classList.add('ativa');
+  var html='';
+  for(var n=1;n<=5;n++){
+    html+='<div onclick="selecionarNota('+n+')" id="nota-'+n+'" style="width:44px;height:44px;border-radius:50%;border:2px solid #eee;display:flex;align-items:center;justify-content:center;font-size:1.1rem;cursor:pointer;transition:all 0.15s;">'+n+'</div>';
+  }
+  document.getElementById('notas').innerHTML=html;
+  window.scrollTo(0,0);
+}
+
+function selecionarNota(n){
+  notaSel=n;
+  for(var i=1;i<=5;i++){
+    var el=document.getElementById('nota-'+i);
+    if(i===n){el.style.background='#1a1a2e';el.style.color='white';el.style.borderColor='#1a1a2e';}
+    else{el.style.background='white';el.style.color='#1a1a2e';el.style.borderColor='#eee';}
+  }
+}
+
+async function enviarAvaliacao(){
+  if(!notaSel){alert('Selecione uma nota de 1 a 5.');return;}
+  var com=document.getElementById('comentario').value;
+  try{
+    await sb.from('avaliacoes').insert({questionado_id:qid,resposta_id:rid,nota:notaSel,comentario:com||null});
+  }catch(e){}
+  document.getElementById('tela-avaliacao').classList.remove('ativa');
+  document.getElementById('tela-fim').classList.add('ativa');
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>
