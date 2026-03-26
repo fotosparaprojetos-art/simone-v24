@@ -52,9 +52,8 @@ body { font-family: 'Segoe UI', sans-serif; background: #f7f7f5; color: #1a1a2e;
 .resultado-logo { text-align: center; margin-bottom: 2rem; }
 .resultado-logo img { width: 140px; }
 .resultado-card { background: white; border-radius: 16px; padding: 2rem; border: 1px solid #eee; margin-bottom: 1.25rem; }
-.resultado-gravidade { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #f5a623; margin-bottom: 0.5rem; }
-.resultado-titulo { font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; color: #1a1a2e; }
-.resultado-texto { font-size: 0.9rem; color: #555; line-height: 1.7; }
+.resultado-reconhecimento { font-size: 1rem; font-weight: 500; color: #1a1a2e; line-height: 1.5; margin-bottom: 1rem; }
+.resultado-texto { font-size: 0.9rem; color: #555; line-height: 1.75; }
 .resultado-eixos { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1.25rem; }
 .eixo-card { background: white; border-radius: 12px; border: 1px solid #eee; padding: 1rem; text-align: center; }
 .eixo-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #ccc; margin-bottom: 4px; }
@@ -106,8 +105,7 @@ body { font-family: 'Segoe UI', sans-serif; background: #f7f7f5; color: #1a1a2e;
     <div class="resultado-logo"><img src="logo.png" alt="SiMone"></div>
     <div id="eixos-grid" class="resultado-eixos"></div>
     <div class="resultado-card">
-      <div class="resultado-gravidade" id="res-gravidade"></div>
-      <div class="resultado-titulo" id="res-titulo"></div>
+      <div class="resultado-reconhecimento" id="res-reconhecimento"></div>
       <div class="resultado-texto" id="res-texto"></div>
     </div>
     <div class="resultado-rodape">Este resultado mostra seu estado recente. Não define quem você é.</div>
@@ -163,6 +161,42 @@ var qid=null;
 var rid=null;
 var notaSel=null;
 
+var DEV={
+  'Burnout':{r:'Seu corpo está pedindo pausa. Ele está carregando mais do que aguenta agora.',t:'Isso não é fraqueza. É sinal de que o ritmo passou do limite. Algo precisa diminuir, mesmo que por pouco tempo.'},
+  'Sobrecarga Emocional':{r:'Você está com muito peso emocional. Não é frescura — é real, e está consumindo sua energia.',t:'Carregar peso emocional tem um custo concreto. Você não precisa minimizar isso.'},
+  'Sobrecarga Cognitiva':{r:'Sua cabeça está cheia de coisas. Tem muito para resolver e pouco espaço pra agir.',t:'Quando a mente está sobrecarregada, fica difícil pensar com clareza — não porque você não consegue, mas porque não há espaço. Isso não é falta de capacidade. É excesso de demanda.'},
+  'Travamento Executivo':{r:'Você até quer fazer, mas na hora de agir algo trava. Não é falta de vontade.',t:'Não é preguiça. Quando o sistema está sobrecarregado, agir trava de verdade.'},
+  'Crise Existencial Funcional':{r:'Você continua fazendo as coisas, mas o sentido foi embora. Isso cansa de um jeito diferente.',t:'Você continua funcionando, mas algo essencial foi embora. Não é depressão — é ausência de sentido. E isso pesa de um jeito diferente. Vale perguntar: o que mudou, e quando?'},
+  'Desengajamento':{r:'Você está se afastando aos poucos. Não é indiferença — é uma forma de se proteger.',t:'O distanciamento que você está sentindo não é indiferença — é um sinal. Quando as demandas superam o que conseguimos sustentar, recuar é uma resposta natural. Não é fraqueza. É aviso.'},
+  'Funcionamento sob Estresse':{r:'Você está conseguindo funcionar, mas esse esforço tem um custo que merece atenção.',t:'Isso não é falta de capacidade. É esforço acima do que deveria ser necessário. Vale observar quanto isso está cobrando de você.'},
+  'Colapso Global':{r:'Está pesado em tudo ao mesmo tempo. Faz sentido estar assim.',t:'Não é exagero. É uma resposta proporcional ao que está acontecendo.'},
+  'Confusão Direcional':{r:'Você pensa muito, mas sem saber para onde ir. A energia está lá — falta direção.',t:'A energia está lá — mas sem um ponto de chegada claro, ela se dispersa. Isso não é falta de inteligência ou de clareza. É falta de ancoragem. E isso pode ser trabalhado.'},
+  'Desorganização Funcional':{r:'Você tenta, mas algo no caminho trava. Não é falta de esforço.',t:'Você está fazendo esforço. O problema não está na vontade — está na estrutura em volta. Quando o caminho não está claro, é natural se perder. Isso não diz nada sobre sua capacidade.'},
+  'Funcionamento Estável':{r:'As coisas estão funcionando de forma estável. É um bom momento para cuidar do que sustenta isso.',t:'Esse é um bom momento — não para acelerar, mas para consolidar. O que está te sustentando agora merece atenção e cuidado, para que continue funcionando quando a exigência aumentar.'},
+  'Misto':{r:'Seu padrão está variando. Ainda não há um ponto central claro — e tudo bem não ter agora.',t:'Nem sempre há um ponto central claro, e forçar uma resposta antes da hora pode confundir mais do que ajudar. Às vezes o mais honesto é observar um pouco mais antes de concluir.'},
+  'Dissociação Operacional':{r:'Você faz, mas não está sentindo o que faz. Presente no corpo, mas distante do que importa.',t:'Você está presente, mas distante do que importa. Isso não é indiferença — é um desacoplamento que acontece quando o sistema está sobrecarregado ou desconectado. Vale prestar atenção nisso.'},
+  'Hipercontrole':{r:'Você precisa ter tudo no lugar antes de agir. Esse cuidado está custando a ação.',t:'O controle que você busca não é problema — é uma resposta a algo que parece imprevisível. Mas quando ele trava a ação, vale perguntar: o que está parecendo tão incerto que precisa ser controlado antes?'},
+  'Sobrecarga Silenciosa':{r:'Você está carregando mais do que parece. Talvez nem esteja sentindo ainda.',t:'Nem sempre a sobrecarga aparece de forma evidente. Às vezes ela só muda o ritmo e o cansaço vai acumulando. Vale olhar com mais cuidado.'},
+  'Execução sem Retorno':{r:'Você faz muito, mas não vê retorno. Isso esvazia de um jeito que cansa fundo.',t:'Não é falta de esforço. É esforço sem encontrar sentido.'},
+  'Colapso de Sustentação':{r:'Você começa bem, mas manter o ritmo está difícil. Não é falta de comprometimento.',t:'Algo está drenando a energia no meio do caminho. Entender o que é isso muda o que precisa ser ajustado.'},
+  'Travamento de Início':{r:'Começar está muito difícil agora. Uma vez dentro, você consegue — o problema é a entrada.',t:'Você sabe o que precisa fazer. O problema está na entrada — não na capacidade. Quando começar custa demais, algo está tornando esse primeiro passo mais pesado do que deveria ser.'},
+  'Conflito Interno':{r:'Você sente muito, mas não sabe o que fazer com isso. A emoção está lá — falta caminho.',t:'A emoção está lá, intensa e real. Sem saída, ela consome sem produzir movimento. Isso tem como ser trabalhado.'},
+  'Sobrecarga Mista':{r:'Está pesado em mais de uma área ao mesmo tempo. Faz sentido estar sobrecarregado.',t:'Você não está exagerando. Está respondendo a uma carga distribuída.'},
+  'Execução Dissociada':{r:'Você está fazendo as coisas, mas não está realmente presente no que faz.',t:'Isso não é indiferença. É um sinal de que algo precisa de atenção.'},
+  'Colapso de Significado Tardio':{r:'Você continua fazendo, mas o peso de fazer sem sentido está começando a aparecer.',t:'Você está sustentando o movimento. Mas algo essencial está faltando. Vale olhar para isso antes que o peso aumente.'},
+  'Hiperclareza Improdutiva':{r:'Você entende o que precisa fazer, mas não consegue transformar isso em ação.',t:'A clareza está lá. O problema está na passagem da compreensão para a ação. Isso não é falta de capacidade — é uma trava real entre o que você sabe e o que consegue executar agora.'},
+  'Atrito Invisível':{r:'Nada parece errado, mas as coisas não fluem. Tem algo no caminho que não aparece.',t:'Às vezes o problema não aparece com nome claro. Você funciona, não tem uma queixa específica, mas algo está travando por baixo. Isso é real mesmo sem ter um rótulo.'},
+  'Compensação Estrutural Silenciosa':{r:'Você está dando conta, mas com muito mais esforço do que as pessoas percebem.',t:'O funcionamento está acontecendo, mas com esforço maior do que deveria. Isso costuma passar despercebido. Vale observar o custo disso.'},
+  'Saturação sem Reação':{r:'Você faz, entrega, resolve — e mesmo assim não sente que foi suficiente.',t:'Quando o sistema está saturado, o movimento não se traduz em alívio. Não é falta de esforço. É excesso sem espaço para recuperar.'},
+  'Falso Funcional':{r:'Por fora parece que está tudo bem, mas por dentro você sente que não está estável.',t:'Não precisa ter uma crise visível para que algo mereça atenção. Às vezes a instabilidade fica por baixo, funcionando em silêncio. Reconhecer isso é mais honesto do que esperar aparecer.'},
+  'Latência de Sentido':{r:'Algo mudou antes de você perceber. Você já está respondendo no automático.',t:'Ainda não dói de um jeito claro. Mas algo foi embora — a direção, o sentido, a motivação. O sistema já está reagindo a isso, mesmo que você ainda não tenha colocado em palavras.'},
+  'Execução por Inércia':{r:'Você continua fazendo, mas talvez mais por hábito do que por escolha.',t:'Quando o sentido vai embora, o movimento continua por inércia. Vale perguntar: o que você está fazendo ainda faz sentido para você?'},
+  'Dissociação de Esforço':{r:'Você está se esforçando mais do que percebe. O cansaço real é maior do que aparece.',t:'O cansaço está por baixo, acumulando em silêncio. O desgaste real é maior do que o visível. Vale levar isso a sério.'},
+  'Estagnação Confortável':{r:'Você está parado, e por enquanto isso parece estar bem assim.',t:'Não há urgência visível, não há dor aguda. O sistema está em repouso. Isso não é necessariamente problema — mas vale observar se esse estado está servindo a você ou só evitando algo.'},
+  'Rigidez Neurofuncional':{r:'Esse é o seu jeito de funcionar. Não é defeito — é o seu normal.',t:'Você funciona melhor com estrutura, previsibilidade e clareza. Isso não é rigidez — é o seu modo. O problema não está em você. Está nos contextos que exigem flexibilidade sem oferecer suporte para isso.'},
+  'Instabilidade Afetiva Reativa':{r:'Suas emoções mudam rápido e com intensidade, e isso impacta o que você consegue fazer.',t:'Não é exagero. Sentir assim é parte de como você funciona. O desafio é entender o que dispara e o que ajuda a encontrar equilíbrio.'}
+};
+
 document.getElementById('aceito').addEventListener('change',function(){
   var b=document.getElementById('btnComecar');
   if(this.checked){b.classList.add('ativo');}else{b.classList.remove('ativo');}
@@ -183,13 +217,7 @@ function item(b,i,t){
   for(var v=0;v<=4;v++){
     segs+='<div class="escala-seg" data-v="'+v+'" tabindex="0" role="radio" aria-label="'+L[v]+'" onclick="sel(\''+id+'\','+v+')" onkeydown="if(event.key===\'Enter\'||event.key===\' \')sel(\''+id+'\','+v+')">'+v+'</div>';
   }
-  return '<div class="item">'+
-    '<div class="item-num">'+n+'</div>'+
-    '<div class="item-texto">'+t+'</div>'+
-    '<div class="escala-barra" id="bar-'+id+'">'+segs+'</div>'+
-    '<div class="escala-ancora"><span>não incomoda</span><span>atrapalha demais</span></div>'+
-    '<div class="escala-sel-label" id="vl-'+id+'"></div>'+
-    '</div>';
+  return '<div class="item"><div class="item-num">'+n+'</div><div class="item-texto">'+t+'</div><div class="escala-barra" id="bar-'+id+'">'+segs+'</div><div class="escala-ancora"><span>não incomoda</span><span>atrapalha demais</span></div><div class="escala-sel-label" id="vl-'+id+'"></div></div>';
 }
 
 function sel(id,v){
@@ -232,31 +260,23 @@ function calcular(){
   var A1=media(['a1_1','a1_2','a1_3','a1_4','a1_5']);
   var A2=media(['a2_1','a2_2','a2_3','a2_4']);
   var P=media(['p_1','p_2','p_3','p_4']);
-  var S=(S1+S2)/2;
-  var O=(O1+O2)/2;
-  var A=(A1+A2)/2;
-  var G=(S+O+A)/3;
-  var Gp=S*0.4+O*0.3+A*0.3;
-  var DS=S1-S2;
-  var DA=A1-A2;
+  var S=(S1+S2)/2,O=(O1+O2)/2,A=(A1+A2)/2;
+  var G=(S+O+A)/3,Gp=S*0.4+O*0.3+A*0.3;
+  var DS=S1-S2,DA=A1-A2;
   var delta=Math.max(Math.abs(S-G),Math.abs(O-G),Math.abs(A-G));
-  var Sn=S/4,On=O/4,An=A/4;
-  var carga=(Sn+On)/2;
-  var chi=An-carga;
+  var chi=(A/4)-((S/4+O/4)/2);
   var vals=Object.values(R);
-  var mn=Math.min.apply(null,vals),mx=Math.max.apply(null,vals);
   var m=vals.reduce(function(a,b){return a+b;},0)/vals.length;
   var std=0;
   for(var i=0;i<vals.length;i++) std+=Math.pow(vals[i]-m,2);
   std=Math.sqrt(std/vals.length);
+  var mn=Math.min.apply(null,vals),mx=Math.max.apply(null,vals);
   var gateA=(mn===mx||std<0.5||m===0||m===4);
-  var contradicoes=0;
-  if(R['s1_4']>=2&&R['a2_1']===0) contradicoes++;
-  if(R['o1_4']===0&&R['a2_2']>=2) contradicoes++;
-  if(R['o1_1']>=2&&R['o2_1']===0) contradicoes++;
-  var gateB=contradicoes>=2;
-  var baixaConf=(G>=3.0&&delta<0.4);
-  return {S:S,O:O,A:A,P:P,G:G,Gp:Gp,DS:DS,DA:DA,delta:delta,chi:chi,S1:S1,S2:S2,O1:O1,O2:O2,A1:A1,A2:A2,gateA:gateA,gateB:gateB,baixaConf:baixaConf};
+  var c=0;
+  if(R['s1_4']>=2&&R['a2_1']===0)c++;
+  if(R['o1_4']===0&&R['a2_2']>=2)c++;
+  if(R['o1_1']>=2&&R['o2_1']===0)c++;
+  return {S:S,O:O,A:A,P:P,G:G,Gp:Gp,DS:DS,DA:DA,delta:delta,chi:chi,S1:S1,S2:S2,O1:O1,O2:O2,A1:A1,A2:A2,gateA:gateA,gateB:c>=2,baixaConf:(G>=3&&delta<0.4)};
 }
 
 function detectarAssinatura(e){
@@ -297,46 +317,6 @@ function detectarAssinatura(e){
   return {nome:'Misto',gravidade:'VARIÁVEL'};
 }
 
-function gerarDevolutivo(nome){
-  var T={
-    'Compensação Estrutural Silenciosa':'Você está conseguindo funcionar, mas o esforço para isso está alto em todas as direções. Seu corpo, sua organização e sua ação estão todos carregados ao mesmo tempo. Vale desacelerar antes que o sistema peça isso por você.',
-    'Colapso Global':'Tudo parece pesado agora — sentir, organizar e agir estão todos sobrecarregados. Isso não é fraqueza, é sinal de que você chegou no limite. Um passo de cada vez.',
-    'Saturação sem Reação':'Você está sentindo muito, mas a capacidade de agir ficou suspensa. O corpo e as emoções estão em sobrecarga, e o movimento virou difícil. Isso pede atenção.',
-    'Burnout':'O cansaço físico está dominando o quadro. Você ainda está se movendo, mas o combustível está acabando. Descanso não é luxo aqui — é necessidade.',
-    'Sobrecarga Emocional':'O lado emocional está mais pesado que o físico agora. As reações estão mais intensas, e isso consome energia que seria usada em outras coisas.',
-    'Instabilidade Afetiva Reativa':'Seu estado emocional está oscilando muito, com reações que surpreendem até você. É um sinal de que o sistema está sensibilizado.',
-    'Colapso de Significado Tardio':'Você ainda está agindo, mas o sentido do que faz está esvaziando. Funcionar sem significado cansa de um jeito diferente — e mais fundo.',
-    'Execução Dissociada':'Você está executando, mas desconectado do que sente e do porquê. É como andar no piloto automático — eficiente por fora, vazio por dentro.',
-    'Execução por Inércia':'A ação está acontecendo, mas sem direção clara. Você faz, mas sem saber bem para onde vai. Isso pode durar um tempo, mas pede revisão.',
-    'Execução sem Retorno':'Você age, mas não sente que o esforço está valendo. A desconexão entre o que faz e o que sente como retorno está presente.',
-    'Travamento Executivo':'Você sabe o que precisa fazer, mas travar antes de começar está sendo frequente. A organização está lá, mas a ignição falha.',
-    'Desorganização Funcional':'O volume de demandas está bagunçando a ordem das coisas. Você até age, mas sem a sequência que tornaria tudo mais leve.',
-    'Hiperclareza Improdutiva':'Você pensa muito, com clareza — mas a ação não acompanha. O mapa está detalhado, mas o movimento ficou parado.',
-    'Sobrecarga Cognitiva':'A mente está trabalhando demais. Organizar, processar, decidir — tudo está custando mais energia do que deveria.',
-    'Confusão Direcional':'Há muita organização interna, mas falta clareza sobre para onde ir. O esforço existe, a direção está nebulosa.',
-    'Hipercontrole':'Você está controlando muito, sentindo pouco e agindo menos. O sistema está travado num modo de gestão que consome sem entregar.',
-    'Sobrecarga Silenciosa':'Por fora parece que está tudo funcionando. Por dentro, a carga organizacional está alta e silenciosa. Vale olhar com mais atenção.',
-    'Rigidez Neurofuncional':'Há um padrão de funcionamento que está difícil de mover. A flexibilidade para adaptar o que faz ou sente está reduzida.',
-    'Crise Existencial Funcional':'O questionamento sobre o sentido do que faz está presente, mas sem carga emocional alta. É um silêncio interno que pede atenção.',
-    'Latência de Sentido':'O sentido está ausente, mas ainda há movimento. É como estar esperando que algo faça sentido novamente — sem urgência, mas sem resposta.',
-    'Desengajamento':'Você se afastou — de tarefas, de sentidos, de movimento. Não é crise, é distância. Mas distância por tempo demais também cobra.',
-    'Dissociação Operacional':'Você age, mas sem sentir o que faz. O movimento existe, a presença está reduzida.',
-    'Dissociação de Esforço':'Você está se esforçando, mas sem sentir que está presente nesse esforço. O corpo faz, a experiência fica fora.',
-    'Colapso de Sustentação':'Começar não é o problema — manter é. O ritmo cai no meio do caminho, e as coisas ficam pela metade.',
-    'Travamento de Início':'Manter o que já está andando funciona, mas dar o primeiro passo está custando muito. O início é onde o sistema trava.',
-    'Funcionamento sob Estresse':'Você está funcionando, mas com custo alto. A carga está presente, e a ação está acompanhando — por enquanto.',
-    'Conflito Interno':'Há algo que você sente que não está alinhado com o que faz. Essa tensão entre o interno e o externo está presente.',
-    'Sobrecarga Mista':'Várias frentes sobrecarregadas ao mesmo tempo — corpo, organização e sentido — sem um ponto dominante.',
-    'Atrito Invisível':'Tudo parece baixo, mas há um atrito que impede o fluxo. É leve, mas constante — e cansa do mesmo jeito.',
-    'Falso Funcional':'O resultado geral parece equilibrado, mas sem variação real entre as áreas. Vale investigar se esse equilíbrio é genuíno ou aparente.',
-    'Estagnação Confortável':'Tudo está baixo e estável. Há conforto, mas pouca movimentação. Não é sofrimento — é pausa. Vale perguntar se é a pausa que você escolheu.',
-    'Misto':'Seu estado tem características de mais de um padrão. Não há uma leitura dominante clara — o que pode indicar transição ou complexidade no momento.',
-    'Funcionamento Estável':'Seu estado funcional está equilibrado. A carga está baixa e o sentido está presente. Um bom momento para consolidar o que está funcionando.',
-    'Padrão Inválido':'Não foi possível gerar uma leitura com as respostas registradas. Isso pode acontecer quando os valores estão muito uniformes. Tente responder novamente com atenção a cada item.'
-  };
-  return T[nome]||'Seu estado foi registrado.';
-}
-
 async function enviar(){
   var n=0,ks=Object.keys(R);
   for(var i=0;i<ks.length;i++){if(R[ks[i]]===null)n++;}
@@ -345,7 +325,7 @@ async function enviar(){
   btn.textContent='Calculando...'; btn.classList.remove('ativo');
   var e=calcular();
   var ass=detectarAssinatura(e);
-  var dev=gerarDevolutivo(ass.nome);
+  var dev=DEV[ass.nome]||{r:'Seu estado foi registrado.',t:'Os dados foram salvos com sucesso.'};
   try{
     var qRes=await sb.from('questionados').insert({aceite_anonimato:true,autoriza_repasse:false}).select().single();
     if(qRes.error)throw qRes.error;
@@ -358,7 +338,7 @@ async function enviar(){
       eixos:{S:e.S,O:e.O,A:e.A,P:e.P,G:e.G,Gp:e.Gp,delta:e.delta,chi:e.chi,DS:e.DS,DA:e.DA},
       assinatura:ass.nome,gravidade:ass.gravidade,
       flags:{gateA:e.gateA,gateB:e.gateB,baixaConf:e.baixaConf},
-      devolutivo:dev
+      devolutivo:dev.r+' '+dev.t
     });
     mostrarResultado(e,ass,dev);
   }catch(err){
@@ -375,9 +355,8 @@ function mostrarResultado(e,ass,dev){
     html+='<div class="eixo-card"><div class="eixo-label">'+eixos[i].l+'</div><div class="eixo-valor">'+eixos[i].v.toFixed(1)+'</div><div class="eixo-barra-wrap"><div class="eixo-barra" style="width:'+pct+'%"></div></div></div>';
   }
   document.getElementById('eixos-grid').innerHTML=html;
-  document.getElementById('res-gravidade').textContent=ass.gravidade;
-  document.getElementById('res-titulo').textContent=ass.nome;
-  document.getElementById('res-texto').textContent=dev;
+  document.getElementById('res-reconhecimento').textContent=dev.r;
+  document.getElementById('res-texto').textContent=dev.t;
   document.getElementById('tela-q36').classList.remove('ativa');
   document.getElementById('tela-resultado').classList.add('ativa');
   window.scrollTo(0,0);
