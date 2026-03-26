@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -20,18 +21,10 @@ body { font-family: 'Segoe UI', sans-serif; background: #f7f7f5; color: #1a1a2e;
 .btn { display: block; width: 100%; background: #1a1a2e; color: white; border: none; border-radius: 10px; padding: 0.85rem 2rem; font-size: 0.95rem; cursor: pointer; opacity: 0.4; transition: opacity 0.2s, background 0.2s; }
 .btn.ativo { opacity: 1; }
 .btn.ativo:hover { background: #f5a623; color: #1a1a2e; }
-
-/* PROGRESSO FIXO */
-.prog-fixo {
-  position: fixed; top: 0; left: 0; width: 100%; z-index: 999;
-  background: rgba(247,247,245,0.97);
-  padding: 8px 1.5rem 6px;
-  border-bottom: 1px solid #eee;
-}
+.prog-fixo { position: fixed; top: 0; left: 0; width: 100%; z-index: 999; background: rgba(247,247,245,0.97); padding: 8px 1.5rem 6px; border-bottom: 1px solid #eee; }
 .prog-fixo .progresso-wrap { background: #eee; border-radius: 99px; height: 5px; margin-bottom: 3px; }
 .prog-fixo .progresso-bar { height: 5px; border-radius: 99px; background: #f5a623; transition: width 0.3s; width: 0%; }
 .prog-fixo .progresso-txt { font-size: 0.7rem; color: #bbb; text-align: right; }
-
 .questionario { max-width: 620px; margin: 0 auto; padding: 4rem 1.5rem 4rem; }
 .q-header { text-align: center; margin-bottom: 2rem; }
 .q-header img { width: 130px; }
@@ -42,28 +35,33 @@ body { font-family: 'Segoe UI', sans-serif; background: #f7f7f5; color: #1a1a2e;
 .item:last-child { margin-bottom: 0; }
 .item-num { font-size: 0.68rem; color: #ccc; margin-bottom: 3px; }
 .item-texto { font-size: 0.88rem; color: #333; line-height: 1.5; margin-bottom: 1rem; }
-
-/* ESCALA RETÂNGULOS */
 .escala-barra { display: flex; height: 36px; border-radius: 8px; overflow: hidden; cursor: pointer; }
-.escala-seg {
-  flex: 1; display: flex; align-items: center; justify-content: center;
-  font-size: 0.7rem; font-weight: 500; color: rgba(0,0,0,0.35);
-  opacity: 0.4; transition: opacity 0.15s, transform 0.1s;
-  cursor: pointer;
-}
-.escala-seg:hover { opacity: 0.7; }
-.escala-seg.sel { opacity: 1; color: rgba(0,0,0,0.6); transform: scaleY(1.08); }
+.escala-seg { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 500; color: rgba(0,0,0,0.3); opacity: 0.35; transition: all 0.15s; cursor: pointer; }
+.escala-seg:hover { opacity: 0.65; }
+.escala-seg.sel { opacity: 1; color: rgba(0,0,0,0.55); font-weight: 700; font-size: 0.88rem; transform: scaleY(1.1); }
 .escala-seg[data-v="0"] { background: #b8e4f0; }
 .escala-seg[data-v="1"] { background: #7dd4c0; }
 .escala-seg[data-v="2"] { background: #a8e06a; }
 .escala-seg[data-v="3"] { background: #f5d020; }
 .escala-seg[data-v="4"] { background: #f5a623; }
-escala-rotulos { text-align: center; margin-top: 6px; min-height: 1rem; }
-.escala-rot { display: none; font-size: 0.72rem; color: #999; }
-.escala-rot.sel { display: block; color: #333; font-weight: 600; font-size: 0.75rem; }
-.escala-rot { flex: 1; text-align: center; font-size: 0.52rem; color: #999; line-height: 1.2; padding: 0 1px; overflow: hidden; }
-.escala-rot.sel { color: #333; font-weight: 600; }
+.escala-ancora { display: flex; justify-content: space-between; margin-top: 4px; }
+.escala-ancora span { font-size: 0.6rem; color: #bbb; }
+.escala-sel-label { text-align: center; font-size: 0.72rem; color: #333; font-weight: 600; min-height: 1rem; margin-top: 2px; }
 .rodape { text-align: center; font-size: 0.75rem; color: #bbb; margin-top: 2rem; }
+.resultado { max-width: 520px; margin: 0 auto; padding: 3rem 1.5rem 4rem; }
+.resultado-logo { text-align: center; margin-bottom: 2rem; }
+.resultado-logo img { width: 140px; }
+.resultado-card { background: white; border-radius: 16px; padding: 2rem; border: 1px solid #eee; margin-bottom: 1.25rem; }
+.resultado-gravidade { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #f5a623; margin-bottom: 0.5rem; }
+.resultado-titulo { font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; color: #1a1a2e; }
+.resultado-texto { font-size: 0.9rem; color: #555; line-height: 1.7; }
+.resultado-eixos { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1.25rem; }
+.eixo-card { background: white; border-radius: 12px; border: 1px solid #eee; padding: 1rem; text-align: center; }
+.eixo-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #ccc; margin-bottom: 4px; }
+.eixo-valor { font-size: 1.4rem; font-weight: 600; color: #1a1a2e; }
+.eixo-barra-wrap { height: 4px; background: #f0f0f0; border-radius: 99px; margin-top: 6px; }
+.eixo-barra { height: 4px; border-radius: 99px; background: #f5a623; }
+.resultado-rodape { font-size: 0.75rem; color: #bbb; text-align: center; margin-top: 1.5rem; font-style: italic; line-height: 1.6; }
 </style>
 </head>
 <body>
@@ -103,13 +101,41 @@ escala-rotulos { text-align: center; margin-top: 6px; min-height: 1rem; }
   </div>
 </div>
 
+<div id="tela-resultado" class="tela">
+  <div class="resultado">
+    <div class="resultado-logo"><img src="logo.png" alt="SiMone"></div>
+    <div id="eixos-grid" class="resultado-eixos"></div>
+    <div class="resultado-card">
+      <div class="resultado-gravidade" id="res-gravidade"></div>
+      <div class="resultado-titulo" id="res-titulo"></div>
+      <div class="resultado-texto" id="res-texto"></div>
+    </div>
+    <div class="resultado-rodape">Este resultado mostra seu estado recente. Não define quem você é.</div>
+    <button class="btn ativo" onclick="irAvaliacao()" style="margin-top:1.5rem;">Avaliar esta ferramenta</button>
+  </div>
+</div>
+
+<div id="tela-avaliacao" class="tela">
+  <div class="entrada">
+    <img src="logo.png" alt="SiMone" class="logo">
+    <div class="card">
+      <h2>Como foi sua experiência?</h2>
+      <p>Sua opinião ajuda a melhorar o SiMone.</p>
+      <div style="display:flex;justify-content:center;gap:12px;margin-bottom:1.5rem;" id="notas"></div>
+      <textarea id="comentario" placeholder="Comentário opcional..." style="width:100%;border:1px solid #eee;border-radius:10px;padding:0.75rem;font-size:0.85rem;font-family:inherit;resize:none;height:80px;margin-bottom:1.5rem;"></textarea>
+      <button class="btn ativo" onclick="enviarAvaliacao()">Enviar</button>
+    </div>
+    <div class="rodape">SiMone V24 · fase de desenvolvimento</div>
+  </div>
+</div>
+
 <div id="tela-fim" class="tela">
   <div class="entrada">
     <img src="logo.png" alt="SiMone" class="logo">
     <div class="card">
       <h2>Obrigado</h2>
-      <p>Suas respostas foram registradas. Em breve você receberá seu resultado.</p>
-      <p style="margin-top:1rem; font-size:0.78rem; color:#aaa;">Este resultado mostra seu estado recente. Não define quem você é.</p>
+      <p>Sua participação contribui para o desenvolvimento do SiMone.</p>
+      <p style="margin-top:1rem;font-size:0.78rem;color:#aaa;">Este resultado mostra seu estado recente. Não define quem você é.</p>
     </div>
     <div class="rodape">SiMone V24 · fase de desenvolvimento</div>
   </div>
@@ -122,7 +148,7 @@ var SKEY='sb_publishable_FIyD24LRb4cmOBaUyVLQyw_cdceJWE4';
 var sb=supabase.createClient(SURL,SKEY);
 var B={
   s1:['Já começo o dia com sensação de pouca energia no corpo','Percebo meu corpo tenso ao longo do dia','Mesmo dormindo, acordo sem me sentir recuperado','Perco energia física ao longo do dia para continuar minhas tarefas','Até tarefas simples parecem exigir esforço físico demais','Meu corpo dá sinais de sobrecarga durante o dia'],
-  s2:['Me irritei com facilidade ao longo do dia','Senti inquietação ao longo do dia','Reagi de forma intensa a coisas que normalmente não me afetariam tanto','O peso emocional do dia me deixou esgotado','Tive dificuldade de me acalmar depois de me abalar','O que senti atrapalhou o que eu precisava fazer'],
+  s2:['Me irritei com facilidade ao longo do dia','Senti inquietação ao longo do dia','Reagei de forma intensa a coisas que normalmente não me afetariam tanto','O peso emocional do dia me deixou esgotado','Tive dificuldade de me acalmar depois de me abalar','O que senti atrapalhou o que eu precisava fazer'],
   o1:['Minha mente ficou lenta para entender','Minhas ideias ficaram embaralhadas','Fiquei pensando nas mesmas coisas repetidamente','Minha atenção se dispersava','Minha cabeça ficou acelerada'],
   o2:['Tive dificuldade de organizar o que precisava fazer','Tive dificuldade de definir o que era mais importante fazer primeiro','Fiquei organizando sem avançar nas tarefas','Quando a demanda aumentava, minha organização se perdia','Misturei o que era urgente com o que podia esperar','A ordem das tarefas ficou confusa'],
   a1:['Tive dificuldade de começar tarefas','Adiei tarefas que eu precisava começar','Evitei iniciar tarefas','Precisei de muito esforço interno para dar o primeiro passo','Resisti a tarefas que exigiam fazer algo diferente do que já conheço'],
@@ -133,6 +159,9 @@ var L=['não incomoda','incomoda um pouco','já me atrapalha','atrapalha bastant
 var R={};
 var resp=0;
 var numQ=0;
+var qid=null;
+var rid=null;
+var notaSel=null;
 
 document.getElementById('aceito').addEventListener('change',function(){
   var b=document.getElementById('btnComecar');
@@ -148,35 +177,28 @@ function iniciar(){
 }
 
 function item(b,i,t){
-  var id=b+'_'+i;
-  R[id]=null;
-  numQ++;
+  var id=b+'_'+i; R[id]=null; numQ++;
   var n=numQ;
   var segs='';
-  var rots='';
   for(var v=0;v<=4;v++){
-    segs+='<div class="escala-seg" data-v="'+v+'" tabindex="0" role="radio" aria-label="'+v+' '+L[v]+'" onclick="sel(\''+id+'\','+v+')" onkeydown="if(event.key===\'Enter\'||event.key===\' \')sel(\''+id+'\','+v+')">'+v+'</div>';
-    rots+='<div class="escala-rot" id="rot-'+id+'-'+v+'">'+L[v]+'</div>';
+    segs+='<div class="escala-seg" data-v="'+v+'" tabindex="0" role="radio" aria-label="'+L[v]+'" onclick="sel(\''+id+'\','+v+')" onkeydown="if(event.key===\'Enter\'||event.key===\' \')sel(\''+id+'\','+v+')">'+v+'</div>';
   }
   return '<div class="item">'+
     '<div class="item-num">'+n+'</div>'+
     '<div class="item-texto">'+t+'</div>'+
     '<div class="escala-barra" id="bar-'+id+'">'+segs+'</div>'+
-    '<div class="escala-rotulos">'+rots+'</div>'+
+    '<div class="escala-ancora"><span>não incomoda</span><span>atrapalha demais</span></div>'+
+    '<div class="escala-sel-label" id="vl-'+id+'"></div>'+
     '</div>';
 }
 
 function sel(id,v){
-  var era=R[id]===null;
-  R[id]=v;
+  var era=R[id]===null; R[id]=v;
   var bar=document.getElementById('bar-'+id);
   var segs=bar.querySelectorAll('.escala-seg');
   for(var i=0;i<segs.length;i++) segs[i].classList.remove('sel');
   bar.querySelector('[data-v="'+v+'"]').classList.add('sel');
-  for(var j=0;j<=4;j++){
-    var rot=document.getElementById('rot-'+id+'-'+j);
-    if(rot) rot.classList.toggle('sel', j===v);
-  }
+  document.getElementById('vl-'+id).textContent=L[v];
   if(era){
     resp++;
     document.getElementById('barra').style.width=Math.round(resp/36*100)+'%';
@@ -196,24 +218,201 @@ function render(){
   }
 }
 
+function media(ids){
+  var s=0;
+  for(var i=0;i<ids.length;i++) s+=R[ids[i]];
+  return s/ids.length;
+}
+
+function calcular(){
+  var S1=media(['s1_1','s1_2','s1_3','s1_4','s1_5','s1_6']);
+  var S2=media(['s2_1','s2_2','s2_3','s2_4','s2_5','s2_6']);
+  var O1=media(['o1_1','o1_2','o1_3','o1_4','o1_5']);
+  var O2=media(['o2_1','o2_2','o2_3','o2_4','o2_5','o2_6']);
+  var A1=media(['a1_1','a1_2','a1_3','a1_4','a1_5']);
+  var A2=media(['a2_1','a2_2','a2_3','a2_4']);
+  var P=media(['p_1','p_2','p_3','p_4']);
+  var S=(S1+S2)/2;
+  var O=(O1+O2)/2;
+  var A=(A1+A2)/2;
+  var G=(S+O+A)/3;
+  var Gp=S*0.4+O*0.3+A*0.3;
+  var DS=S1-S2;
+  var DA=A1-A2;
+  var delta=Math.max(Math.abs(S-G),Math.abs(O-G),Math.abs(A-G));
+  var Sn=S/4,On=O/4,An=A/4;
+  var carga=(Sn+On)/2;
+  var chi=An-carga;
+  var vals=Object.values(R);
+  var mn=Math.min.apply(null,vals),mx=Math.max.apply(null,vals);
+  var m=vals.reduce(function(a,b){return a+b;},0)/vals.length;
+  var std=0;
+  for(var i=0;i<vals.length;i++) std+=Math.pow(vals[i]-m,2);
+  std=Math.sqrt(std/vals.length);
+  var gateA=(mn===mx||std<0.5||m===0||m===4);
+  var contradicoes=0;
+  if(R['s1_4']>=2&&R['a2_1']===0) contradicoes++;
+  if(R['o1_4']===0&&R['a2_2']>=2) contradicoes++;
+  if(R['o1_1']>=2&&R['o2_1']===0) contradicoes++;
+  var gateB=contradicoes>=2;
+  var baixaConf=(G>=3.0&&delta<0.4);
+  return {S:S,O:O,A:A,P:P,G:G,Gp:Gp,DS:DS,DA:DA,delta:delta,chi:chi,S1:S1,S2:S2,O1:O1,O2:O2,A1:A1,A2:A2,gateA:gateA,gateB:gateB,baixaConf:baixaConf};
+}
+
+function detectarAssinatura(e){
+  if(e.gateA) return {nome:'Padrão Inválido',gravidade:'INVÁLIDO'};
+  var x=e.chi;
+  if(e.S>=3&&e.O>=3&&e.A>=3&&x>=2) return {nome:'Compensação Estrutural Silenciosa',gravidade:'CRÍTICO'};
+  if(e.S>=3&&e.O>=3&&e.A>=3) return {nome:'Colapso Global',gravidade:'CRÍTICO'};
+  if(e.S>=3&&e.A<=2&&x<=1) return {nome:'Saturação sem Reação',gravidade:'CRÍTICO'};
+  if(e.S>=3&&Math.abs(e.DS)>=0.8&&e.delta<0.6) return {nome:'Instabilidade Afetiva Reativa',gravidade:'ALTO'};
+  if(e.S>=3&&e.S1>=e.S2&&e.S2<3.2) return {nome:'Burnout',gravidade:'CRÍTICO'};
+  if(e.S>=3&&e.S2>e.S1&&e.S1<3) return {nome:'Sobrecarga Emocional',gravidade:'ALTO'};
+  if(e.P<=1.5&&e.A>=2.5&&e.S>=2.5) return {nome:'Colapso de Significado Tardio',gravidade:'ALTO'};
+  if(e.A>=3&&e.S<=2&&e.P<=2&&x>=2) return {nome:'Execução Dissociada',gravidade:'ALTO'};
+  if(e.A>=3&&e.P<=1.5&&e.delta>=0.5) return {nome:'Execução por Inércia',gravidade:'ALTO'};
+  if(e.A>=3&&e.P<=1.5) return {nome:'Execução sem Retorno',gravidade:'ALTO'};
+  if(e.A>=3&&e.O>=2&&e.P>=2) return {nome:'Travamento Executivo',gravidade:'MODERADO'};
+  if(e.O>=3&&e.A>=2.5&&e.P>=2) return {nome:'Desorganização Funcional',gravidade:'MODERADO'};
+  if(e.O1>=3&&e.O2<=2&&e.A<=2) return {nome:'Hiperclareza Improdutiva',gravidade:'MODERADO'};
+  if(e.O>=3&&e.S<3&&e.A<2.5) return {nome:'Sobrecarga Cognitiva',gravidade:'MODERADO'};
+  if(e.O>=3&&e.P<=2&&e.A>=2) return {nome:'Confusão Direcional',gravidade:'MODERADO'};
+  if(e.O>=3&&e.S<=2&&e.A<=2) return {nome:'Hipercontrole',gravidade:'MODERADO'};
+  if(e.O>=3&&e.S<=2&&e.A>=2) return {nome:'Sobrecarga Silenciosa',gravidade:'MODERADO'};
+  if((e.O>=3&&e.A>=2&&e.S<=2.2&&e.delta>=0.5)||(e.S>=3&&e.A<=2&&e.O>=2.5&&e.delta>=0.5)) return {nome:'Rigidez Neurofuncional',gravidade:'MODERADO'};
+  if(e.P<=1.5&&e.O>=2.5&&e.S<=2.2) return {nome:'Crise Existencial Funcional',gravidade:'ALTO'};
+  if(e.P<=1.5&&e.S<=2&&e.O>=2.5&&e.A>=1.5) return {nome:'Latência de Sentido',gravidade:'ALTO'};
+  if(e.P<=1.5&&e.A<=2&&e.S<=2.5) return {nome:'Desengajamento',gravidade:'ALTO'};
+  if(e.S<=2&&e.A>=3&&e.P<=2) return {nome:'Dissociação Operacional',gravidade:'ALTO'};
+  if(e.S<=2&&e.A>=2.5&&x>=2) return {nome:'Dissociação de Esforço',gravidade:'MODERADO'};
+  if(e.A1>=3&&e.A2<=2) return {nome:'Colapso de Sustentação',gravidade:'MODERADO'};
+  if(e.A1<=2&&e.A2>=2.5) return {nome:'Travamento de Início',gravidade:'MODERADO'};
+  if(e.S>=2.5&&e.A>=2.5&&x>=1.5) return {nome:'Funcionamento sob Estresse',gravidade:'MODERADO'};
+  if(e.S>=2.5&&e.P<=2) return {nome:'Conflito Interno',gravidade:'ALTO'};
+  if(e.S>=2.5&&e.O>=2.5&&e.P>=2) return {nome:'Sobrecarga Mista',gravidade:'MODERADO'};
+  if(e.A<=2&&e.S<=2&&e.O<=2&&x>=1.5) return {nome:'Atrito Invisível',gravidade:'MODERADO'};
+  if(e.G<=2&&e.delta<0.5) return {nome:'Falso Funcional',gravidade:'ALTO'};
+  if(e.S<=2&&e.O<=2&&e.A<=2&&e.P>=1.5) return {nome:'Estagnação Confortável',gravidade:'ESTÁVEL'};
+  if(e.delta<0.5&&e.Gp>=2.5) return {nome:'Misto',gravidade:'VARIÁVEL'};
+  if(e.S<2&&e.O<2&&e.A<2&&e.P>=2) return {nome:'Funcionamento Estável',gravidade:'ESTÁVEL'};
+  return {nome:'Misto',gravidade:'VARIÁVEL'};
+}
+
+function gerarDevolutivo(nome){
+  var T={
+    'Compensação Estrutural Silenciosa':'Você está conseguindo funcionar, mas o esforço para isso está alto em todas as direções. Seu corpo, sua organização e sua ação estão todos carregados ao mesmo tempo. Vale desacelerar antes que o sistema peça isso por você.',
+    'Colapso Global':'Tudo parece pesado agora — sentir, organizar e agir estão todos sobrecarregados. Isso não é fraqueza, é sinal de que você chegou no limite. Um passo de cada vez.',
+    'Saturação sem Reação':'Você está sentindo muito, mas a capacidade de agir ficou suspensa. O corpo e as emoções estão em sobrecarga, e o movimento virou difícil. Isso pede atenção.',
+    'Burnout':'O cansaço físico está dominando o quadro. Você ainda está se movendo, mas o combustível está acabando. Descanso não é luxo aqui — é necessidade.',
+    'Sobrecarga Emocional':'O lado emocional está mais pesado que o físico agora. As reações estão mais intensas, e isso consome energia que seria usada em outras coisas.',
+    'Instabilidade Afetiva Reativa':'Seu estado emocional está oscilando muito, com reações que surpreendem até você. É um sinal de que o sistema está sensibilizado.',
+    'Colapso de Significado Tardio':'Você ainda está agindo, mas o sentido do que faz está esvaziando. Funcionar sem significado cansa de um jeito diferente — e mais fundo.',
+    'Execução Dissociada':'Você está executando, mas desconectado do que sente e do porquê. É como andar no piloto automático — eficiente por fora, vazio por dentro.',
+    'Execução por Inércia':'A ação está acontecendo, mas sem direção clara. Você faz, mas sem saber bem para onde vai. Isso pode durar um tempo, mas pede revisão.',
+    'Execução sem Retorno':'Você age, mas não sente que o esforço está valendo. A desconexão entre o que faz e o que sente como retorno está presente.',
+    'Travamento Executivo':'Você sabe o que precisa fazer, mas travar antes de começar está sendo frequente. A organização está lá, mas a ignição falha.',
+    'Desorganização Funcional':'O volume de demandas está bagunçando a ordem das coisas. Você até age, mas sem a sequência que tornaria tudo mais leve.',
+    'Hiperclareza Improdutiva':'Você pensa muito, com clareza — mas a ação não acompanha. O mapa está detalhado, mas o movimento ficou parado.',
+    'Sobrecarga Cognitiva':'A mente está trabalhando demais. Organizar, processar, decidir — tudo está custando mais energia do que deveria.',
+    'Confusão Direcional':'Há muita organização interna, mas falta clareza sobre para onde ir. O esforço existe, a direção está nebulosa.',
+    'Hipercontrole':'Você está controlando muito, sentindo pouco e agindo menos. O sistema está travado num modo de gestão que consome sem entregar.',
+    'Sobrecarga Silenciosa':'Por fora parece que está tudo funcionando. Por dentro, a carga organizacional está alta e silenciosa. Vale olhar com mais atenção.',
+    'Rigidez Neurofuncional':'Há um padrão de funcionamento que está difícil de mover. A flexibilidade para adaptar o que faz ou sente está reduzida.',
+    'Crise Existencial Funcional':'O questionamento sobre o sentido do que faz está presente, mas sem carga emocional alta. É um silêncio interno que pede atenção.',
+    'Latência de Sentido':'O sentido está ausente, mas ainda há movimento. É como estar esperando que algo faça sentido novamente — sem urgência, mas sem resposta.',
+    'Desengajamento':'Você se afastou — de tarefas, de sentidos, de movimento. Não é crise, é distância. Mas distância por tempo demais também cobra.',
+    'Dissociação Operacional':'Você age, mas sem sentir o que faz. O movimento existe, a presença está reduzida.',
+    'Dissociação de Esforço':'Você está se esforçando, mas sem sentir que está presente nesse esforço. O corpo faz, a experiência fica fora.',
+    'Colapso de Sustentação':'Começar não é o problema — manter é. O ritmo cai no meio do caminho, e as coisas ficam pela metade.',
+    'Travamento de Início':'Manter o que já está andando funciona, mas dar o primeiro passo está custando muito. O início é onde o sistema trava.',
+    'Funcionamento sob Estresse':'Você está funcionando, mas com custo alto. A carga está presente, e a ação está acompanhando — por enquanto.',
+    'Conflito Interno':'Há algo que você sente que não está alinhado com o que faz. Essa tensão entre o interno e o externo está presente.',
+    'Sobrecarga Mista':'Várias frentes sobrecarregadas ao mesmo tempo — corpo, organização e sentido — sem um ponto dominante.',
+    'Atrito Invisível':'Tudo parece baixo, mas há um atrito que impede o fluxo. É leve, mas constante — e cansa do mesmo jeito.',
+    'Falso Funcional':'O resultado geral parece equilibrado, mas sem variação real entre as áreas. Vale investigar se esse equilíbrio é genuíno ou aparente.',
+    'Estagnação Confortável':'Tudo está baixo e estável. Há conforto, mas pouca movimentação. Não é sofrimento — é pausa. Vale perguntar se é a pausa que você escolheu.',
+    'Misto':'Seu estado tem características de mais de um padrão. Não há uma leitura dominante clara — o que pode indicar transição ou complexidade no momento.',
+    'Funcionamento Estável':'Seu estado funcional está equilibrado. A carga está baixa e o sentido está presente. Um bom momento para consolidar o que está funcionando.',
+    'Padrão Inválido':'Não foi possível gerar uma leitura com as respostas registradas. Isso pode acontecer quando os valores estão muito uniformes. Tente responder novamente com atenção a cada item.'
+  };
+  return T[nome]||'Seu estado foi registrado.';
+}
+
 async function enviar(){
   var n=0,ks=Object.keys(R);
   for(var i=0;i<ks.length;i++){if(R[ks[i]]===null)n++;}
   if(n>0){alert('Ainda faltam '+n+' respostas.');return;}
   var btn=document.getElementById('btnConcluir');
-  btn.textContent='Salvando...'; btn.classList.remove('ativo');
+  btn.textContent='Calculando...'; btn.classList.remove('ativo');
+  var e=calcular();
+  var ass=detectarAssinatura(e);
+  var dev=gerarDevolutivo(ass.nome);
   try{
     var qRes=await sb.from('questionados').insert({aceite_anonimato:true,autoriza_repasse:false}).select().single();
     if(qRes.error)throw qRes.error;
-    var rRes=await sb.from('respostas').insert({questionado_id:qRes.data.id,questionario:'Q36',marco:'D0',itens:R});
+    qid=qRes.data.id;
+    var rRes=await sb.from('respostas').insert({questionado_id:qid,questionario:'Q36',marco:'D0',itens:R}).select().single();
     if(rRes.error)throw rRes.error;
-    document.getElementById('tela-q36').classList.remove('ativa');
-    document.getElementById('tela-fim').classList.add('ativa');
-    window.scrollTo(0,0);
-  }catch(e){
-    alert('Erro ao salvar: '+e.message);
+    rid=rRes.data.id;
+    await sb.from('resultados').insert({
+      questionado_id:qid,resposta_id:rid,marco:'D0',
+      eixos:{S:e.S,O:e.O,A:e.A,P:e.P,G:e.G,Gp:e.Gp,delta:e.delta,chi:e.chi,DS:e.DS,DA:e.DA},
+      assinatura:ass.nome,gravidade:ass.gravidade,
+      flags:{gateA:e.gateA,gateB:e.gateB,baixaConf:e.baixaConf},
+      devolutivo:dev
+    });
+    mostrarResultado(e,ass,dev);
+  }catch(err){
+    alert('Erro ao salvar: '+err.message);
     btn.textContent='Concluir'; btn.classList.add('ativo');
   }
+}
+
+function mostrarResultado(e,ass,dev){
+  var eixos=[{l:'Sentir',v:e.S},{l:'Organizar',v:e.O},{l:'Agir',v:e.A},{l:'Propósito',v:e.P}];
+  var html='';
+  for(var i=0;i<eixos.length;i++){
+    var pct=Math.round((eixos[i].v/4)*100);
+    html+='<div class="eixo-card"><div class="eixo-label">'+eixos[i].l+'</div><div class="eixo-valor">'+eixos[i].v.toFixed(1)+'</div><div class="eixo-barra-wrap"><div class="eixo-barra" style="width:'+pct+'%"></div></div></div>';
+  }
+  document.getElementById('eixos-grid').innerHTML=html;
+  document.getElementById('res-gravidade').textContent=ass.gravidade;
+  document.getElementById('res-titulo').textContent=ass.nome;
+  document.getElementById('res-texto').textContent=dev;
+  document.getElementById('tela-q36').classList.remove('ativa');
+  document.getElementById('tela-resultado').classList.add('ativa');
+  window.scrollTo(0,0);
+}
+
+function irAvaliacao(){
+  document.getElementById('tela-resultado').classList.remove('ativa');
+  document.getElementById('tela-avaliacao').classList.add('ativa');
+  var html='';
+  for(var n=1;n<=5;n++){
+    html+='<div onclick="selecionarNota('+n+')" id="nota-'+n+'" style="width:44px;height:44px;border-radius:50%;border:2px solid #eee;display:flex;align-items:center;justify-content:center;font-size:1.1rem;cursor:pointer;transition:all 0.15s;">'+n+'</div>';
+  }
+  document.getElementById('notas').innerHTML=html;
+  window.scrollTo(0,0);
+}
+
+function selecionarNota(n){
+  notaSel=n;
+  for(var i=1;i<=5;i++){
+    var el=document.getElementById('nota-'+i);
+    if(i===n){el.style.background='#1a1a2e';el.style.color='white';el.style.borderColor='#1a1a2e';}
+    else{el.style.background='white';el.style.color='#1a1a2e';el.style.borderColor='#eee';}
+  }
+}
+
+async function enviarAvaliacao(){
+  if(!notaSel){alert('Selecione uma nota de 1 a 5.');return;}
+  var com=document.getElementById('comentario').value;
+  try{
+    await sb.from('avaliacoes').insert({questionado_id:qid,resposta_id:rid,nota:notaSel,comentario:com||null});
+  }catch(e){}
+  document.getElementById('tela-avaliacao').classList.remove('ativa');
+  document.getElementById('tela-fim').classList.add('ativa');
+  window.scrollTo(0,0);
 }
 </script>
 </body>
