@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -52,7 +51,7 @@ body { font-family: 'Segoe UI', sans-serif; background: #f7f7f5; color: #1a1a2e;
 .resultado-logo { text-align: center; margin-bottom: 2rem; }
 .resultado-logo img { width: 140px; }
 .eixos-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1.5rem; }
-.eixo-card { background: white; border-radius: 12px; border: 1px solid #eee; padding: 1rem; text-align: center; transition: all 0.2s; }
+.eixo-card { background: white; border-radius: 12px; border: 1px solid #eee; padding: 1rem; text-align: center; }
 .eixo-card.dominante { border: 2px solid #f5a623; background: #fffbf2; }
 .eixo-card.recurso { border: 2px solid #b8e4f0; background: #f5fbfe; }
 .eixo-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #ccc; margin-bottom: 4px; }
@@ -77,7 +76,6 @@ body { font-family: 'Segoe UI', sans-serif; background: #f7f7f5; color: #1a1a2e;
 </style>
 </head>
 <body>
-
 <div id="tela-entrada" class="tela ativa">
   <div class="entrada">
     <img src="logo.png" alt="SiMone" class="logo">
@@ -93,7 +91,6 @@ body { font-family: 'Segoe UI', sans-serif; background: #f7f7f5; color: #1a1a2e;
     <div class="rodape">SiMone V24 · fase de desenvolvimento</div>
   </div>
 </div>
-
 <div id="tela-q36" class="tela">
   <div class="prog-fixo">
     <div class="progresso-wrap"><div class="progresso-bar" id="barra"></div></div>
@@ -112,31 +109,20 @@ body { font-family: 'Segoe UI', sans-serif; background: #f7f7f5; color: #1a1a2e;
     <div class="rodape">SiMone V24 · fase de desenvolvimento</div>
   </div>
 </div>
-
 <div id="tela-resultado" class="tela">
   <div class="resultado">
     <div class="resultado-logo"><img src="logo.png" alt="SiMone"></div>
     <div id="eixos-grid" class="eixos-grid"></div>
     <div class="dev-card">
       <div class="dev-titulo" id="dev-titulo"></div>
-      <div class="dev-bloco">
-        <div class="dev-label">Resumo</div>
-        <div class="dev-texto" id="dev-resumo"></div>
-      </div>
-      <div class="dev-bloco">
-        <div class="dev-label">Leitura</div>
-        <div class="dev-texto" id="dev-leitura"></div>
-      </div>
-      <div class="dev-bloco">
-        <div class="dev-label">Direção</div>
-        <div class="dev-direcao" id="dev-direcao"></div>
-      </div>
+      <div class="dev-bloco"><div class="dev-label">Resumo</div><div class="dev-texto" id="dev-resumo"></div></div>
+      <div class="dev-bloco"><div class="dev-label">Leitura</div><div class="dev-texto" id="dev-leitura"></div></div>
+      <div class="dev-bloco"><div class="dev-label">Direção</div><div class="dev-direcao" id="dev-direcao"></div></div>
     </div>
     <div class="resultado-rodape">Este resultado mostra seu estado recente. Não define quem você é.</div>
     <button class="btn ativo" onclick="irAvaliacao()" style="margin-top:1.5rem;">Avaliar esta ferramenta</button>
   </div>
 </div>
-
 <div id="tela-avaliacao" class="tela">
   <div class="entrada">
     <img src="logo.png" alt="SiMone" class="logo">
@@ -150,7 +136,6 @@ body { font-family: 'Segoe UI', sans-serif; background: #f7f7f5; color: #1a1a2e;
     <div class="rodape">SiMone V24 · fase de desenvolvimento</div>
   </div>
 </div>
-
 <div id="tela-fim" class="tela">
   <div class="entrada">
     <img src="logo.png" alt="SiMone" class="logo">
@@ -162,187 +147,73 @@ body { font-family: 'Segoe UI', sans-serif; background: #f7f7f5; color: #1a1a2e;
     <div class="rodape">SiMone V24 · fase de desenvolvimento</div>
   </div>
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 var SURL='https://dzfpsdbppfvftvamhvok.supabase.co';
 var SKEY='sb_publishable_FIyD24LRb4cmOBaUyVLQyw_cdceJWE4';
 var sb=supabase.createClient(SURL,SKEY);
+var B={s1:['Já começo o dia com sensação de pouca energia no corpo','Percebo meu corpo tenso ao longo do dia','Mesmo dormindo, acordo sem me sentir recuperado','Perco energia física ao longo do dia para continuar minhas tarefas','Até tarefas simples parecem exigir esforço físico demais','Meu corpo dá sinais de sobrecarga durante o dia'],s2:['Me irritei com facilidade ao longo do dia','Senti inquietação ao longo do dia','Reagi de forma intensa a coisas que normalmente não me afetariam tanto','O peso emocional do dia me deixou esgotado','Tive dificuldade de me acalmar depois de me abalar','O que senti atrapalhou o que eu precisava fazer'],o1:['Minha mente ficou lenta para entender','Minhas ideias ficaram embaralhadas','Fiquei pensando nas mesmas coisas repetidamente','Minha atenção se dispersava','Minha cabeça ficou acelerada'],o2:['Tive dificuldade de organizar o que precisava fazer','Tive dificuldade de definir o que era mais importante fazer primeiro','Fiquei organizando sem avançar nas tarefas','Quando a demanda aumentava, minha organização se perdia','Misturei o que era urgente com o que podia esperar','A ordem das tarefas ficou confusa'],a1:['Tive dificuldade de começar tarefas','Adiei tarefas que eu precisava começar','Evitei iniciar tarefas','Precisei de muito esforço interno para dar o primeiro passo','Resisti a tarefas que exigiam fazer algo diferente do que já conheço'],a2:['Tive dificuldade de manter o que estava fazendo','Eu parava tarefas antes de terminar','Eu perdia o ritmo no meio do que estava fazendo','No fim do dia, tarefas importantes ainda estavam por fazer'],p:['O que eu fazia parecia sem sentido','O que eu fazia não combinava comigo','Eu não via motivo no que estava fazendo','Senti que o esforço que fiz não valeu o que produzi']};
+var L=['não interfere','interfere pouco','já atrapalha','atrapalha bastante','impede de funcionar'];
+var R={},resp=0,numQ=0,qid=null,rid=null,notaSel=null;
+document.getElementById('aceito').addEventListener('change',function(){var b=document.getElementById('btnComecar');if(this.checked){b.classList.add('ativo');}else{b.classList.remove('ativo');}});
+function iniciar(){if(!document.getElementById('aceito').checked)return;document.getElementById('tela-entrada').classList.remove('ativa');document.getElementById('tela-q36').classList.add('ativa');render();window.scrollTo(0,0);}
+function item(b,i,t){var id=b+'_'+i;R[id]=null;numQ++;var n=numQ,segs='';for(var v=0;v<=4;v++){segs+='<div class="escala-seg" data-v="'+v+'" tabindex="0" role="radio" aria-label="'+L[v]+'" onclick="sel(\''+id+'\','+v+')" onkeydown="if(event.key===\'Enter\'||event.key===\' \')sel(\''+id+'\','+v+')">'+v+'</div>';}return '<div class="item"><div class="item-num">'+n+'</div><div class="item-texto">'+t+'</div><div class="escala-barra" id="bar-'+id+'">'+segs+'</div><div class="escala-ancora"><span>não interfere</span><span>impede de funcionar</span></div><div class="escala-sel-label" id="vl-'+id+'"></div></div>';}
+function sel(id,v){var era=R[id]===null;R[id]=v;var bar=document.getElementById('bar-'+id),segs=bar.querySelectorAll('.escala-seg');for(var i=0;i<segs.length;i++)segs[i].classList.remove('sel');bar.querySelector('[data-v="'+v+'"]').classList.add('sel');document.getElementById('vl-'+id).textContent=L[v];if(era){resp++;document.getElementById('barra').style.width=Math.round(resp/36*100)+'%';document.getElementById('prog-txt').textContent=resp+' de 36';}}
+function render(){numQ=0;var ks=Object.keys(B);for(var i=0;i<ks.length;i++){var k=ks[i],el=document.getElementById('itens-'+k);if(!el)continue;var h='';for(var j=0;j<B[k].length;j++)h+=item(k,j+1,B[k][j]);el.innerHTML=h;}}
+function mediaR(ids){var s=0;for(var i=0;i<ids.length;i++)s+=R[ids[i]];return s/ids.length;}
+function calcularEixos(){var S1=mediaR(['s1_1','s1_2','s1_3','s1_4','s1_5','s1_6']),S2=mediaR(['s2_1','s2_2','s2_3','s2_4','s2_5','s2_6']),O1=mediaR(['o1_1','o1_2','o1_3','o1_4','o1_5']),O2=mediaR(['o2_1','o2_2','o2_3','o2_4','o2_5','o2_6']),A1=mediaR(['a1_1','a1_2','a1_3','a1_4','a1_5']),A2=mediaR(['a2_1','a2_2','a2_3','a2_4']),P=mediaR(['p_1','p_2','p_3','p_4']);var S=(S1+S2)/2,O=(O1+O2)/2,A=(A1+A2)/2,G=(S+O+A)/3,delta=Math.max(Math.abs(S-G),Math.abs(O-G),Math.abs(A-G));var vals=Object.values(R),todosIguais=vals.every(function(v){return v===vals[0];});return {S:S,O:O,A:A,P:P,G:G,delta:delta,todosIguais:todosIguais,valorUnico:todosIguais?vals[0]:null};}
+function maiorEixo(S,O,A,P){var eixos={sentir:S,organizar:O,agir:A,proposito:P},entries=Object.entries(eixos).sort(function(a,b){return b[1]-a[1];});if(entries[0][1]===entries[1][1])return null;return entries[0][0];}
+function menorEixo(S,O,A,P){var eixos={sentir:S,organizar:O,agir:A,proposito:P},entries=Object.entries(eixos).sort(function(a,b){return a[1]-b[1];});if(entries[0][1]===entries[1][1])return null;return entries[0][0];}
+function avaliarSimone(e){
+  var S=e.S,O=e.O,A=e.A,P=e.P,G=e.G,delta=e.delta;
+  if(typeof S!=='number'||isNaN(S)||typeof O!=='number'||isNaN(O)||typeof A!=='number'||isNaN(A)||typeof P!=='number'||isNaN(P)||typeof G!=='number'||isNaN(G)||typeof delta!=='number'||isNaN(delta)){return {codigo:'inconsistencia_tecnica',severidade:'tecnico',titulo:'Inconsistência técnica',resumo:'Não foi possível gerar a devolutiva com segurança.',leitura:'Os dados recebidos não permitem leitura confiável do estado funcional.',direcao:'Revisar o preenchimento e repetir a aplicação.',eixoDominante:null,eixoRecurso:null};}
+  var dom=maiorEixo(S,O,A,P),rec=menorEixo(S,O,A,P);
+  if(e.todosIguais&&e.valorUnico===0)return {codigo:'ausencia_de_sinal',severidade:'especial',titulo:'Ausência de sinal',resumo:'No período observado, não apareceu sinal suficiente para indicar carga funcional relevante.',leitura:'Isso não deve ser lido como flow automático. Pode significar ausência de peso percebido, baixa ativação ou pouca diferenciação do autorrelato.',direcao:'Observar o contexto e, se necessário, reaplicar de forma assistida.',eixoDominante:dom,eixoRecurso:rec};
+  if(e.todosIguais&&e.valorUnico===1)return {codigo:'carga_leve_uniforme',severidade:'leve',titulo:'Carga leve distribuída',resumo:'Há sinais leves de incômodo, distribuídos de forma bastante uniforme.',leitura:'Não aparece um vetor dominante. O funcionamento está preservado, mas já existe atrito percebido.',direcao:'Monitorar tendência e observar se algum eixo começa a puxar mais carga.',eixoDominante:dom,eixoRecurso:rec};
 
-var B={
-  s1:['Já começo o dia com sensação de pouca energia no corpo','Percebo meu corpo tenso ao longo do dia','Mesmo dormindo, acordo sem me sentir recuperado','Perco energia física ao longo do dia para continuar minhas tarefas','Até tarefas simples parecem exigir esforço físico demais','Meu corpo dá sinais de sobrecarga durante o dia'],
-  s2:['Me irritei com facilidade ao longo do dia','Senti inquietação ao longo do dia','Reagi de forma intensa a coisas que normalmente não me afetariam tanto','O peso emocional do dia me deixou esgotado','Tive dificuldade de me acalmar depois de me abalar','O que senti atrapalhou o que eu precisava fazer'],
-  o1:['Minha mente ficou lenta para entender','Minhas ideias ficaram embaralhadas','Fiquei pensando nas mesmas coisas repetidamente','Minha atenção se dispersava','Minha cabeça ficou acelerada'],
-  o2:['Tive dificuldade de organizar o que precisava fazer','Tive dificuldade de definir o que era mais importante fazer primeiro','Fiquei organizando sem avançar nas tarefas','Quando a demanda aumentava, minha organização se perdia','Misturei o que era urgente com o que podia esperar','A ordem das tarefas ficou confusa'],
-  a1:['Tive dificuldade de começar tarefas','Adiei tarefas que eu precisava começar','Evitei iniciar tarefas','Precisei de muito esforço interno para dar o primeiro passo','Resisti a tarefas que exigiam fazer algo diferente do que já conheço'],
-  a2:['Tive dificuldade de manter o que estava fazendo','Eu parava tarefas antes de terminar','Eu perdia o ritmo no meio do que estava fazendo','No fim do dia, tarefas importantes ainda estavam por fazer'],
-  p:['O que eu fazia parecia sem sentido','O que eu fazia não combinava comigo','Eu não via motivo no que estava fazendo','Senti que o esforço que fiz não valeu o que produzi']
-};
-
-var L=['não incomoda','incomoda um pouco','já me atrapalha','atrapalha bastante','atrapalha demais'];
-var R={};
-var resp=0;
-var numQ=0;
-var qid=null;
-var rid=null;
-var notaSel=null;
-
-document.getElementById('aceito').addEventListener('change',function(){
-  var b=document.getElementById('btnComecar');
-  if(this.checked){b.classList.add('ativo');}else{b.classList.remove('ativo');}
-});
-
-function iniciar(){
-  if(!document.getElementById('aceito').checked)return;
-  document.getElementById('tela-entrada').classList.remove('ativa');
-  document.getElementById('tela-q36').classList.add('ativa');
-  render();
-  window.scrollTo(0,0);
+  if(e.todosIguais&&e.valorUnico===3)return {codigo:'carga_alta_uniforme',severidade:'alto',titulo:'Carga alta distribuída',resumo:'O peso está alto e aparece de forma espalhada, sem um único eixo explicando sozinho o quadro.',leitura:'Quando tudo sobe junto nesse nível, o risco é continuar funcionando à custa de esforço contínuo, sem perceber claramente onde está o ponto principal de desgaste.',direcao:'Reduzir exigência global e evitar novas frentes antes que essa carga suba mais.',eixoDominante:dom,eixoRecurso:rec};
+  if(e.todosIguais&&e.valorUnico===4)return {codigo:'saturacao_maxima',severidade:'critico',titulo:'Saturação máxima',resumo:'Tudo aparece no limite máximo de carga percebida neste momento.',leitura:'Não há um eixo isolado pedindo atenção. O sistema inteiro está saturado, com comprometimento global da sustentação funcional.',direcao:'Interromper excessos, proteger ambiente e reduzir ao mínimo necessário imediatamente.',eixoDominante:dom,eixoRecurso:rec};
+  if(S>=3.2&&O>=3.2&&A>=3.2)return {codigo:'colapso_global',severidade:'critico',titulo:'Sobrecarga total',resumo:'Tudo está exigindo mais do que o sistema consegue sustentar agora.',leitura:'Não há um eixo de apoio claro. O peso é sistêmico e a continuidade forçada tende a aumentar custo e perda de função.',direcao:'Reduzir o que não é essencial e priorizar contenção imediata.',eixoDominante:dom,eixoRecurso:rec};
+  if(G>=2.5&&S>=Math.max(O,A)+0.4&&S<3.2)return {codigo:'sobrecarga_emocional',severidade:'alto',titulo:'Sobrecarga puxada pelo sentir',resumo:'O sentir está puxando o quadro para cima e domina a experiência funcional.',leitura:'O custo corporal ou emocional ocupa espaço central e contamina organização e ação.',direcao:'Proteger energia e diminuir exposição ao que mais intensifica o peso.',eixoDominante:dom,eixoRecurso:rec};
+  if(G>=2.5&&O>=Math.max(S,A)+0.4&&O<3.2)return {codigo:'sobrecarga_organizacional',severidade:'alto',titulo:'Sobrecarga puxada pela desorganização',resumo:'A principal quebra está na clareza, sequência e estrutura do funcionamento.',leitura:'Quando organizar domina nessa faixa, o risco de confusão, atraso e perda de eixo aumenta muito.',direcao:'Simplificar sistema, reduzir frentes e externalizar prioridades.',eixoDominante:dom,eixoRecurso:rec};
+  if(G>=2.5&&A>=Math.max(S,O)+0.4&&A<3.2)return {codigo:'sobrecarga_de_acao',severidade:'alto',titulo:'Sobrecarga puxada pela execução',resumo:'O maior custo está em sustentar a execução e manter movimento funcional.',leitura:'Agir aparece mais comprometido do que sentir e organizar, sugerindo desgaste direto na capacidade de fazer.',direcao:'Cortar volume, encurtar ciclos e interromper exigência de alto rendimento.',eixoDominante:dom,eixoRecurso:rec};
+  if(G>=2.5&&P>=G+0.4&&S<3.2&&O<3.2&&A<3.2)return {codigo:'sobrecarga_com_sentido',severidade:'alto',titulo:'Segue porque faz sentido, mas o custo está alto',resumo:'Ainda existe sentido no que se faz, mas esse sentido está sustentando um custo alto demais.',leitura:'O propósito aparece relativamente preservado, o que pode mascarar desgaste por manter a pessoa em ação apesar da carga.',direcao:'Proteger o que importa sem usar sentido como justificativa para excesso.',eixoDominante:dom,eixoRecurso:rec};
+  if(G>=2.5&&delta<0.4)return {codigo:'limite_funcional',severidade:'alto',titulo:'Funcionando no limite',resumo:'O sistema ainda está de pé, mas já opera com pouca margem.',leitura:'O peso aparece alto e relativamente distribuído. Ainda não é colapso, mas a folga funcional é pequena.',direcao:'Reduzir exigências antes que o corpo imponha essa redução.',eixoDominante:dom,eixoRecurso:rec};
+  if(G>=1.7&&G<=2.4&&delta<0.25)return {codigo:'falso_funcional',severidade:'alto',titulo:'Equilíbrio com esforço oculto',resumo:'Por fora parece estável, mas há esforço contínuo para manter esse nível.',leitura:'Os eixos estão próximos entre si, sem folga clara. O quadro pode parecer organizado, mas o custo interno é relevante.',direcao:'Testar se existe folga real antes de aumentar exigência.',eixoDominante:dom,eixoRecurso:rec};
+  if(G>=1.4&&G<=2.4&&P>=G+0.5&&A<=G-0.3)return {codigo:'conflito_sentido_acao',severidade:'moderado',titulo:'Sabe o que importa, mas não consegue agir',resumo:'Há valor percebido no que deve ser feito, mas isso não está conseguindo se converter em ação consistente.',leitura:'O propósito aparece relativamente preservado, enquanto a ação fica abaixo do conjunto.',direcao:'Transformar sentido em tarefa curta, concreta e observável.',eixoDominante:dom,eixoRecurso:rec};
+  if(G>=1.4&&G<=2.4&&O>=G+0.4&&A<=G-0.3)return {codigo:'ruminacao_sem_acao',severidade:'moderado',titulo:'Pensa muito, anda pouco',resumo:'A mente trabalha mais do que o comportamento consegue acompanhar.',leitura:'Há elaboração, análise ou repetição mental, mas pouca passagem para movimento efetivo.',direcao:'Definir um único próximo passo e interromper replanejamento contínuo.',eixoDominante:dom,eixoRecurso:rec};
+  if(G>=1.4&&G<=2.4&&A>=G+0.4&&O<=G-0.3)return {codigo:'atropelo_sem_ordem',severidade:'moderado',titulo:'Faz sob pressão, sem estrutura suficiente',resumo:'Há movimento, mas com pouca estrutura para sustentar qualidade ou sequência.',leitura:'A execução sobe mais rápido do que a organização, o que aumenta atropelo e retrabalho.',direcao:'Desacelerar, ordenar e reduzir troca de contexto.',eixoDominante:dom,eixoRecurso:rec};
+  if(G>=1.4&&G<=2.4&&S>=Math.max(O,A)+0.4)return {codigo:'sentir_dominante',severidade:'moderado',titulo:'Peso maior no sentir',resumo:'O custo principal está no sentir, consumindo mais recurso do que os demais eixos.',leitura:'Quando sentir puxa a carga, a energia tende a ir para dentro e sobra menos disponibilidade para o restante do dia.',direcao:'Diminuir atrito e mapear o que mais drena corpo e emoção.',eixoDominante:dom,eixoRecurso:rec};
+  if(G>=1.4&&G<=2.4&&O>=Math.max(S,A)+0.4)return {codigo:'organizar_dominante',severidade:'moderado',titulo:'Excesso de carga na organização',resumo:'A principal dificuldade está em dar estrutura, ordem e clareza ao que precisa ser feito.',leitura:'Quando organizar sobe, aumentam confusão de prioridade, acúmulo de frentes e dificuldade de decidir sequência.',direcao:'Fechar frentes abertas e escolher uma prioridade principal.',eixoDominante:dom,eixoRecurso:rec};
+  if(G>=1.4&&G<=2.4&&A>=Math.max(S,O)+0.4)return {codigo:'agir_dominante',severidade:'moderado',titulo:'Dificuldade para colocar em movimento',resumo:'A maior carga está em iniciar, retomar ou sustentar a execução.',leitura:'Existe intenção de agir, mas a passagem para o comportamento custa mais do que deveria.',direcao:'Reduzir o tamanho da próxima tarefa e trabalhar com começo imediato.',eixoDominante:dom,eixoRecurso:rec};
+  var soa=[S,O,A].sort(function(a,b){return b-a;}),semDom=(soa[0]-soa[1])<0.4;
+  if((e.todosIguais&&e.valorUnico===2)||(G>=1.4&&G<=2.4&&delta>=0.25&&delta<=0.5&&semDom))return {codigo:'carga_difusa',severidade:'moderado',titulo:'Peso distribuído sem vetor dominante',resumo:'Há peso funcional real, mas ele não se concentra em um eixo só.',leitura:'O dia parece custar em várias frentes ao mesmo tempo, sem um único ponto explicando tudo. Quando as respostas ficam homogêneas em nível médio, o risco é subestimar o custo acumulado por não haver um ponto único chamando atenção.',direcao:'Reduzir simultaneidade e acompanhar qual eixo passa a subir primeiro.',eixoDominante:dom,eixoRecurso:rec};
+  if(G<1.4&&P>=G+0.3)return {codigo:'leve_com_sentido',severidade:'leve',titulo:'Sentido presente, mas com pouca tração',resumo:'Há reconhecimento de sentido, mas isso ainda não está puxando organização nem ação com consistência.',leitura:'O eixo de propósito aparece acima dos demais, sugerindo valor percebido sem força suficiente para virar movimento.',direcao:'Retomar uma tarefa curta com começo claro e utilidade visível.',eixoDominante:dom,eixoRecurso:rec};
+  if(G<1.4&&P<=0.7)return {codigo:'leve_sem_sentido',severidade:'leve',titulo:'Funcionando sem conexão',resumo:'O funcionamento está baixo e o vínculo com o que se faz também aparece reduzido.',leitura:'Não é colapso, mas há distanciamento do valor percebido naquilo que está sendo feito.',direcao:'Antes de cobrar desempenho, vale revisar o que ainda faz sentido manter.',eixoDominante:dom,eixoRecurso:rec};
+  if(G<1.4&&S<=Math.min(O,A)-0.3)return {codigo:'leve_com_corpo_baixo',severidade:'leve',titulo:'Baixa energia corporal, com estrutura preservada',resumo:'O corpo aparece mais baixo do que os demais e pode estar limitando a presença no dia.',leitura:'A estrutura e a ação não parecem colapsadas, mas a energia corporal não acompanha no mesmo ritmo.',direcao:'Reduzir atrito físico e observar sinais de recuperação antes de aumentar exigência.',eixoDominante:dom,eixoRecurso:rec};
+  if(G<1.4&&O<=Math.min(S,A)-0.3)return {codigo:'leve_com_mente_baixa',severidade:'leve',titulo:'Pouca clareza, sem grande carga',resumo:'A dificuldade principal não é sofrimento intenso, mas menor nitidez para organizar o dia.',leitura:'A mente aparece mais baixa do que sentir e agir, sugerindo dispersão leve ou falta de definição.',direcao:'Simplificar escolhas e explicitar a próxima prioridade.',eixoDominante:dom,eixoRecurso:rec};
+  if(G<1.4&&A<=Math.min(S,O)-0.3)return {codigo:'leve_com_acao_baixa',severidade:'leve',titulo:'Inércia leve',resumo:'Existe alguma presença e alguma leitura do que importa, mas custa transformar isso em início concreto.',leitura:'A ação aparece abaixo dos demais e o movimento do dia tende a ficar mais lento ou adiado.',direcao:'Trabalhar com início pequeno, imediato e sem complexidade.',eixoDominante:dom,eixoRecurso:rec};
+  if(G<1.4)return {codigo:'leve_difuso',severidade:'leve',titulo:'Baixa intensidade geral',resumo:'Não há sobrecarga importante, mas também não há grande tração funcional.',leitura:'Os eixos estão baixos e relativamente próximos. O funcionamento parece preservado, porém com pouca intensidade.',direcao:'Escolher uma ação pequena e concreta para retomar presença.',eixoDominante:dom,eixoRecurso:rec};
+  return {codigo:'inconsistencia_tecnica',severidade:'tecnico',titulo:'Inconsistência técnica',resumo:'Não foi possível gerar a devolutiva com segurança.',leitura:'Os dados recebidos não permitem leitura confiável do estado funcional.',direcao:'Revisar o preenchimento e repetir a aplicação.',eixoDominante:null,eixoRecurso:null};
 }
-
-function item(b,i,t){
-  var id=b+'_'+i; R[id]=null; numQ++;
-  var n=numQ; var segs='';
-  for(var v=0;v<=4;v++){
-    segs+='<div class="escala-seg" data-v="'+v+'" tabindex="0" role="radio" aria-label="'+L[v]+'" onclick="sel(\''+id+'\','+v+')" onkeydown="if(event.key===\'Enter\'||event.key===\' \')sel(\''+id+'\','+v+')">'+v+'</div>';
-  }
-  return '<div class="item"><div class="item-num">'+n+'</div><div class="item-texto">'+t+'</div><div class="escala-barra" id="bar-'+id+'">'+segs+'</div><div class="escala-ancora"><span>não incomoda</span><span>atrapalha demais</span></div><div class="escala-sel-label" id="vl-'+id+'"></div></div>';
-}
-
-function sel(id,v){
-  var era=R[id]===null; R[id]=v;
-  var bar=document.getElementById('bar-'+id);
-  var segs=bar.querySelectorAll('.escala-seg');
-  for(var i=0;i<segs.length;i++) segs[i].classList.remove('sel');
-  bar.querySelector('[data-v="'+v+'"]').classList.add('sel');
-  document.getElementById('vl-'+id).textContent=L[v];
-  if(era){resp++;document.getElementById('barra').style.width=Math.round(resp/36*100)+'%';document.getElementById('prog-txt').textContent=resp+' de 36';}
-}
-
-function render(){
-  numQ=0;
-  var ks=Object.keys(B);
-  for(var i=0;i<ks.length;i++){
-    var k=ks[i],el=document.getElementById('itens-'+k);
-    if(!el)continue;
-    var h='';
-    for(var j=0;j<B[k].length;j++)h+=item(k,j+1,B[k][j]);
-    el.innerHTML=h;
-  }
-}
-
-function mediaR(ids){
-  var s=0; for(var i=0;i<ids.length;i++) s+=R[ids[i]]; return s/ids.length;
-}
-
-function calcularEixos(){
-  var S1=mediaR(['s1_1','s1_2','s1_3','s1_4','s1_5','s1_6']);
-  var S2=mediaR(['s2_1','s2_2','s2_3','s2_4','s2_5','s2_6']);
-  var O1=mediaR(['o1_1','o1_2','o1_3','o1_4','o1_5']);
-  var O2=mediaR(['o2_1','o2_2','o2_3','o2_4','o2_5','o2_6']);
-  var A1=mediaR(['a1_1','a1_2','a1_3','a1_4','a1_5']);
-  var A2=mediaR(['a2_1','a2_2','a2_3','a2_4']);
-  var P=mediaR(['p_1','p_2','p_3','p_4']);
-  var S=(S1+S2)/2, O=(O1+O2)/2, A=(A1+A2)/2;
-  var G=(S+O+A)/3;
-  var delta=Math.max(Math.abs(S-G),Math.abs(O-G),Math.abs(A-G));
-  var colapsoGlobal=(S>=3&&O>=3&&A>=3);
-  var falsoFuncional=(G>=1.7&&G<=2.4&&delta<0.25);
-  return {
-    sentir:S, organizar:O, agir:A, proposito:P,
-    g:G, delta:delta,
-    flags:{invalido:false, falsoFuncional:falsoFuncional, colapsoGlobal:colapsoGlobal}
-  };
-}
-
-function maiorEixo(eixos){
-  var entries=Object.entries(eixos).sort(function(a,b){return b[1]-a[1];});
-  if(entries[0][1]===entries[1][1]) return null;
-  return entries[0][0];
-}
-
-function menorEixo(eixos){
-  var entries=Object.entries(eixos).sort(function(a,b){return a[1]-b[1];});
-  if(entries[0][1]===entries[1][1]) return null;
-  return entries[0][0];
-}
-
-function nomeBonito(chave){
-  var mapa={sentir:'Sentir',organizar:'Organizar',agir:'Agir',proposito:'Propósito'};
-  return mapa[chave]||chave;
-}
-
-function erroTecnico(mensagem){
-  return {codigo:'erro_tecnico',severidade:'erro',titulo:'Erro técnico',resumo:'Não foi possível processar a devolutiva.',leitura:mensagem,direcao:'Verifique os dados de entrada antes de tentar novamente.',eixoDominante:null,eixoRecurso:null};
-}
-
-function avaliarSimone(entrada){
-  if(!entrada||typeof entrada!=='object') return erroTecnico('Entrada ausente ou inválida');
-  var sentir=entrada.sentir,organizar=entrada.organizar,agir=entrada.agir,proposito=entrada.proposito,g=entrada.g,delta=entrada.delta,flags=entrada.flags||{};
-  var camposNumericos={sentir:sentir,organizar:organizar,agir:agir,proposito:proposito,g:g,delta:delta};
-  for(var campo in camposNumericos){
-    var valor=camposNumericos[campo];
-    if(typeof valor!=='number'||isNaN(valor)) return erroTecnico('Campo numérico inválido: '+campo);
-  }
-  var eixos={sentir:sentir,organizar:organizar,agir:agir,proposito:proposito};
-  var eixoDominante=maiorEixo(eixos);
-  var eixoRecurso=menorEixo(eixos);
-  if(flags.invalido){return {codigo:'padrao_invalido',severidade:'invalido',titulo:'Respostas muito uniformes',resumo:'As respostas ficaram parecidas demais e isso impede identificar onde o peso do dia realmente apareceu.',leitura:'Esse tipo de resultado costuma acontecer quando a marcação sai muito rápida, automática ou sem diferenciação suficiente entre os itens.',direcao:'Vale responder de novo, olhando item por item e marcando o quanto cada um realmente pesou hoje.',eixoDominante:eixoDominante,eixoRecurso:eixoRecurso};}
-  if(flags.colapsoGlobal||(g>=3.5&&sentir>=3.2&&organizar>=3.2&&agir>=3.2)){return {codigo:'colapso_global',severidade:'critico',titulo:'Sobrecarga total',resumo:'Tudo está exigindo mais do que você consegue sustentar agora.',leitura:'O peso não está concentrado em uma área só. Sentir, organizar e agir aparecem sobrecarregados ao mesmo tempo, com pouco espaço de recuperação.',direcao:'Agora o foco não é resolver tudo. É reduzir o que não é essencial e proteger energia.',eixoDominante:eixoDominante,eixoRecurso:eixoRecurso};}
-  if(flags.falsoFuncional||(g>=1.7&&g<=2.4&&delta<0.25)){return {codigo:'falso_funcional',severidade:'alto',titulo:'Equilíbrio com esforço oculto',resumo:'Por fora parece estável, mas há esforço contínuo para manter isso.',leitura:'Os eixos estão próximos entre si, sem variação expressiva. Isso pode indicar equilíbrio real, mas também sustentação por contenção e desgaste silencioso.',direcao:'Antes de aumentar exigência, vale testar se há folga real ou só manutenção no limite.',eixoDominante:eixoDominante,eixoRecurso:eixoRecurso};}
-  if(g<1.4&&delta<0.5){return {codigo:'leve_afastamento',severidade:'leve',titulo:'Estado leve de afastamento',resumo:'Você não está sobrecarregado, mas também não está plenamente conectado ao que faz.',leitura:'Os eixos estão baixos e estáveis. O maior valor apareceu em '+nomeBonito(eixoDominante)+', sugerindo presença discreta desse peso, sem ruptura geral.',direcao:'O próximo passo não é se pressionar mais. É retomar uma ação pequena com sentido claro.',eixoDominante:eixoDominante,eixoRecurso:eixoRecurso};}
-  if(agir>=2.5&&sentir<2.0&&organizar>=2.0){return {codigo:'travamento_operacional',severidade:'moderado',titulo:'Dificuldade para colocar em movimento',resumo:'Você parece entender parte do que precisa, mas está custando transformar isso em ação.',leitura:'O maior peso está em agir. Isso costuma aparecer quando existe energia consumida na tentativa de começar, retomar ou sustentar tarefas.',direcao:'Vale reduzir o tamanho da próxima tarefa e trabalhar com início simples, concreto e imediato.',eixoDominante:eixoDominante,eixoRecurso:eixoRecurso};}
-  if(organizar>=2.5&&agir>=2.0){return {codigo:'sobrecarga_organizacional',severidade:'moderado',titulo:'Excesso de carga na organização',resumo:'O dia parece estar pesado mais na clareza e na estrutura do que na disposição em si.',leitura:'Quando organizar sobe, costuma aparecer confusão de prioridades, acúmulo de frentes ou dificuldade para dar forma ao que precisa ser feito.',direcao:'Antes de produzir mais, vale reduzir frentes abertas e definir uma prioridade principal.',eixoDominante:eixoDominante,eixoRecurso:eixoRecurso};}
-  if(sentir>=2.5&&agir<2.3){return {codigo:'sobrecarga_emocional_corporal',severidade:'moderado',titulo:'Peso maior no sentir',resumo:'O corpo ou o campo emocional estão consumindo mais recurso do que o habitual.',leitura:'O eixo sentir apareceu acima dos demais. Isso costuma puxar energia para dentro e reduzir a disponibilidade para o restante do dia.',direcao:'O mais útil agora é diminuir atrito e observar o que está drenando mais, em vez de tentar compensar no esforço.',eixoDominante:eixoDominante,eixoRecurso:eixoRecurso};}
-  return {codigo:'estado_intermediario',severidade:'moderado',titulo:'Carga presente, sem ruptura principal',resumo:'Há peso no funcionamento, mas sem um padrão dominante suficientemente forte para nomear outro estado.',leitura:'Os eixos mostram esforço real, porém sem concentração crítica em uma única frente.',direcao:'Vale acompanhar tendência nos próximos dias para ver se isso está estabilizando, subindo ou cedendo.',eixoDominante:eixoDominante,eixoRecurso:eixoRecurso};
-}
-
 async function enviar(){
-  var n=0,ks=Object.keys(R);
-  for(var i=0;i<ks.length;i++){if(R[ks[i]]===null)n++;}
+  var n=0,ks=Object.keys(R);for(var i=0;i<ks.length;i++){if(R[ks[i]]===null)n++;}
   if(n>0){alert('Ainda faltam '+n+' respostas.');return;}
-  var btn=document.getElementById('btnConcluir');
-  btn.textContent='Calculando...'; btn.classList.remove('ativo');
-  var e=calcularEixos();
-  var resultado=avaliarSimone(e);
+  var btn=document.getElementById('btnConcluir');btn.textContent='Calculando...';btn.classList.remove('ativo');
+  var e=calcularEixos(),resultado=avaliarSimone(e);
   try{
     var qRes=await sb.from('questionados').insert({aceite_anonimato:true,autoriza_repasse:false}).select().single();
-    if(qRes.error)throw qRes.error;
-    qid=qRes.data.id;
+    if(qRes.error)throw qRes.error;qid=qRes.data.id;
     var rRes=await sb.from('respostas').insert({questionado_id:qid,questionario:'Q36',marco:'D0',itens:R}).select().single();
-    if(rRes.error)throw rRes.error;
-    rid=rRes.data.id;
-    await sb.from('resultados').insert({
-      questionado_id:qid,resposta_id:rid,marco:'D0',
-      eixos:{S:e.sentir,O:e.organizar,A:e.agir,P:e.proposito,G:e.g,delta:e.delta},
-      assinatura:resultado.codigo,gravidade:resultado.severidade,
-      flags:e.flags,
-      devolutivo:resultado.titulo+' — '+resultado.resumo
-    });
+    if(rRes.error)throw rRes.error;rid=rRes.data.id;
+    await sb.from('resultados').insert({questionado_id:qid,resposta_id:rid,marco:'D0',eixos:{S:e.S,O:e.O,A:e.A,P:e.P,G:e.G,delta:e.delta},assinatura:resultado.codigo,gravidade:resultado.severidade,flags:{todosIguais:e.todosIguais,valorUnico:e.valorUnico},devolutivo:resultado.titulo+' — '+resultado.resumo});
     mostrarResultado(e,resultado);
-  }catch(err){
-    alert('Erro ao salvar: '+err.message);
-    btn.textContent='Concluir'; btn.classList.add('ativo');
-  }
+  }catch(err){alert('Erro ao salvar: '+err.message);btn.textContent='Concluir';btn.classList.add('ativo');}
 }
-
 function mostrarResultado(e,r){
-  var eixos=[
-    {chave:'sentir',label:'Sentir',valor:e.sentir},
-    {chave:'organizar',label:'Organizar',valor:e.organizar},
-    {chave:'agir',label:'Agir',valor:e.agir},
-    {chave:'proposito',label:'Propósito',valor:e.proposito}
-  ];
+  var eixos=[{chave:'sentir',label:'Sentir',valor:e.S},{chave:'organizar',label:'Organizar',valor:e.O},{chave:'agir',label:'Agir',valor:e.A},{chave:'proposito',label:'Propósito',valor:e.P}];
   var html='';
-  for(var i=0;i<eixos.length;i++){
-    var ex=eixos[i];
-    var cls='eixo-card';
-    var tag='';
-    if(r.eixoDominante&&ex.chave===r.eixoDominante){cls+=' dominante';tag='<div class="eixo-tag">maior carga</div>';}
-    else if(r.eixoRecurso&&ex.chave===r.eixoRecurso){cls+=' recurso';tag='<div class="eixo-tag">menor carga</div>';}
-    var pct=Math.round((ex.valor/4)*100);
-    html+='<div class="'+cls+'"><div class="eixo-label">'+ex.label+'</div><div class="eixo-valor">'+ex.valor.toFixed(1)+'</div><div class="eixo-barra-wrap"><div class="eixo-barra" style="width:'+pct+'%"></div></div>'+tag+'</div>';
-  }
+  for(var i=0;i<eixos.length;i++){var ex=eixos[i],cls='eixo-card',tag='';if(r.eixoDominante&&ex.chave===r.eixoDominante){cls+=' dominante';tag='<div class="eixo-tag">maior carga</div>';}else if(r.eixoRecurso&&ex.chave===r.eixoRecurso){cls+=' recurso';tag='<div class="eixo-tag">menor carga</div>';}var pct=Math.round((ex.valor/4)*100);html+='<div class="'+cls+'"><div class="eixo-label">'+ex.label+'</div><div class="eixo-valor">'+ex.valor.toFixed(1)+'</div><div class="eixo-barra-wrap"><div class="eixo-barra" style="width:'+pct+'%"></div></div>'+tag+'</div>';}
   document.getElementById('eixos-grid').innerHTML=html;
   document.getElementById('dev-titulo').textContent=r.titulo;
   document.getElementById('dev-resumo').textContent=r.resumo;
@@ -352,37 +223,9 @@ function mostrarResultado(e,r){
   document.getElementById('tela-resultado').classList.add('ativa');
   window.scrollTo(0,0);
 }
-
-function irAvaliacao(){
-  document.getElementById('tela-resultado').classList.remove('ativa');
-  document.getElementById('tela-avaliacao').classList.add('ativa');
-  var html='';
-  for(var n=1;n<=5;n++){
-    html+='<div onclick="selecionarNota('+n+')" id="nota-'+n+'" style="width:44px;height:44px;border-radius:50%;border:2px solid #eee;display:flex;align-items:center;justify-content:center;font-size:1.1rem;cursor:pointer;transition:all 0.15s;">'+n+'</div>';
-  }
-  document.getElementById('notas').innerHTML=html;
-  window.scrollTo(0,0);
-}
-
-function selecionarNota(n){
-  notaSel=n;
-  for(var i=1;i<=5;i++){
-    var el=document.getElementById('nota-'+i);
-    if(i===n){el.style.background='#1a1a2e';el.style.color='white';el.style.borderColor='#1a1a2e';}
-    else{el.style.background='white';el.style.color='#1a1a2e';el.style.borderColor='#eee';}
-  }
-}
-
-async function enviarAvaliacao(){
-  if(!notaSel){alert('Selecione uma nota de 1 a 5.');return;}
-  var com=document.getElementById('comentario').value;
-  try{
-    await sb.from('avaliacoes').insert({questionado_id:qid,resposta_id:rid,nota:notaSel,comentario:com||null});
-  }catch(e){}
-  document.getElementById('tela-avaliacao').classList.remove('ativa');
-  document.getElementById('tela-fim').classList.add('ativa');
-  window.scrollTo(0,0);
-}
+function irAvaliacao(){document.getElementById('tela-resultado').classList.remove('ativa');document.getElementById('tela-avaliacao').classList.add('ativa');var html='';for(var n=1;n<=5;n++){html+='<div onclick="selecionarNota('+n+')" id="nota-'+n+'" style="width:44px;height:44px;border-radius:50%;border:2px solid #eee;display:flex;align-items:center;justify-content:center;font-size:1.1rem;cursor:pointer;transition:all 0.15s;">'+n+'</div>';}document.getElementById('notas').innerHTML=html;window.scrollTo(0,0);}
+function selecionarNota(n){notaSel=n;for(var i=1;i<=5;i++){var el=document.getElementById('nota-'+i);if(i===n){el.style.background='#1a1a2e';el.style.color='white';el.style.borderColor='#1a1a2e';}else{el.style.background='white';el.style.color='#1a1a2e';el.style.borderColor='#eee';}}}
+async function enviarAvaliacao(){if(!notaSel){alert('Selecione uma nota de 1 a 5.');return;}var com=document.getElementById('comentario').value;try{await sb.from('avaliacoes').insert({questionado_id:qid,resposta_id:rid,nota:notaSel,comentario:com||null});}catch(e){}document.getElementById('tela-avaliacao').classList.remove('ativa');document.getElementById('tela-fim').classList.add('ativa');window.scrollTo(0,0);}
 </script>
 </body>
 </html>
