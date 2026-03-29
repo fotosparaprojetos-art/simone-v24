@@ -229,8 +229,7 @@ function mostrarResultado(e,r){
   var html='';
   for(var i=0;i<eixos.length;i++){
     var ex=eixos[i],cls='eixo-card',tag='';
-    if(r.eixoDominante&&ex.chave===r.eixoDominante){cls+=' dominante';tag='<div class="eixo-tag">maior peso</div>';}
-    else if(r.eixoRecurso&&ex.chave===r.eixoRecurso){cls+=' recurso';tag='<div class="eixo-tag">menor peso</div>';}
+    if(r.eixoDominante&&r.eixoDominante!=='global'&&ex.label===r.eixoDominante){cls+=' dominante';tag='<div class="eixo-tag">maior peso</div>';}
     var pct=Math.round((ex.valor/4)*100);
     var rot=rotuloQualitativo(ex.valor);
     html+='<div class="'+cls+'"><div class="eixo-label">'+ex.label+'</div><div class="eixo-qualitativo">'+rot+'</div><div class="eixo-barra-wrap"><div class="eixo-barra" style="width:'+pct+'%"></div></div>'+tag+'</div>';
