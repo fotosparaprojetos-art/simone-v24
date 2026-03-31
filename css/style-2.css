@@ -1,0 +1,75 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', sans-serif; background: #f7f7f5; color: #1a1a2e; min-height: 100vh; }
+.tela { display: none; }
+.tela.ativa { display: block; }
+.entrada { max-width: 480px; margin: 0 auto; padding: 3rem 1.5rem; text-align: center; }
+.logo { width: 200px; margin-bottom: 2rem; }
+.card { background: white; border-radius: 16px; padding: 2rem; border: 1px solid #eee; }
+.card h2 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.75rem; }
+.card p { font-size: 0.9rem; color: #555; line-height: 1.6; margin-bottom: 1.5rem; }
+.aceite { display: flex; align-items: flex-start; gap: 0.75rem; text-align: left; margin-bottom: 1.5rem; padding: 1rem; background: #f7f7f5; border-radius: 10px; }
+.aceite input { margin-top: 3px; accent-color: #f5a623; }
+.aceite label { font-size: 0.82rem; color: #555; line-height: 1.5; }
+.btn { display: block; width: 100%; background: #1a1a2e; color: white; border: none; border-radius: 10px; padding: 0.85rem 2rem; font-size: 0.95rem; cursor: pointer; opacity: 0.4; transition: opacity 0.2s, background 0.2s; }
+.btn.ativo { opacity: 1; }
+.btn.ativo:hover { background: #f5a623; color: #1a1a2e; }
+.btn:not(.ativo) { pointer-events: none; cursor: default; }
+.prog-fixo { position: fixed; top: 0; left: 0; width: 100%; z-index: 999; background: rgba(247,247,245,0.97); padding: 8px 1.5rem 6px; border-bottom: 1px solid #eee; }
+.prog-fixo .progresso-wrap { background: #eee; border-radius: 99px; height: 5px; margin-bottom: 3px; }
+.prog-fixo .progresso-bar { height: 5px; border-radius: 99px; background: #f5a623; transition: width 0.3s; width: 0%; }
+.prog-fixo .progresso-txt { font-size: 0.7rem; color: #bbb; text-align: right; }
+.questionario { max-width: 620px; margin: 0 auto; padding: 4rem 1.5rem 4rem; }
+.q-header { text-align: center; margin-bottom: 2rem; }
+.q-header img { width: 130px; }
+.bloco { background: white; border-radius: 14px; border: 1px solid #eee; padding: 1.5rem; margin-bottom: 1.5rem; }
+.bloco-titulo { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #f5a623; margin-bottom: 1.25rem; }
+.bloco-janela { font-size: 0.72rem; color: #aaa; margin-bottom: 1.25rem; margin-top: -0.75rem; }
+.item { margin-bottom: 2rem; }
+.item:last-child { margin-bottom: 0; }
+.item-num { font-size: 0.68rem; color: #ccc; margin-bottom: 3px; }
+.item-texto { font-size: 0.88rem; color: #333; line-height: 1.5; margin-bottom: 1rem; }
+.escala-barra { display: flex; height: 36px; border-radius: 8px; overflow: hidden; cursor: pointer; }
+.escala-seg { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 500; color: transparent; opacity: 0.35; transition: all 0.15s; cursor: pointer; }
+.escala-seg:hover { opacity: 0.65; }
+.escala-seg.sel { opacity: 1; transform: scaleY(1.1); }
+.escala-seg[data-v="0"] { background: #b8e4f0; }
+.escala-seg[data-v="1"] { background: #7dd4c0; }
+.escala-seg[data-v="2"] { background: #a8e06a; }
+.escala-seg[data-v="3"] { background: #f5d020; }
+.escala-seg[data-v="4"] { background: #f5a623; }
+.escala-ancora { display: flex; justify-content: space-between; margin-top: 4px; }
+.escala-ancora span { font-size: 0.6rem; color: #bbb; }
+.escala-label-wrap { position: relative; height: 24px; margin-top: 6px; overflow: visible; }
+.escala-sel-label { position: absolute; top: 0; transform: translateX(-50%); font-size: 0.68rem; color: #333; font-weight: 600; white-space: nowrap; transition: left 0.15s ease; max-width: 120px; text-align: center; }
+.escala-sel-label:empty { display: none; }
+.rodape { text-align: center; font-size: 0.75rem; color: #bbb; margin-top: 2rem; }
+.resultado { max-width: 520px; margin: 0 auto; padding: 3rem 1.5rem 4rem; }
+.resultado-logo { text-align: center; margin-bottom: 2rem; }
+.resultado-logo img { width: 140px; }
+.eixos-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1.5rem; }
+.eixo-card { background: white; border-radius: 12px; border: 1px solid #eee; padding: 1rem; text-align: center; }
+.eixo-card.dominante { border: 2px solid #f5a623; background: #fffbf2; }
+.eixo-card.recurso { border: 2px solid #b8e4f0; background: #f5fbfe; }
+.eixo-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #ccc; margin-bottom: 4px; }
+.eixo-card.dominante .eixo-label { color: #f5a623; }
+.eixo-card.recurso .eixo-label { color: #7dd4c0; }
+.eixo-qualitativo { font-size: 0.88rem; font-weight: 600; color: #1a1a2e; margin-bottom: 6px; }
+.eixo-barra-wrap { height: 4px; background: #f0f0f0; border-radius: 99px; margin-top: 6px; }
+.eixo-barra { height: 4px; border-radius: 99px; background: #ddd; }
+.eixo-card.dominante .eixo-barra { background: #f5a623; }
+.eixo-card.recurso .eixo-barra { background: #7dd4c0; }
+.eixo-tag { font-size: 0.55rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 4px; }
+.eixo-card.dominante .eixo-tag { color: #f5a623; }
+.eixo-card.recurso .eixo-tag { color: #7dd4c0; }
+.info-card { background: white; border-radius: 14px; border: 1px solid #eee; padding: 1.25rem 1.5rem; margin-bottom: 1rem; }
+.info-card-label { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #ccc; margin-bottom: 6px; }
+.info-card-texto { font-size: 0.9rem; color: #1a1a2e; line-height: 1.6; }
+.info-card-item { font-size: 0.85rem; color: #555; line-height: 1.6; font-style: italic; margin-top: 4px; }
+.dev-card { background: white; border-radius: 16px; border: 1px solid #eee; padding: 2rem; margin-bottom: 1.25rem; }
+.dev-titulo { font-size: 1.15rem; font-weight: 700; color: #1a1a2e; margin-bottom: 1rem; line-height: 1.3; }
+.dev-bloco { margin-bottom: 1.25rem; }
+.dev-bloco:last-child { margin-bottom: 0; }
+.dev-label { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #ccc; margin-bottom: 4px; }
+.dev-texto { font-size: 0.88rem; color: #444; line-height: 1.7; }
+.dev-direcao { font-size: 0.88rem; color: #1a1a2e; line-height: 1.7; font-weight: 500; }
+.resultado-rodape { font-size: 0.75rem; color: #bbb; text-align: center; margin-top: 1.5rem; font-style: italic; line-height: 1.6; }
