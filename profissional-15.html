@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SiMone · Painel Profissional</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; color: #1a1a2e; min-height: 100vh; }
+.topo { background: #1a1a2e; color: white; padding: 1rem 2rem; display: flex; align-items: center; gap: 1rem; }
+.topo img { width: 90px; }
+.topo h1 { font-size: 0.95rem; font-weight: 600; letter-spacing: 0.05em; opacity: 0.9; }
+.container { max-width: 900px; margin: 0 auto; padding: 2rem 1.25rem; }
+.filtro { background: white; border-radius: 12px; border: 1px solid #eee; padding: 1rem 1.25rem; margin-bottom: 1.5rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+.filtro label { font-size: 0.75rem; color: #999; margin-right: 3px; }
+.filtro input, .filtro select { border: 1px solid #ddd; border-radius: 8px; padding: 0.4rem 0.7rem; font-size: 0.82rem; font-family: inherit; color: #1a1a2e; }
+.btn-buscar { background: #1a1a2e; color: white; border: none; border-radius: 8px; padding: 0.45rem 1.1rem; font-size: 0.82rem; cursor: pointer; }
+.btn-buscar:hover { background: #f5a623; color: #1a1a2e; }
+.lista { display: flex; flex-direction: column; gap: 0.75rem; }
+.caso { background: white; border-radius: 12px; border: 1px solid #eee; padding: 1rem 1.25rem; cursor: pointer; transition: border 0.15s; }
+.caso:hover { border-color: #f5a623; }
+.caso-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+.caso-id { font-size: 0.65rem; color: #ccc; font-family: monospace; }
+.caso-data { font-size: 0.72rem; color: #aaa; }
+.caso-assinatura { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.4rem; }
+.caso-eixos { display: flex; gap: 1rem; flex-wrap: wrap; }
+.em { font-size: 0.72rem; color: #777; }
+.em b { color: #1a1a2e; }
+.badge { display:inline-block;font-size:0.58rem;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;padding:2px 7px;border-radius:99px;margin-left:6px; }
+.badge-critico{background:#fde8e8;color:#c0392b;}
+.badge-alto{background:#fef3e2;color:#e67e22;}
+.badge-moderado{background:#fef9e7;color:#b7950b;}
+.badge-leve{background:#eafaf1;color:#27ae60;}
+.badge-especial{background:#eaf0fb;color:#2980b9;}
+.badge-tecnico{background:#f5f5f5;color:#aaa;}
+.painel { display: none; margin-top: 0.75rem; border-top: 1px solid #f0f0f0; padding-top: 1rem; }
+.painel.aberto { display: block; }
+.p-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem; }
+.p-bloco { background: #f7f7f5; border-radius: 10px; padding: 0.85rem 1rem; margin-bottom: 0.75rem; }
+.p-bloco:last-child { margin-bottom: 0; }
+.p-label { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #bbb; margin-bottom: 5px; }
+.p-valor { font-size: 0.88rem; color: #1a1a2e; line-height: 1.5; }
+.p-sub { font-size: 0.8rem; color: #666; margin-top: 3px; line-height: 1.5; }
+.p-item { font-size: 0.8rem; color: #555; font-style: italic; margin-top: 4px; }
+.p-nota { font-size: 0.75rem; color: #999; margin-top: 5px; }
+.heatmap-row { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 6px; }
+.hm-nome { font-size: 0.75rem; color: #666; width: 90px; flex-shrink: 0; }
+.hm-wrap { flex: 1; height: 8px; background: #eee; border-radius: 99px; }
+.hm-barra { height: 8px; border-radius: 99px; background: #f5a623; transition: width 0.3s; }
+.hm-dominante { background: #e74c3c; }
+.hm-pct { font-size: 0.68rem; color: #aaa; width: 30px; text-align: right; }
+.tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+.tag-sec { font-size: 0.75rem; background: #f0f0f0; color: #444; border-radius: 8px; padding: 3px 10px; }
+.tag-alerta { font-size: 0.75rem; background: #fde8e8; color: #c0392b; border-radius: 8px; padding: 3px 10px; font-weight: 600; }
+.secao-titulo { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #1a1a2e; margin: 1.25rem 0 0.75rem; padding-bottom: 4px; border-bottom: 1px solid #eee; }
+.timeline-wrap { overflow-x: auto; margin-bottom: 0.75rem; }
+.timeline-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+.timeline-table th { background: #1a1a2e; color: white; padding: 6px 10px; text-align: left; font-weight: 600; white-space: nowrap; }
+.timeline-table td { padding: 6px 10px; border-bottom: 1px solid #f0f0f0; white-space: nowrap; color: #444; }
+.timeline-table tr:last-child td { border-bottom: none; }
+.timeline-table tr:hover td { background: #fafafa; }
+.tend-row { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+.tend-item { font-size: 0.82rem; color: #444; }
+.tend-item b { color: #1a1a2e; }
+.tend-piora { color: #c0392b; }
+.tend-melhora { color: #27ae60; }
+.tend-estabilidade { color: #2980b9; }
+.tend-oscilacao { color: #e67e22; }
+.resumo-frase { font-size: 0.85rem; color: #444; line-height: 1.7; padding: 2px 0; }
+.empty { text-align: center; color: #bbb; padding: 3rem; font-size: 0.88rem; }
+.loading { text-align: center; color: #aaa; padding: 2rem; font-size: 0.85rem; }
+</style>
+</head>
+<body>
+<div class="topo">
+  <img src="logo.png" alt="SiMone">
+  <h1>Painel Profissional</h1>
+</div>
+<div class="container">
+  <div class="filtro">
+    <div><label>De</label><input type="date" id="f-de"></div>
+    <div><label>Até</label><input type="date" id="f-ate"></div>
+    <div><label>Severidade</label>
+      <select id="f-sev">
+        <option value="">Todas</option>
+        <option value="critico">Crítico</option>
+        <option value="alto">Alto</option>
+        <option value="moderado">Moderado</option>
+        <option value="leve">Leve</option>
+        <option value="especial">Especial</option>
+      </select>
+    </div>
+    <button class="btn-buscar" onclick="buscar()">Buscar</button>
+  </div>
+  <div id="lista" class="lista"><div class="loading">Carregando...</div></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/js/motor.js"></script>
+<script src="/js/biblioteca.js"></script>
+<script src="/js/profissional.js"></script>
+<script>
+var SURL='https://dzfpsdbppfvftvamhvok.supabase.co';
+var SKEY='sb_publishable_FIyD24LRb4cmOBaUyVLQyw_cdceJWE4';
+var sb=supabase.createClient(SURL,SKEY);
+var casos=[];
+var aberto=null;
+
+function fmtData(iso){var d=new Date(iso);return d.toLocaleDateString('pt-BR')+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});}
+function fmtDataCurta(iso){var d=new Date(iso);return d.toLocaleDateString('pt-BR');}
+function badgeCls(sev){return 'badge badge-'+(sev||'tecnico');}
+
+function renderLista(dados){
+  var el=document.getElementById('lista');
+  if(!dados||!dados.length){el.innerHTML='<div class="empty">Nenhum resultado.</div>';return;}
+  casos=dados;
+  var html='';
+  for(var i=0;i<dados.length;i++){
+    var c=dados[i],ex=c.eixos||{};
+    var devTitulo=tituloDev(c.assinatura);
+    html+='<div class="caso" id="caso-'+i+'" onclick="togglePainel('+i+')">';
+    html+='<div class="caso-header"><span class="caso-id">'+c.questionado_id+'</span><span class="caso-data">'+fmtData(c.created_at)+'</span></div>';
+    html+='<div class="caso-assinatura">'+devTitulo+'<span class="'+badgeCls(c.gravidade)+'">'+(c.gravidade||'—')+'</span></div>';
+    html+='<div class="caso-eixos">';
+    ['S','O','A','P','G'].forEach(function(k){if(ex[k]!=null)html+='<div class="em">'+k+' <b>'+Number(ex[k]).toFixed(1)+'</b></div>';});
+    if(ex.delta!=null)html+='<div class="em">Δ <b>'+Number(ex.delta).toFixed(2)+'</b></div>';
+    html+='</div>';
+    html+='<div class="painel" id="painel-'+i+'"><div class="loading">Carregando...</div></div>';
+    html+='</div>';
+  }
+  el.innerHTML=html;
+}
+
+async function togglePainel(i){
+  var el=document.getElementById('painel-'+i);
+  if(el.classList.contains('aberto')){el.classList.remove('aberto');return;}
+  if(aberto!==null){var prev=document.getElementById('painel-'+aberto);if(prev)prev.classList.remove('aberto');}
+  aberto=i;el.classList.add('aberto');
+  if(el.dataset.loaded)return;
+  el.dataset.loaded='1';
+
+  var c=casos[i];
+  var rRes=await sb.from('respostas').select('itens').eq('questionado_id',c.questionado_id).order('created_at',{ascending:false}).limit(1).single();
+  var itens=(rRes.data&&rRes.data.itens)||{};
+  var hRes=await sb.from('resultados').select('*').eq('questionado_id',c.questionado_id).order('created_at',{ascending:true});
+  var historico=(hRes.data)||[c];
+
+  var saida=montarPainelProfissional({eixos:c.eixos||{},assinatura:c.assinatura,respostas:itens});
+  var codigoBib=MAPA_MOTOR_BIBLIOTECA[c.assinatura]||null;
+  var dev=codigoBib?BIBLIOTECA_DEVOLUTIVAS[codigoBib]:null;
+  var analise=analisarEvolucaoClinica(historico);
+
+  var html='';
+
+  // SESSÃO ATUAL
+  html+='<div class="secao-titulo">Leitura da sessão</div>';
+  html+='<div class="p-grid">';
+  html+='<div class="p-bloco"><div class="p-label">Área mais exigida nesta sessão</div>';
+  html+='<div class="p-valor">'+saida.dominanteNome+'</div></div>';
+  if(saida.recurso){
+    html+='<div class="p-bloco"><div class="p-label">Área com menor exigência</div>';
+    html+='<div class="p-valor">'+saida.recursoNome+'</div>';
+    html+='<div class="p-sub">'+saida.recursoNome+' aparece com menor carga relativa, podendo funcionar como ponto de apoio.</div></div>';
+  } else {
+    html+='<div class="p-bloco"><div class="p-label">Área com menor exigência</div>';
+    html+='<div class="p-valor">—</div><div class="p-sub">Sem diferença clara entre os eixos menores.</div></div>';
+  }
+  html+='<div class="p-bloco"><div class="p-label">Ponto mais exigido</div>';
+  html+='<div class="p-valor">'+saida.subeixoDominante+'</div></div>';
+  html+='<div class="p-bloco"><div class="p-label">Item de maior custo</div>';
+  html+='<div class="p-valor">'+saida.itemCritico.valor+'/4</div>';
+  if(saida.itemCritico.texto)html+='<div class="p-item">"'+saida.itemCritico.texto+'"</div>';
+  html+='<div class="p-nota">Representa o ponto de maior consumo de energia dentro da sessão.</div></div>';
+  html+='</div>';
+
+  // HEATMAP
+  html+='<div class="p-bloco"><div class="p-label">Intensidade por eixo</div>';
+  Object.keys(saida.heatmap).forEach(function(k){
+    var isDom=(k===saida.dominante);
+    var nomeLeg=NOMES_EIXO_PROF[k]||k;
+    html+='<div class="heatmap-row"><div class="hm-nome">'+nomeLeg+'</div>';
+    html+='<div class="hm-wrap"><div class="hm-barra'+(isDom?' hm-dominante':'')+'" style="width:'+saida.heatmap[k]+'%"></div></div>';
+    html+='<div class="hm-pct">'+saida.heatmap[k]+'%</div></div>';
+  });
+  html+='</div>';
+
+  // SECUNDÁRIAS
+  if(saida.assinaturasSecundarias&&saida.assinaturasSecundarias.length){
+    html+='<div class="p-bloco"><div class="p-label">Outras tendências identificadas</div>';
+    html+='<div class="tags">';
+    saida.assinaturasSecundarias.forEach(function(s){html+='<span class="tag-sec">'+tituloDev(s)+'</span>';});
+    html+='</div></div>';
+  }
+
+  // DEVOLUTIVA
+  if(dev){
+    html+='<div class="p-bloco"><div class="p-label">Devolutiva principal</div>';
+    html+='<div class="p-valor" style="font-weight:600;margin-bottom:4px">'+dev.titulo+'</div>';
+    html+='<div class="p-valor">'+dev.modo_curto+'</div>';
+    html+='<div class="p-item" style="margin-top:6px">Ação sugerida: '+dev.acao_pratica+'</div></div>';
+  }
+
+  // FILME DO CASO
+  if(historico.length>0){
+    html+='<div class="secao-titulo">Filme do caso ('+historico.length+' '+(historico.length===1?'sessão':'sessões')+')</div>';
+    html+='<div class="timeline-wrap"><table class="timeline-table"><thead><tr>';
+    html+='<th>Marco</th><th>Data</th><th>S</th><th>O</th><th>A</th><th>P</th><th>G</th><th>Δ</th><th>Assinatura</th>';
+    html+='</tr></thead><tbody>';
+    historico.forEach(function(s,idx){
+      var ex=s.eixos||{};
+      html+='<tr><td>'+(s.marco||'D'+idx)+'</td><td>'+fmtDataCurta(s.created_at)+'</td>';
+      ['S','O','A','P','G'].forEach(function(k){html+='<td>'+(ex[k]!=null?Number(ex[k]).toFixed(1):'—')+'</td>';});
+      html+='<td>'+(ex.delta!=null?Number(ex.delta).toFixed(2):'—')+'</td>';
+      html+='<td>'+tituloDev(s.assinatura)+'</td></tr>';
+    });
+    html+='</tbody></table></div>';
+
+    // GRÁFICO LONGITUDINAL
+    html+='<div class="p-bloco"><div class="p-label">Evolução dos eixos</div>';
+    html+=gerarGraficoLongitudinal(historico);
+    html+='</div>';
+
+    // TENDÊNCIA
+    if(analise){
+      html+='<div class="p-bloco"><div class="p-label">Tendência do caso</div>';
+      html+='<div class="tend-row">';
+      var tClass='tend-'+analise.tendenciaGlobal;
+      html+='<div class="tend-item">Tendência global: <b class="'+tClass+'">'+_tendenciaTexto(analise.tendenciaGlobal)+'</b></div>';
+      html+='<div class="tend-item">Eixo mais recorrente: <b>'+analise.eixoRecorrente+'</b></div>';
+      html+='<div class="tend-item">Assinatura mais recorrente: <b>'+analise.assinaturaRecorrente+'</b></div>';
+      html+='</div></div>';
+
+      // LEITURA LONGITUDINAL
+      if(analise.resumoClinico&&analise.resumoClinico.length){
+        html+='<div class="p-bloco"><div class="p-label">Leitura longitudinal</div>';
+        analise.resumoClinico.forEach(function(f){html+='<div class="resumo-frase">'+f+'</div>';});
+        html+='</div>';
+      }
+
+      // ALERTAS CLÍNICOS
+      var alertas=[];
+      if(analise.riscoCrescente)alertas.push('Risco crescente');
+      if(analise.perdaDeProposito)alertas.push('Perda de propósito');
+      if(analise.oscilacaoRelevante)alertas.push('Oscilação relevante');
+      if(analise.alertaMudancaBrusca)alertas.push('Mudança brusca entre sessões');
+      if(alertas.length){
+        html+='<div class="p-bloco"><div class="p-label">Alertas clínicos</div><div class="tags">';
+        alertas.forEach(function(a){html+='<span class="tag-alerta">'+a+'</span>';});
+        html+='</div></div>';
+      }
+
+      // PADRÃO RECORRENTE
+      html+='<div class="p-bloco"><div class="p-label">Padrão recorrente</div>';
+      html+='<div class="p-valor">'+analise.eixoRecorrente+'</div>';
+      html+='<div class="p-sub">'+analise.assinaturaRecorrente+'</div>';
+      if(analise.subeixoRecorrente)html+='<div class="p-sub">Subeixo: '+analise.subeixoRecorrente+'</div>';
+      html+='</div>';
+    }
+  }
+
+  el.innerHTML=html;
+}
+
+async function buscar(){
+  var el=document.getElementById('lista');
+  el.innerHTML='<div class="loading">Buscando...</div>';
+  aberto=null;
+  var q=sb.from('resultados').select('*').order('created_at',{ascending:false}).limit(100);
+  var de=document.getElementById('f-de').value;
+  var ate=document.getElementById('f-ate').value;
+  var sev=document.getElementById('f-sev').value;
+  if(de)q=q.gte('created_at',de);
+  if(ate)q=q.lte('created_at',ate+'T23:59:59');
+  if(sev)q=q.eq('gravidade',sev);
+  var res=await q;
+  if(res.error){el.innerHTML='<div class="empty">Erro: '+res.error.message+'</div>';return;}
+  renderLista(res.data);
+}
+
+buscar();
+</script>
+</body>
+</html>
