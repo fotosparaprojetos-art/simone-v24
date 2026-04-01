@@ -105,8 +105,10 @@ var sb=supabase.createClient(SURL,SKEY);
 var casos=[];
 var aberto=null;
 
-function fmtData(iso){var d=new Date(iso);return d.toLocaleDateString('pt-BR')+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});}
-function fmtDataCurta(iso){var d=new Date(iso);return d.toLocaleDateString('pt-BR');}
+function inicioDiaISO(dataStr){var d=new Date(dataStr+'T00:00:00-03:00');return d.toISOString();}
+function fimDiaISO(dataStr){var d=new Date(dataStr+'T23:59:59-03:00');return d.toISOString();}
+function fmtData(iso){var d=new Date(iso);return d.toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'})+' '+d.toLocaleTimeString('pt-BR',{timeZone:'America/Sao_Paulo',hour:'2-digit',minute:'2-digit'});}
+function fmtDataCurta(iso){var d=new Date(iso);return d.toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'});}
 function badgeCls(sev){return 'badge badge-'+(sev||'tecnico');}
 
 function renderLista(dados){
@@ -268,8 +270,8 @@ async function buscar(){
   var de=document.getElementById('f-de').value;
   var ate=document.getElementById('f-ate').value;
   var sev=document.getElementById('f-sev').value;
-  if(de)q=q.gte('created_at',de);
-  if(ate)q=q.lte('created_at',ate+'T23:59:59');
+  if(de)q=q.gte('created_at',inicioDiaISO(de));
+  if(ate)q=q.lte('created_at',fimDiaISO(ate));
   if(sev)q=q.eq('gravidade',sev);
   var res=await q;
   if(res.error){el.innerHTML='<div class="empty">Erro: '+res.error.message+'</div>';return;}
