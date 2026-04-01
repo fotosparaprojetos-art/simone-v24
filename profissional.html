@@ -107,8 +107,8 @@ var aberto=null;
 
 function inicioDiaISO(dataStr){var d=new Date(dataStr+'T00:00:00-03:00');return d.toISOString();}
 function fimDiaISO(dataStr){var d=new Date(dataStr+'T23:59:59-03:00');return d.toISOString();}
-function fmtData(iso){var d=new Date(iso);return d.toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'})+' '+d.toLocaleTimeString('pt-BR',{timeZone:'America/Sao_Paulo',hour:'2-digit',minute:'2-digit'});}
-function fmtDataCurta(iso){var d=new Date(iso);return d.toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'});}
+function fmtData(iso){var d=new Date(iso.indexOf('Z')===-1&&iso.indexOf('+')===-1?iso+'Z':iso);return d.toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'})+' '+d.toLocaleTimeString('pt-BR',{timeZone:'America/Sao_Paulo',hour:'2-digit',minute:'2-digit'});}
+function fmtDataCurta(iso){var d=new Date(iso.indexOf('Z')===-1&&iso.indexOf('+')===-1?iso+'Z':iso);return d.toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'});}
 function badgeCls(sev){return 'badge badge-'+(sev||'tecnico');}
 
 function renderLista(dados){
@@ -126,6 +126,8 @@ function renderLista(dados){
     ['S','O','A','P','G'].forEach(function(k){if(ex[k]!=null)html+='<div class="em">'+k+' <b>'+Number(ex[k]).toFixed(1)+'</b></div>';});
     if(ex.delta!=null)html+='<div class="em">Δ <b>'+Number(ex.delta).toFixed(2)+'</b></div>';
     html+='</div>';
+    html+='<div class="em">RAW <b>'+c.created_at+'</b></div>';
+    html+='<div class="em">FMT <b>'+fmtData(c.created_at)+'</b></div>';
     html+='<div class="painel" id="painel-'+i+'"><div class="loading">Carregando...</div></div>';
     html+='</div>';
   }
