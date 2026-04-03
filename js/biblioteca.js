@@ -3,7 +3,7 @@
 // Formato padrão profissional · Versão 24.1
 // Linguagem clínica funcional · Sem nomes autorais na saída
 
-const devolutivas = {
+var devolutivas = {
 
   // ===== LOTE 1 =====
 
@@ -223,4 +223,3 @@ const devolutivas = {
 
 };
 
-export { devolutivas };
