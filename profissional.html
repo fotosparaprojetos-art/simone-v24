@@ -1,286 +1,328 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SiMone · Painel Profissional</title>
-<style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; color: #1a1a2e; min-height: 100vh; }
-.topo { background: #1a1a2e; color: white; padding: 1rem 2rem; display: flex; align-items: center; gap: 1rem; }
-.topo img { width: 90px; }
-.topo h1 { font-size: 0.95rem; font-weight: 600; letter-spacing: 0.05em; opacity: 0.9; }
-.container { max-width: 900px; margin: 0 auto; padding: 2rem 1.25rem; }
-.filtro { background: white; border-radius: 12px; border: 1px solid #eee; padding: 1rem 1.25rem; margin-bottom: 1.5rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
-.filtro label { font-size: 0.75rem; color: #999; margin-right: 3px; }
-.filtro input, .filtro select { border: 1px solid #ddd; border-radius: 8px; padding: 0.4rem 0.7rem; font-size: 0.82rem; font-family: inherit; color: #1a1a2e; }
-.btn-buscar { background: #1a1a2e; color: white; border: none; border-radius: 8px; padding: 0.45rem 1.1rem; font-size: 0.82rem; cursor: pointer; }
-.btn-buscar:hover { background: #f5a623; color: #1a1a2e; }
-.lista { display: flex; flex-direction: column; gap: 0.75rem; }
-.caso { background: white; border-radius: 12px; border: 1px solid #eee; padding: 1rem 1.25rem; cursor: pointer; transition: border 0.15s; }
-.caso:hover { border-color: #f5a623; }
-.caso-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
-.caso-id { font-size: 0.65rem; color: #ccc; font-family: monospace; }
-.caso-data { font-size: 0.72rem; color: #aaa; }
-.caso-assinatura { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.4rem; }
-.caso-eixos { display: flex; gap: 1rem; flex-wrap: wrap; }
-.em { font-size: 0.72rem; color: #777; }
-.em b { color: #1a1a2e; }
-.badge { display:inline-block;font-size:0.58rem;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;padding:2px 7px;border-radius:99px;margin-left:6px; }
-.badge-critico{background:#fde8e8;color:#c0392b;}
-.badge-alto{background:#fef3e2;color:#e67e22;}
-.badge-moderado{background:#fef9e7;color:#b7950b;}
-.badge-leve{background:#eafaf1;color:#27ae60;}
-.badge-especial{background:#eaf0fb;color:#2980b9;}
-.badge-tecnico{background:#f5f5f5;color:#aaa;}
-.painel { display: none; margin-top: 0.75rem; border-top: 1px solid #f0f0f0; padding-top: 1rem; }
-.painel.aberto { display: block; }
-.p-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem; }
-.p-bloco { background: #f7f7f5; border-radius: 10px; padding: 0.85rem 1rem; margin-bottom: 0.75rem; }
-.p-bloco:last-child { margin-bottom: 0; }
-.p-label { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #bbb; margin-bottom: 5px; }
-.p-valor { font-size: 0.88rem; color: #1a1a2e; line-height: 1.5; }
-.p-sub { font-size: 0.8rem; color: #666; margin-top: 3px; line-height: 1.5; }
-.p-item { font-size: 0.8rem; color: #555; font-style: italic; margin-top: 4px; }
-.p-nota { font-size: 0.75rem; color: #999; margin-top: 5px; }
-.heatmap-row { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 6px; }
-.hm-nome { font-size: 0.75rem; color: #666; width: 90px; flex-shrink: 0; }
-.hm-wrap { flex: 1; height: 8px; background: #eee; border-radius: 99px; }
-.hm-barra { height: 8px; border-radius: 99px; background: #f5a623; transition: width 0.3s; }
-.hm-dominante { background: #e74c3c; }
-.hm-pct { font-size: 0.68rem; color: #aaa; width: 30px; text-align: right; }
-.tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
-.tag-sec { font-size: 0.75rem; background: #f0f0f0; color: #444; border-radius: 8px; padding: 3px 10px; }
-.tag-alerta { font-size: 0.75rem; background: #fde8e8; color: #c0392b; border-radius: 8px; padding: 3px 10px; font-weight: 600; }
-.secao-titulo { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #1a1a2e; margin: 1.25rem 0 0.75rem; padding-bottom: 4px; border-bottom: 1px solid #eee; }
-.timeline-wrap { overflow-x: auto; margin-bottom: 0.75rem; }
-.timeline-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
-.timeline-table th { background: #1a1a2e; color: white; padding: 6px 10px; text-align: left; font-weight: 600; white-space: nowrap; }
-.timeline-table td { padding: 6px 10px; border-bottom: 1px solid #f0f0f0; white-space: nowrap; color: #444; }
-.timeline-table tr:last-child td { border-bottom: none; }
-.timeline-table tr:hover td { background: #fafafa; }
-.tend-row { display: flex; gap: 0.75rem; flex-wrap: wrap; }
-.tend-item { font-size: 0.82rem; color: #444; }
-.tend-item b { color: #1a1a2e; }
-.tend-piora { color: #c0392b; }
-.tend-melhora { color: #27ae60; }
-.tend-estabilidade { color: #2980b9; }
-.tend-oscilacao { color: #e67e22; }
-.resumo-frase { font-size: 0.85rem; color: #444; line-height: 1.7; padding: 2px 0; }
-.empty { text-align: center; color: #bbb; padding: 3rem; font-size: 0.88rem; }
-.loading { text-align: center; color: #aaa; padding: 2rem; font-size: 0.85rem; }
-</style>
-</head>
-<body>
-<div class="topo">
-  <img src="logo.png" alt="SiMone">
-  <h1>Painel Profissional</h1>
-</div>
-<div class="container">
-  <div class="filtro">
-    <div><label>De</label><input type="date" id="f-de"></div>
-    <div><label>Até</label><input type="date" id="f-ate"></div>
-    <div><label>Severidade</label>
-      <select id="f-sev">
-        <option value="">Todas</option>
-        <option value="critico">Crítico</option>
-        <option value="alto">Alto</option>
-        <option value="moderado">Moderado</option>
-        <option value="leve">Leve</option>
-        <option value="especial">Especial</option>
-      </select>
-    </div>
-    <button class="btn-buscar" onclick="buscar()">Buscar</button>
-  </div>
-  <div id="lista" class="lista"><div class="loading">Carregando...</div></div>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="/js/motor.js"></script>
-<script src="/js/biblioteca.js"></script>
-<script src="/js/profissional.js"></script>
-<script>
-var SURL='https://dzfpsdbppfvftvamhvok.supabase.co';
-var SKEY='sb_publishable_FIyD24LRb4cmOBaUyVLQyw_cdceJWE4';
-var sb=supabase.createClient(SURL,SKEY);
-var casos=[];
-var aberto=null;
+var NOMES_SUBEIXO_PROF={s1:'Corpo',s2:'Emocional',o1:'Clareza mental',o2:'Organização',a1:'Início',a2:'Sustentação',p:'Propósito'};
+var NOMES_EIXO_PROF={sentir:'Sentir',organizar:'Organizar',agir:'Agir',proposito:'Propósito'};
+var PRIORIDADE_SEC={sobrecarga_emocional:1,sobrecarga_organizacional:1,sobrecarga_de_acao:1,baixo_sentido:1,sobrecarga_com_sentido:1,falso_funcional:2,ruminacao_sem_acao:2,atropelo_sem_ordem:2};
+var TEXTOS_ITENS_PROF={
+  s1:['Já começo o dia com sensação de pouca energia no corpo','Percebo meu corpo tenso ao longo do dia','Mesmo dormindo, acordo sem me sentir recuperado','Perco energia física ao longo do dia para continuar minhas tarefas','Até tarefas simples parecem exigir esforço físico demais','Meu corpo dá sinais de sobrecarga durante o dia'],
+  s2:['Me irritei com facilidade ao longo do dia','Senti inquietação ao longo do dia','Reagi de forma intensa a coisas que normalmente não me afetariam tanto','O peso emocional do dia me deixou esgotado','Tive dificuldade de me acalmar depois de me abalar','O que senti atrapalhou o que eu precisava fazer'],
+  o1:['Minha mente ficou lenta para entender','Minhas ideias ficaram embaralhadas','Fiquei pensando nas mesmas coisas repetidamente','Minha atenção se dispersava','Minha cabeça ficou acelerada'],
+  o2:['Tive dificuldade de organizar o que precisava fazer','Tive dificuldade de definir o que era mais importante fazer primeiro','Fiquei organizando sem avançar nas tarefas','Quando a demanda aumentava, minha organização se perdia','Misturei o que era urgente com o que podia esperar','A ordem das tarefas ficou confusa'],
+  a1:['Tive dificuldade de começar tarefas','Adiei tarefas que eu precisava começar','Evitei iniciar tarefas','Precisei de muito esforço interno para dar o primeiro passo','Resisti a tarefas que exigiam fazer algo diferente do que já conheço'],
+  a2:['Tive dificuldade de manter o que estava fazendo','Eu parava tarefas antes de terminar','Eu perdia o ritmo no meio do que estava fazendo','No fim do dia, tarefas importantes ainda estavam por fazer'],
+  p:['O que eu fazia parecia sem sentido','O que eu fazia não combinava comigo','Eu não via motivo no que estava fazendo','Senti que o esforço que fiz não valeu o que produzi']
+};
 
-function inicioDiaISO(dataStr){var d=new Date(dataStr+'T00:00:00-03:00');return d.toISOString();}
-function fimDiaISO(dataStr){var d=new Date(dataStr+'T23:59:59-03:00');return d.toISOString();}
-function fmtData(iso){var d=new Date(iso.indexOf('Z')===-1&&iso.indexOf('+')===-1?iso+'Z':iso);return d.toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'})+' '+d.toLocaleTimeString('pt-BR',{timeZone:'America/Sao_Paulo',hour:'2-digit',minute:'2-digit'});}
-function fmtDataCurta(iso){var d=new Date(iso.indexOf('Z')===-1&&iso.indexOf('+')===-1?iso+'Z':iso);return d.toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'});}
-function badgeCls(sev){return 'badge badge-'+(sev||'tecnico');}
-
-function renderLista(dados){
-  var el=document.getElementById('lista');
-  if(!dados||!dados.length){el.innerHTML='<div class="empty">Nenhum resultado.</div>';return;}
-  casos=dados;
-  var html='';
-  for(var i=0;i<dados.length;i++){
-    var c=dados[i],ex=c.eixos||{};
-    var devTitulo=tituloDev(c.assinatura);
-    html+='<div class="caso" id="caso-'+i+'" onclick="togglePainel('+i+')">';
-    html+='<div class="caso-header"><span class="caso-id">'+c.questionado_id+'</span><span class="caso-data">'+fmtData(c.created_at)+'</span></div>';
-    html+='<div class="caso-assinatura">'+devTitulo+'<span class="'+badgeCls(c.gravidade)+'">'+(c.gravidade||'—')+'</span></div>';
-    html+='<div class="caso-eixos">';
-    ['S','O','A','P','G'].forEach(function(k){if(ex[k]!=null)html+='<div class="em">'+k+' <b>'+Number(ex[k]).toFixed(1)+'</b></div>';});
-    if(ex.delta!=null)html+='<div class="em">Δ <b>'+Number(ex.delta).toFixed(2)+'</b></div>';
-    html+='</div>';
-    html+='<div class="em">RAW <b>'+c.created_at+'</b></div>';
-    html+='<div class="em">FMT <b>'+fmtData(c.created_at)+'</b></div>';
-    html+='<div class="painel" id="painel-'+i+'"><div class="loading">Carregando...</div></div>';
-    html+='</div>';
+function _mediaIds(respostas,ids){
+  var s=0,c=0;
+  for(var i=0;i<ids.length;i++){
+    var v=respostas[ids[i]];
+    if(v!==null&&v!==undefined&&!isNaN(v)){s+=Number(v);c++;}
   }
-  el.innerHTML=html;
+  return c?s/c:null;
 }
 
-async function togglePainel(i){
-  var el=document.getElementById('painel-'+i);
-  if(el.classList.contains('aberto')){el.classList.remove('aberto');return;}
-  if(aberto!==null){var prev=document.getElementById('painel-'+aberto);if(prev)prev.classList.remove('aberto');}
-  aberto=i;el.classList.add('aberto');
-  if(el.dataset.loaded)return;
-  el.dataset.loaded='1';
+function _r(v){return v!=null?Math.round(v*100)/100:null;}
 
-  var c=casos[i];
-  var rRes=await sb.from('respostas').select('itens').eq('questionado_id',c.questionado_id).order('created_at',{ascending:false}).limit(1).single();
-  var itens=(rRes.data&&rRes.data.itens)||{};
-  var hRes=await sb.from('resultados').select('*').eq('questionado_id',c.questionado_id).order('created_at',{ascending:true});
-  var historico=(hRes.data)||[c];
-
-  var saida=montarPainelProfissional({eixos:c.eixos||{},assinatura:c.assinatura,respostas:itens});
-  var codigoBib=MAPA_MOTOR_BIBLIOTECA[c.assinatura]||null;
-  var dev=codigoBib?BIBLIOTECA_DEVOLUTIVAS[codigoBib]:null;
-  var analise=analisarEvolucaoClinica(historico);
-
-  var html='';
-
-  // SESSÃO ATUAL
-  html+='<div class="secao-titulo">Leitura da sessão</div>';
-  html+='<div class="p-grid">';
-  html+='<div class="p-bloco"><div class="p-label">Área mais exigida nesta sessão</div>';
-  html+='<div class="p-valor">'+saida.dominanteNome+'</div></div>';
-  if(saida.recurso){
-    html+='<div class="p-bloco"><div class="p-label">Área com menor exigência</div>';
-    html+='<div class="p-valor">'+saida.recursoNome+'</div>';
-    html+='<div class="p-sub">'+saida.recursoNome+' aparece com menor carga relativa, podendo funcionar como ponto de apoio.</div></div>';
-  } else {
-    html+='<div class="p-bloco"><div class="p-label">Área com menor exigência</div>';
-    html+='<div class="p-valor">—</div><div class="p-sub">Sem diferença clara entre os eixos menores.</div></div>';
+// CORRIGIDO: lê direto de devolutivas usando codigo como chave, sintese como retorno
+function tituloDev(codigo){
+  if(!codigo)return '';
+  if(typeof devolutivas!=='undefined'&&devolutivas[codigo]){
+    return devolutivas[codigo].sintese||codigo;
   }
-  html+='<div class="p-bloco"><div class="p-label">Ponto mais exigido</div>';
-  html+='<div class="p-valor">'+saida.subeixoDominante+'</div></div>';
-  html+='<div class="p-bloco"><div class="p-label">Item de maior custo</div>';
-  html+='<div class="p-valor">'+saida.itemCritico.valor+'/4</div>';
-  if(saida.itemCritico.texto)html+='<div class="p-item">"'+saida.itemCritico.texto+'"</div>';
-  html+='<div class="p-nota">Representa o ponto de maior consumo de energia dentro da sessão.</div></div>';
-  html+='</div>';
+  return codigo;
+}
 
-  // HEATMAP
-  html+='<div class="p-bloco"><div class="p-label">Intensidade por eixo</div>';
-  Object.keys(saida.heatmap).forEach(function(k){
-    var isDom=(k===saida.dominante);
-    var nomeLeg=NOMES_EIXO_PROF[k]||k;
-    html+='<div class="heatmap-row"><div class="hm-nome">'+nomeLeg+'</div>';
-    html+='<div class="hm-wrap"><div class="hm-barra'+(isDom?' hm-dominante':'')+'" style="width:'+saida.heatmap[k]+'%"></div></div>';
-    html+='<div class="hm-pct">'+saida.heatmap[k]+'%</div></div>';
+function calcularSubeixosPro(respostas){
+  return {
+    s1:_mediaIds(respostas,['s1_1','s1_2','s1_3','s1_4','s1_5','s1_6']),
+    s2:_mediaIds(respostas,['s2_1','s2_2','s2_3','s2_4','s2_5','s2_6']),
+    o1:_mediaIds(respostas,['o1_1','o1_2','o1_3','o1_4','o1_5']),
+    o2:_mediaIds(respostas,['o2_1','o2_2','o2_3','o2_4','o2_5','o2_6']),
+    a1:_mediaIds(respostas,['a1_1','a1_2','a1_3','a1_4','a1_5']),
+    a2:_mediaIds(respostas,['a2_1','a2_2','a2_3','a2_4']),
+    p:_mediaIds(respostas,['p_1','p_2','p_3','p_4'])
+  };
+}
+
+function detectarAssinaturasSecundarias(e){
+  var S=e.S,O=e.O,A=e.A,P=e.P,G=e.G,delta=e.delta;
+  var sec=[];
+  if(G>=1.4&&G<=2.4&&O>=G+0.4&&A<=G-0.3)sec.push('ruminacao_sem_acao');
+  if(G>=1.4&&G<=2.4&&A>=G+0.4&&O<=G-0.3)sec.push('atropelo_sem_ordem');
+  if(G>=1.7&&G<=2.4&&delta<0.25)sec.push('falso_funcional');
+  if(P<=1.5&&G>=1.4)sec.push('baixo_sentido');
+  if(G>=2.5&&S>=Math.max(O,A)+0.4&&S<3.2)sec.push('sobrecarga_emocional');
+  if(G>=2.5&&O>=Math.max(S,A)+0.4&&O<3.2)sec.push('sobrecarga_organizacional');
+  if(G>=2.5&&A>=Math.max(S,O)+0.4&&A<3.2)sec.push('sobrecarga_de_acao');
+  if(G>=2.5&&P>=G+0.4)sec.push('sobrecarga_com_sentido');
+  sec=[...new Set(sec)];
+  sec.sort(function(a,b){return (PRIORIDADE_SEC[a]||3)-(PRIORIDADE_SEC[b]||3);});
+  return sec;
+}
+
+function montarPainelProfissional(dados){
+  var eixos=dados.eixos,assinatura=dados.assinatura,respostas=dados.respostas||{};
+  var S=eixos.S,O=eixos.O,A=eixos.A,P=eixos.P,G=eixos.G,delta=eixos.delta;
+  var sub=calcularSubeixosPro(respostas);
+
+  var eixosArr=[{k:'sentir',v:S},{k:'organizar',v:O},{k:'agir',v:A},{k:'proposito',v:P}];
+  eixosArr.sort(function(a,b){return b.v-a.v;});
+  var dominante=(eixosArr[0].v-eixosArr[1].v<0.2)?'global':eixosArr[0].k;
+  var recurso=(eixosArr[2].v-eixosArr[3].v<0.2)?null:eixosArr[eixosArr.length-1].k;
+
+  var subKeys=Object.keys(sub).filter(function(k){return sub[k]!==null;});
+  var subDomK=subKeys.length?subKeys.reduce(function(a,b){return sub[a]>=sub[b]?a:b;}):null;
+  var subDomNome=subDomK?NOMES_SUBEIXO_PROF[subDomK]:null;
+
+  var itens=subDomK?(TEXTOS_ITENS_PROF[subDomK]||[]):[];
+  var maxV=null,maxIdx=0;
+  for(var i=0;i<itens.length;i++){
+    var id=subDomK+'_'+(i+1);
+    var v=respostas[id];
+    if(v!==null&&v!==undefined&&!isNaN(v)&&(maxV===null||Number(v)>maxV)){maxV=Number(v);maxIdx=i;}
+  }
+
+  var heatmap={};
+  var heixos={sentir:S,organizar:O,agir:A,proposito:P};
+  Object.keys(heixos).forEach(function(k){
+    var v=heixos[k];
+    heatmap[k]=(v!==null&&v!==undefined&&!isNaN(v))?Math.round((v/4)*100):null;
   });
-  html+='</div>';
 
-  // SECUNDÁRIAS
-  if(saida.assinaturasSecundarias&&saida.assinaturasSecundarias.length){
-    html+='<div class="p-bloco"><div class="p-label">Outras tendências identificadas</div>';
-    html+='<div class="tags">';
-    saida.assinaturasSecundarias.forEach(function(s){html+='<span class="tag-sec">'+tituloDev(s)+'</span>';});
-    html+='</div></div>';
+  var secundarias=detectarAssinaturasSecundarias({S:S,O:O,A:A,P:P,G:G,delta:delta});
+  secundarias=secundarias.filter(function(s){return s!==assinatura;});
+
+  return {
+    eixos:{S:_r(S),O:_r(O),A:_r(A),P:_r(P),G:_r(G),delta:_r(delta)},
+    assinatura:assinatura,
+    dominante:dominante,
+    dominanteNome:dominante==='global'?'Distribuído':NOMES_EIXO_PROF[dominante]||dominante,
+    recurso:recurso,
+    recursoNome:recurso?(NOMES_EIXO_PROF[recurso]||recurso):null,
+    subeixoDominante:subDomNome,
+    itemCritico:{texto:maxV!==null?(itens[maxIdx]||''):'',valor:maxV},
+    assinaturasSecundarias:secundarias,
+    heatmap:heatmap
+  };
+}
+
+function gerarSaidaProfissional(eixos,resultado,respostas){
+  return montarPainelProfissional({eixos:eixos,assinatura:resultado.codigo,respostas:respostas});
+}
+
+function _eixoDomSessao(eixos){
+  var S=Number(eixos.S)||0,O=Number(eixos.O)||0,A=Number(eixos.A)||0,P=Number(eixos.P)||0;
+  var arr=[{k:'sentir',v:S},{k:'organizar',v:O},{k:'agir',v:A},{k:'proposito',v:P}];
+  arr.sort(function(a,b){return b.v-a.v;});
+  if(arr[0].v-arr[1].v<0.2)return 'global';
+  return arr[0].k;
+}
+
+function _eixoRecursoSessao(eixos){
+  var S=Number(eixos.S)||0,O=Number(eixos.O)||0,A=Number(eixos.A)||0,P=Number(eixos.P)||0;
+  var arr=[{k:'sentir',v:S},{k:'organizar',v:O},{k:'agir',v:A},{k:'proposito',v:P}];
+  arr.sort(function(a,b){return a.v-b.v;});
+  return arr[0].k;
+}
+
+function analisarEvolucaoClinica(historico){
+  if(!historico||historico.length===0)return null;
+  var n=historico.length;
+
+  if(n===1){
+    var e1=historico[0].eixos||{};
+    var dom1=_eixoDomSessao(e1);
+    return {
+      tendenciaGlobal:'estabilidade',riscoCrescente:false,cargaAltaPersistente:false,
+      perdaDeProposito:false,eixoRecorrente:dom1==='global'?'Distribuído':(NOMES_EIXO_PROF[dom1]||dom1),
+      assinaturaRecorrente:tituloDev(historico[0].assinatura),
+      subeixoRecorrente:null,oscilacaoRelevante:false,alertaMudancaBrusca:false,
+      resumoClinico:[]
+    };
   }
 
-  // DEVOLUTIVA
-  if(dev){
-    html+='<div class="p-bloco"><div class="p-label">Devolutiva principal</div>';
-    html+='<div class="p-valor" style="font-weight:600;margin-bottom:4px">'+dev.titulo+'</div>';
-    html+='<div class="p-valor">'+dev.modo_curto+'</div>';
-    html+='<div class="p-item" style="margin-top:6px">Ação sugerida: '+dev.acao_pratica+'</div></div>';
+  var gVals=historico.map(function(s){return Number((s.eixos||{}).G)||0;});
+  var pVals=historico.map(function(s){return Number((s.eixos||{}).P)||0;});
+  var gPrimeiro=gVals[0],gUltimo=gVals[n-1];
+  var diff=gUltimo-gPrimeiro;
+
+  var tendenciaGlobal;
+  if(diff>=0.3)tendenciaGlobal='piora';
+  else if(diff<=-0.3)tendenciaGlobal='melhora';
+  else{
+    var mudancasG=0;
+    for(var i=1;i<gVals.length;i++){if(Math.abs(gVals[i]-gVals[i-1])>=0.3)mudancasG++;}
+    tendenciaGlobal=(mudancasG>=n/2)?'oscilacao':'estabilidade';
   }
 
-  // FILME DO CASO
-  if(historico.length>0){
-    html+='<div class="secao-titulo">Filme do caso ('+historico.length+' '+(historico.length===1?'sessão':'sessões')+')</div>';
-    html+='<div class="timeline-wrap"><table class="timeline-table"><thead><tr>';
-    html+='<th>Marco</th><th>Data</th><th>S</th><th>O</th><th>A</th><th>P</th><th>G</th><th>Δ</th><th>Assinatura</th>';
-    html+='</tr></thead><tbody>';
-    historico.forEach(function(s,idx){
-      var ex=s.eixos||{};
-      html+='<tr><td>'+(s.marco||'D'+idx)+'</td><td>'+fmtDataCurta(s.created_at)+'</td>';
-      ['S','O','A','P','G'].forEach(function(k){html+='<td>'+(ex[k]!=null?Number(ex[k]).toFixed(1):'—')+'</td>';});
-      html+='<td>'+(ex.delta!=null?Number(ex.delta).toFixed(2):'—')+'</td>';
-      html+='<td>'+tituloDev(s.assinatura)+'</td></tr>';
+  var gravOrdem={leve:1,moderado:2,alto:3,critico:4,especial:0,tecnico:0};
+  var gravUlt=gravOrdem[historico[n-1].gravidade||'']||0;
+  var gravPenult=n>=2?(gravOrdem[historico[n-2].gravidade||'']||0):0;
+  var riscoCrescente=(gUltimo>gPrimeiro&&Math.abs(diff)>=0.3&&gravUlt>=gravPenult);
+  var cargaAltaPersistente=n>=2&&gVals[n-1]>=2.5&&gVals[n-2]>=2.5;
+
+  var pPrimeiro=pVals[0],pUltimo=pVals[n-1];
+  var perdaDeProposito=(pUltimo-pPrimeiro<=-0.3);
+  if(!perdaDeProposito&&n>=2){
+    var min1=_eixoRecursoSessao(historico[n-1].eixos||{});
+    var min2=_eixoRecursoSessao(historico[n-2].eixos||{});
+    if(min1==='proposito'&&min2==='proposito')perdaDeProposito=true;
+  }
+
+  var contEixos={sentir:0,organizar:0,agir:0,proposito:0};
+  historico.forEach(function(s){
+    var d=_eixoDomSessao(s.eixos||{});
+    if(d&&contEixos[d]!==undefined)contEixos[d]++;
+  });
+  var maxEixoCount=Math.max.apply(null,Object.values(contEixos));
+  var eixosEmpatados=Object.keys(contEixos).filter(function(k){return contEixos[k]===maxEixoCount;});
+  var eixoRecK=eixosEmpatados.length===1?eixosEmpatados[0]:'global';
+
+  var contAss={};
+  historico.forEach(function(s){var a=s.assinatura||'';contAss[a]=(contAss[a]||0)+1;});
+  var maxAssCount=Math.max.apply(null,Object.values(contAss));
+  var assEmpatadas=Object.keys(contAss).filter(function(k){return contAss[k]===maxAssCount;});
+  var assK=assEmpatadas.length===1?tituloDev(assEmpatadas[0]):'Distribuída';
+
+  var eixosDom=historico.map(function(s){return _eixoDomSessao(s.eixos||{});});
+  var mudancasDom=0;
+  for(var j=1;j<eixosDom.length;j++){if(eixosDom[j]!==eixosDom[j-1])mudancasDom++;}
+  var oscilacaoRelevante=mudancasDom>=2;
+
+  var alertaMudancaBrusca=false;
+  for(var k=1;k<gVals.length;k++){if(Math.abs(gVals[k]-gVals[k-1])>=0.6){alertaMudancaBrusca=true;break;}}
+
+  var subeixoRecorrente=null;
+  var sessoesComRespostas=historico.filter(function(s){return s.respostas||s.itens;});
+  if(sessoesComRespostas.length>=2){
+    var contSub={};
+    sessoesComRespostas.forEach(function(s){
+      var itens=s.respostas||s.itens||{};
+      var sub=calcularSubeixosPro(itens);
+      var subKeys=Object.keys(sub).filter(function(k){return sub[k]!==null;});
+      if(!subKeys.length)return;
+      var subDomK=subKeys.reduce(function(a,b){return sub[a]>=sub[b]?a:b;});
+      contSub[subDomK]=(contSub[subDomK]||0)+1;
     });
-    html+='</tbody></table></div>';
-
-    // GRÁFICO LONGITUDINAL
-    html+='<div class="p-bloco"><div class="p-label">Evolução dos eixos</div>';
-    html+=gerarGraficoLongitudinal(historico);
-    html+='</div>';
-
-    // TENDÊNCIA
-    if(analise){
-      html+='<div class="p-bloco"><div class="p-label">Tendência do caso</div>';
-      html+='<div class="tend-row">';
-      var tClass='tend-'+analise.tendenciaGlobal;
-      html+='<div class="tend-item">Tendência global: <b class="'+tClass+'">'+_tendenciaTexto(analise.tendenciaGlobal)+'</b></div>';
-      html+='<div class="tend-item">Eixo mais recorrente: <b>'+analise.eixoRecorrente+'</b></div>';
-      html+='<div class="tend-item">Assinatura mais recorrente: <b>'+analise.assinaturaRecorrente+'</b></div>';
-      html+='</div></div>';
-
-      // LEITURA LONGITUDINAL
-      if(analise.resumoClinico&&analise.resumoClinico.length){
-        html+='<div class="p-bloco"><div class="p-label">Leitura longitudinal</div>';
-        analise.resumoClinico.forEach(function(f){html+='<div class="resumo-frase">'+f+'</div>';});
-        html+='</div>';
-      }
-
-      // ALERTAS CLÍNICOS
-      var alertas=[];
-      if(analise.riscoCrescente)alertas.push('Risco crescente');
-      if(analise.perdaDeProposito)alertas.push('Perda de propósito');
-      if(analise.oscilacaoRelevante)alertas.push('Oscilação relevante');
-      if(analise.alertaMudancaBrusca)alertas.push('Mudança brusca entre sessões');
-      if(alertas.length){
-        html+='<div class="p-bloco"><div class="p-label">Alertas clínicos</div><div class="tags">';
-        alertas.forEach(function(a){html+='<span class="tag-alerta">'+a+'</span>';});
-        html+='</div></div>';
-      }
-
-      // PADRÃO RECORRENTE
-      html+='<div class="p-bloco"><div class="p-label">Padrão recorrente</div>';
-      html+='<div class="p-valor">'+analise.eixoRecorrente+'</div>';
-      html+='<div class="p-sub">'+analise.assinaturaRecorrente+'</div>';
-      if(analise.subeixoRecorrente)html+='<div class="p-sub">Subeixo: '+analise.subeixoRecorrente+'</div>';
-      html+='</div>';
+    var subKeys2=Object.keys(contSub);
+    if(subKeys2.length){
+      var maxSub=Math.max.apply(null,Object.values(contSub));
+      var subEmpatados=subKeys2.filter(function(k){return contSub[k]===maxSub;});
+      if(subEmpatados.length===1)subeixoRecorrente=NOMES_SUBEIXO_PROF[subEmpatados[0]]||null;
     }
   }
 
-  el.innerHTML=html;
+  var analise={
+    tendenciaGlobal:tendenciaGlobal,riscoCrescente:riscoCrescente,cargaAltaPersistente:cargaAltaPersistente,
+    perdaDeProposito:perdaDeProposito,
+    eixoRecorrente:eixoRecK==='global'?'Distribuído':(NOMES_EIXO_PROF[eixoRecK]||eixoRecK),
+    assinaturaRecorrente:assK,
+    subeixoRecorrente:subeixoRecorrente,
+    oscilacaoRelevante:oscilacaoRelevante,alertaMudancaBrusca:alertaMudancaBrusca,
+    resumoClinico:[]
+  };
+  analise.resumoClinico=gerarResumoClinico(analise);
+  return analise;
 }
 
-async function buscar(){
-  var el=document.getElementById('lista');
-  el.innerHTML='<div class="loading">Buscando...</div>';
-  aberto=null;
-  var q=sb.from('resultados').select('*').order('created_at',{ascending:false}).limit(100);
-  var de=document.getElementById('f-de').value;
-  var ate=document.getElementById('f-ate').value;
-  var sev=document.getElementById('f-sev').value;
-  if(de)q=q.gte('created_at',inicioDiaISO(de));
-  if(ate)q=q.lte('created_at',fimDiaISO(ate));
-  if(sev)q=q.eq('gravidade',sev);
-  var res=await q;
-  if(res.error){el.innerHTML='<div class="empty">Erro: '+res.error.message+'</div>';return;}
-  renderLista(res.data);
+function gerarResumoClinico(analise){
+  var frases=[];
+  var mapaTend={piora:'A carga global vem aumentando nas últimas sessões.',melhora:'A carga global apresenta redução nas últimas sessões.',oscilacao:'Há oscilação relevante entre as sessões.',estabilidade:'O padrão global se mantém estável ao longo das sessões.'};
+  if(mapaTend[analise.tendenciaGlobal])frases.push(mapaTend[analise.tendenciaGlobal]);
+  if(analise.cargaAltaPersistente)frases.push('A carga global permanece alta nas sessões mais recentes.');
+  if(analise.perdaDeProposito)frases.push('Propósito mostra redução progressiva.');
+  var eixoVal=analise.eixoRecorrente;
+  if(eixoVal&&eixoVal!=='global'&&eixoVal!=='Distribuído'&&eixoVal!==null){
+    frases.push(eixoVal+' permanece como área predominante de exigência.');
+  }
+  if(frases.length<4&&analise.assinaturaRecorrente&&analise.assinaturaRecorrente!=='Distribuída'){
+    frases.push('O caso mostra padrão recorrente de '+analise.assinaturaRecorrente.toLowerCase()+'.');
+  }
+  return frases.slice(0,4);
 }
 
-buscar();
-</script>
-</body>
-</html>
+function gerarTendencia(sessoes){
+  if(!sessoes||sessoes.length===0)return null;
+  var analise=analisarEvolucaoClinica(sessoes);
+  return {
+    tendenciaGlobal:analise.tendenciaGlobal,
+    eixoMaisRecorrente:analise.eixoRecorrente,
+    assinaturaRecorrente:analise.assinaturaRecorrente,
+    sessoes:sessoes.length
+  };
+}
+
+function _tendenciaTexto(t){
+  var mapa={piora:'Piora',melhora:'Melhora',estabilidade:'Estabilidade',oscilacao:'Oscilação'};
+  return mapa[t]||t;
+}
+
+function gerarGraficoLongitudinal(historico){
+  if(!historico||historico.length===0)return '';
+
+  var W=560,H=220,padL=36,padR=20,padT=16,padB=32;
+  var innerW=W-padL-padR,innerH=H-padT-padB;
+  var n=historico.length;
+
+  var series={S:[],O:[],A:[],P:[],G:[]};
+  var marcas=[];
+  historico.forEach(function(s,idx){
+    var ex=s.eixos||{};
+    marcas.push(s.marco||'D'+idx);
+    ['S','O','A','P','G'].forEach(function(k){
+      var v=ex[k];
+      series[k].push((v!==null&&v!==undefined&&!isNaN(v))?Number(v):null);
+    });
+  });
+
+  function xPos(i){return padL+(i/(Math.max(n-1,1)))*innerW;}
+  function yPos(v){return padT+innerH-(v/4)*innerH;}
+
+  var cores={S:'#7bb3cc',O:'#9b8ec4',A:'#72b98a',P:'#c4956e',G:'#2c2c3e'};
+  var espessuras={S:1.5,O:1.5,A:1.5,P:1.5,G:2.5};
+
+  var svg='<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:'+W+'px;display:block;overflow:visible;">';
+  svg+='<rect x="'+padL+'" y="'+padT+'" width="'+innerW+'" height="'+innerH+'" fill="#fafafa" rx="4"/>';
+
+  [0,1,2,3,4].forEach(function(v){
+    var y=yPos(v);
+    svg+='<line x1="'+padL+'" y1="'+y+'" x2="'+(padL+innerW)+'" y2="'+y+'" stroke="#e8e8e8" stroke-width="1"/>';
+    svg+='<text x="'+(padL-5)+'" y="'+(y+4)+'" text-anchor="end" font-size="9" fill="#bbb">'+v+'</text>';
+  });
+
+  marcas.forEach(function(m,i){
+    var x=xPos(i);
+    svg+='<text x="'+x+'" y="'+(padT+innerH+14)+'" text-anchor="middle" font-size="9" fill="#aaa">'+m+'</text>';
+  });
+
+  ['S','O','A','P','G'].forEach(function(k){
+    var pts=series[k];
+    var cor=cores[k],esp=espessuras[k];
+    var pathD='';
+    var pendurado=false;
+    pts.forEach(function(v,i){
+      if(v===null){pendurado=false;return;}
+      var x=xPos(i),y=yPos(v);
+      pathD+=(pendurado?'L':'M')+x+' '+y+' ';
+      pendurado=true;
+    });
+    if(pathD)svg+='<path d="'+pathD+'" fill="none" stroke="'+cor+'" stroke-width="'+esp+'" stroke-linejoin="round" stroke-linecap="round"/>';
+    pts.forEach(function(v,i){
+      if(v===null)return;
+      var x=xPos(i),y=yPos(v),r=k==='G'?4:3;
+      svg+='<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="'+cor+'" stroke="white" stroke-width="1.5"/>';
+    });
+  });
+
+  svg+='</svg>';
+
+  var leg='<div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;">';
+  var nomes={S:'Sentir',O:'Organizar',A:'Agir',P:'Propósito',G:'Global'};
+  ['S','O','A','P','G'].forEach(function(k){
+    leg+='<div style="display:flex;align-items:center;gap:4px;font-size:0.72rem;color:#555;">';
+    leg+='<svg width="18" height="4"><line x1="0" y1="2" x2="18" y2="2" stroke="'+cores[k]+'" stroke-width="'+(k==='G'?3:2)+'"/></svg>';
+    leg+=nomes[k]+'</div>';
+  });
+  leg+='</div>';
+
+  return svg+leg;
+}
