@@ -22,11 +22,13 @@ function _mediaIds(respostas,ids){
 
 function _r(v){return v!=null?Math.round(v*100)/100:null;}
 
+// CORRIGIDO: lê direto de devolutivas usando codigo como chave, sintese como retorno
 function tituloDev(codigo){
-  var bib=MAPA_MOTOR_BIBLIOTECA[codigo];
-  if(!bib)return codigo;
-  var dev=BIBLIOTECA_DEVOLUTIVAS[bib];
-  return dev?dev.titulo:codigo;
+  if(!codigo)return '';
+  if(typeof devolutivas!=='undefined'&&devolutivas[codigo]){
+    return devolutivas[codigo].sintese||codigo;
+  }
+  return codigo;
 }
 
 function calcularSubeixosPro(respostas){
@@ -189,7 +191,6 @@ function analisarEvolucaoClinica(historico){
   var alertaMudancaBrusca=false;
   for(var k=1;k<gVals.length;k++){if(Math.abs(gVals[k]-gVals[k-1])>=0.6){alertaMudancaBrusca=true;break;}}
 
-  // subeixo recorrente: só calcular se historico tiver campo 'respostas' ou 'itens' em cada sessão
   var subeixoRecorrente=null;
   var sessoesComRespostas=historico.filter(function(s){return s.respostas||s.itens;});
   if(sessoesComRespostas.length>=2){
@@ -280,29 +281,22 @@ function gerarGraficoLongitudinal(historico){
   var espessuras={S:1.5,O:1.5,A:1.5,P:1.5,G:2.5};
 
   var svg='<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:'+W+'px;display:block;overflow:visible;">';
-
-  // fundo
   svg+='<rect x="'+padL+'" y="'+padT+'" width="'+innerW+'" height="'+innerH+'" fill="#fafafa" rx="4"/>';
 
-  // linhas de referência horizontais
   [0,1,2,3,4].forEach(function(v){
     var y=yPos(v);
     svg+='<line x1="'+padL+'" y1="'+y+'" x2="'+(padL+innerW)+'" y2="'+y+'" stroke="#e8e8e8" stroke-width="1"/>';
     svg+='<text x="'+(padL-5)+'" y="'+(y+4)+'" text-anchor="end" font-size="9" fill="#bbb">'+v+'</text>';
   });
 
-  // labels eixo X
   marcas.forEach(function(m,i){
     var x=xPos(i);
     svg+='<text x="'+x+'" y="'+(padT+innerH+14)+'" text-anchor="middle" font-size="9" fill="#aaa">'+m+'</text>';
   });
 
-  // linhas e pontos por série
   ['S','O','A','P','G'].forEach(function(k){
     var pts=series[k];
     var cor=cores[k],esp=espessuras[k];
-
-    // linha — quebra segmento em null
     var pathD='';
     var pendurado=false;
     pts.forEach(function(v,i){
@@ -312,8 +306,6 @@ function gerarGraficoLongitudinal(historico){
       pendurado=true;
     });
     if(pathD)svg+='<path d="'+pathD+'" fill="none" stroke="'+cor+'" stroke-width="'+esp+'" stroke-linejoin="round" stroke-linecap="round"/>';
-
-    // pontos
     pts.forEach(function(v,i){
       if(v===null)return;
       var x=xPos(i),y=yPos(v),r=k==='G'?4:3;
@@ -323,7 +315,6 @@ function gerarGraficoLongitudinal(historico){
 
   svg+='</svg>';
 
-  // legenda
   var leg='<div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;">';
   var nomes={S:'Sentir',O:'Organizar',A:'Agir',P:'Propósito',G:'Global'};
   ['S','O','A','P','G'].forEach(function(k){
