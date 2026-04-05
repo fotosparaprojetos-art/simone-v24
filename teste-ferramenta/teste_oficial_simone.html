@@ -1,1 +1,237 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>SiMone V24 — Teste obterDevolutiva</title>
+<style>
+  body { font-family: monospace; background: #0f0f0f; color: #e0e0e0; padding: 24px; font-size: 13px; }
+  h2 { color: #7ec8e3; margin: 24px 0 8px; font-size: 14px; letter-spacing: 0.1em; text-transform: uppercase; }
+  .caso { background: #1a1a1a; border: 1px solid #333; border-radius: 4px; padding: 16px; margin-bottom: 12px; }
+  .label { color: #888; font-size: 11px; margin-bottom: 4px; }
+  .entrada { color: #a8d8a8; margin-bottom: 8px; }
+  .campo { margin: 4px 0; }
+  .key { color: #7ec8e3; }
+  .val { color: #f0e68c; }
+  .val-str { color: #dda0dd; }
+  .val-bool-true { color: #90ee90; }
+  .val-bool-false { color: #ff6b6b; }
+  .val-null { color: #888; }
+  .bloqueado { border-left: 3px solid #ff6b6b; }
+  .ok { border-left: 3px solid #90ee90; }
+  .warn { border-left: 3px solid #f0e68c; }
+  .pass { color: #90ee90; }
+  .fail { color: #ff6b6b; }
+  hr { border: none; border-top: 1px solid #333; margin: 24px 0; }
+  #resumo { background: #1a1a1a; border: 1px solid #444; padding: 16px; border-radius: 4px; margin-top: 24px; }
+</style>
+</head>
+<body>
 
+<h2>SiMone V24 · Teste obterDevolutiva.js</h2>
+<div id="output"></div>
+<div id="resumo"></div>
+
+<!-- Carregar bibliotecas na ordem correta -->
+<!-- Opção A: mesma pasta → usar caminhos relativos simples -->
+<!-- Opção B: /js/ → rodar python -m http.server na raiz do projeto -->
+<script src="biblioteca.devolutivas.js"></script>
+<script src="obterDevolutiva.js"></script>
+
+<script>
+var casos = [
+  {
+    id: 'T01',
+    desc: 'Estado principal válido · 2 sessões · longitudinal ativo',
+    entrada: { estado: 'sobrecarga_de_acao', sessoes: 2, dados_validos: true },
+    esperado: { _bloqueado: false, _categoria: 'principal', temLongitudinal: true }
+  },
+  {
+    id: 'T02',
+    desc: 'Estado principal válido · 1 sessão · longitudinal baseline',
+    entrada: { estado: 'colapso_global', sessoes: 1, dados_validos: true },
+    esperado: { _bloqueado: false, _categoria: 'principal', longitudinalBaseline: true }
+  },
+  {
+    id: 'T03',
+    desc: 'dados_validos: false · fallback técnico',
+    entrada: { estado: 'colapso_global', sessoes: 2, dados_validos: false },
+    esperado: { _bloqueado: true, _categoria: 'tecnico' }
+  },
+  {
+    id: 'T04',
+    desc: 'dados_validos ausente · fallback técnico',
+    entrada: { estado: 'colapso_global', sessoes: 2 },
+    esperado: { _bloqueado: true, _categoria: 'tecnico' }
+  },
+  {
+    id: 'T05',
+    desc: 'ausencia_de_sinal · bloqueia leitura clínica',
+    entrada: { estado: 'ausencia_de_sinal', sessoes: 1, dados_validos: true },
+    esperado: { _bloqueado: true }
+  },
+  {
+    id: 'T06',
+    desc: 'inconsistencia_tecnica · bloqueia leitura clínica',
+    entrada: { estado: 'inconsistencia_tecnica', sessoes: 1, dados_validos: true },
+    esperado: { _bloqueado: true, _categoria: 'tecnico' }
+  },
+  {
+    id: 'T07',
+    desc: 'Estado complementar como principal · recusado',
+    entrada: { estado: 'falso_funcional', sessoes: 2, dados_validos: true },
+    esperado: { _bloqueado: false, _categoria: 'complementar', _codigo: 'falso_funcional' }
+  },
+  {
+    id: 'T08',
+    desc: 'Modulador longitudinal · 1 sessão · insuficiente',
+    entrada: { estado: 'melhora_funcional', sessoes: 1, dados_validos: true },
+    esperado: { _bloqueado: false, _categoria: 'modulador_longitudinal', _codigo: 'melhora_funcional', longitudinalBaseline: true }
+  },
+  {
+    id: 'T09',
+    desc: 'Modulador longitudinal · 2 sessões · fallbackModulador',
+    entrada: { estado: 'melhora_funcional', sessoes: 2, dados_validos: true },
+    esperado: { _bloqueado: false, _categoria: 'modulador_longitudinal', _codigo: 'melhora_funcional' }
+  },
+  {
+    id: 'T10',
+    desc: 'Estado inativo (agir_dominante) · retorna ausente',
+    entrada: { estado: 'agir_dominante', sessoes: 2, dados_validos: true },
+    esperado: { _bloqueado: false, _categoria: 'ausente', _codigo: 'agir_dominante' }
+  },
+  {
+    id: 'T11',
+    desc: 'Estado fundido (sobrecarga_distribuida) · retorna ausente',
+    entrada: { estado: 'sobrecarga_distribuida', sessoes: 2, dados_validos: true },
+    esperado: { _bloqueado: false, _categoria: 'ausente', _codigo: 'sobrecarga_distribuida' }
+  },
+  {
+    id: 'T12',
+    desc: 'saturacao_maxima · _alerta preenchido',
+    entrada: { estado: 'saturacao_maxima', sessoes: 2, dados_validos: true },
+    esperado: { _bloqueado: false, _categoria: 'principal', _codigo: 'saturacao_maxima', temAlerta: true }
+  },
+  {
+    id: 'T13',
+    desc: 'Estado inexistente · fallback ausente',
+    entrada: { estado: 'estado_que_nao_existe', sessoes: 2, dados_validos: true },
+    esperado: { _bloqueado: false, _categoria: 'ausente', _codigo: 'estado_que_nao_existe' }
+  },
+  {
+    id: 'T14',
+    desc: 'parametros inválido (null) · fallback técnico',
+    entrada: null,
+    esperado: { _bloqueado: true, _categoria: 'tecnico' }
+  },
+  {
+    id: 'T15',
+    desc: 'estado ausente (string vazia) · fallback ausente',
+    entrada: { estado: '', sessoes: 2, dados_validos: true },
+    esperado: { _bloqueado: false, _categoria: 'ausente' }
+  },
+  {
+    id: 'T16',
+    desc: 'sessoes como string · tratado como 0 · baseline',
+    entrada: { estado: 'sobrecarga_de_acao', sessoes: '2', dados_validos: true },
+    esperado: { _bloqueado: false, _categoria: 'principal', longitudinalBaseline: true }
+  }
+];
+
+function renderValor(v) {
+  if (v === null)            return '<span class="val-null">null</span>';
+  if (v === true)            return '<span class="val-bool-true">true</span>';
+  if (v === false)           return '<span class="val-bool-false">false</span>';
+  if (typeof v === 'string') return '<span class="val-str">"' + v.substring(0, 80) + (v.length > 80 ? '…' : '') + '"</span>';
+  return '<span class="val">' + v + '</span>';
+}
+
+function verificar(resultado, esperado) {
+  var erros = [];
+
+  // Estrutura obrigatória — todos os campos clínicos devem existir
+  if (!resultado.sintese || !resultado.interpretacao || !resultado.conduta)
+    erros.push('estrutura incompleta: sintese/interpretacao/conduta ausentes');
+
+  // Metadados
+  if ('_bloqueado' in esperado && resultado._bloqueado !== esperado._bloqueado)
+    erros.push('_bloqueado: esperado ' + esperado._bloqueado + ', obtido ' + resultado._bloqueado);
+  if ('_categoria' in esperado && resultado._categoria !== esperado._categoria)
+    erros.push('_categoria: esperado "' + esperado._categoria + '", obtido "' + resultado._categoria + '"');
+  if ('_codigo' in esperado && resultado._codigo !== esperado._codigo)
+    erros.push('_codigo: esperado "' + esperado._codigo + '", obtido "' + resultado._codigo + '"');
+
+  // Longitudinal
+  if (esperado.temLongitudinal && (!resultado.longitudinal || resultado.longitudinal === 'Baseline — sem leitura longitudinal disponível.' || resultado.longitudinal === 'Leitura longitudinal não disponível.'))
+    erros.push('longitudinal: esperado texto da biblioteca, obtido baseline/vazio');
+  if (esperado.longitudinalBaseline && resultado.longitudinal !== 'Baseline — sem leitura longitudinal disponível.')
+    erros.push('longitudinal: esperado baseline, obtido "' + resultado.longitudinal.substring(0, 40) + '"');
+
+  // Alerta
+  if (esperado.temAlerta && !resultado._alerta)
+    erros.push('_alerta: esperado string, obtido null');
+
+  return erros;
+}
+
+var out = document.getElementById('output');
+var total = 0, passou = 0;
+
+casos.forEach(function(c) {
+  total++;
+  var resultado;
+  try {
+    resultado = obterDevolutiva(c.entrada);
+  } catch(e) {
+    resultado = {
+      sintese:       null,
+      interpretacao: null,
+      implicacoes:   null,
+      limites:       null,
+      conduta:       null,
+      longitudinal:  null,
+      _alerta:       null,
+      _bloqueado:    true,
+      _codigo:       null,
+      _categoria:    null,
+      _erro:         e.message
+    };
+  }
+
+  var erros = verificar(resultado, c.esperado);
+  var ok = erros.length === 0;
+  if (ok) passou++;
+
+  var cls = resultado._bloqueado ? 'bloqueado' : (ok ? 'ok' : 'warn');
+
+  var html = '<div class="caso ' + cls + '">';
+  html += '<div class="label">' + c.id + ' — ' + c.desc + '</div>';
+  html += '<div class="entrada">Entrada: ' + JSON.stringify(c.entrada) + '</div>';
+
+  var camposExibir = ['sintese', '_codigo', '_categoria', '_bloqueado', '_alerta', 'longitudinal'];
+  camposExibir.forEach(function(k) {
+    html += '<div class="campo"><span class="key">' + k + '</span>: ' + renderValor(resultado[k]) + '</div>';
+  });
+  if (resultado._erro) {
+    html += '<div class="campo"><span class="key" style="color:#ff6b6b">_erro</span>: ' + renderValor(resultado._erro) + '</div>';
+  }
+
+  html += '<div class="campo" style="margin-top:6px">';
+  if (ok) {
+    html += '<span class="pass">✓ PASS</span>';
+  } else {
+    html += '<span class="fail">✗ FAIL — ' + erros.join(' | ') + '</span>';
+  }
+  html += '</div></div>';
+
+  out.innerHTML += html;
+});
+
+document.getElementById('resumo').innerHTML =
+  '<div style="font-size:14px">' +
+  (passou === total
+    ? '<span class="pass">✓ TODOS OS TESTES PASSARAM (' + passou + '/' + total + ')</span>'
+    : '<span class="fail">✗ ' + (total - passou) + ' FALHA(S) — ' + passou + '/' + total + ' passaram</span>') +
+  '</div>';
+</script>
+</body>
+</html>
