@@ -3,182 +3,251 @@
 <head>
 <meta charset="UTF-8">
 <title>SiMone V24 — Teste obterDevolutiva</title>
-
 <style>
-body { font-family: monospace; background: #0f0f0f; color: #e0e0e0; padding: 24px; font-size: 13px; }
-h2 { color: #7ec8e3; margin: 24px 0 8px; font-size: 14px; letter-spacing: 0.1em; text-transform: uppercase; }
-.caso { background: #1a1a1a; border: 1px solid #333; border-radius: 4px; padding: 16px; margin-bottom: 12px; }
-.label { color: #888; font-size: 11px; margin-bottom: 4px; }
-.entrada { color: #a8d8a8; margin-bottom: 8px; }
-.campo { margin: 4px 0; }
-.key { color: #7ec8e3; }
-.val-str { color: #dda0dd; }
-.val-bool-true { color: #90ee90; }
-.val-bool-false { color: #ff6b6b; }
-.val-null { color: #888; }
-.bloqueado { border-left: 3px solid #ff6b6b; }
-.ok { border-left: 3px solid #90ee90; }
-.warn { border-left: 3px solid #f0e68c; }
-.pass { color: #90ee90; }
-.fail { color: #ff6b6b; }
-#resumo { margin-top: 24px; }
+  body { font-family: monospace; background: #0f0f0f; color: #e0e0e0; padding: 24px; font-size: 13px; }
+  h2 { color: #7ec8e3; margin: 24px 0 8px; font-size: 14px; letter-spacing: 0.1em; text-transform: uppercase; }
+  .caso { background: #1a1a1a; border: 1px solid #333; border-radius: 4px; padding: 16px; margin-bottom: 12px; }
+  .label { color: #888; font-size: 11px; margin-bottom: 4px; }
+  .entrada { color: #a8d8a8; margin-bottom: 8px; }
+  .campo { margin: 4px 0; }
+  .key { color: #7ec8e3; }
+  .val { color: #f0e68c; }
+  .val-str { color: #dda0dd; }
+  .val-bool-true { color: #90ee90; }
+  .val-bool-false { color: #ff6b6b; }
+  .val-null { color: #888; }
+  .bloqueado { border-left: 3px solid #ff6b6b; }
+  .ok { border-left: 3px solid #90ee90; }
+  .warn { border-left: 3px solid #f0e68c; }
+  .pass { color: #90ee90; }
+  .fail { color: #ff6b6b; }
+  hr { border: none; border-top: 1px solid #333; margin: 24px 0; }
+  #resumo { background: #1a1a1a; border: 1px solid #444; padding: 16px; border-radius: 4px; margin-top: 24px; }
 </style>
 </head>
-
 <body>
 
 <h2>SiMone V24 · Teste obterDevolutiva.js</h2>
 <div id="output"></div>
 <div id="resumo"></div>
 
-<!-- ================= BIBLIOTECA ================= -->
-<script>
-var devolutivas = {
-  sobrecarga_de_acao: {
-    categoria: 'principal',
-    ativo: true,
-    usar_como_principal: true,
-    bloqueia_leitura_clinica: false,
-    sintese: 'Hoje está mais difícil fazer as coisas acontecerem.',
-    interpretacao: 'Tudo exige mais esforço.',
-    implicacoes: 'Custo de ação elevado.',
-    limites: 'Não indica incapacidade.',
-    conduta: 'Reduzir tarefas.',
-    longitudinal: 'Persistência indica esgotamento.',
-    _alerta: null
-  },
+<script src="../js/biblioteca.devolutivas.js"></script>
+<script src="../js/obterDevolutiva.js"></script>
 
-  colapso_global: {
-    categoria: 'principal',
-    ativo: true,
-    usar_como_principal: true,
-    bloqueia_leitura_clinica: false,
-    sintese: 'Agora está além do que você consegue dar conta.',
-    interpretacao: 'Sistema no limite.',
-    implicacoes: 'Risco alto.',
-    limites: 'Estado agudo.',
-    conduta: 'Reduzir exigências.',
-    longitudinal: 'Repetição indica necessidade de suporte.',
-    _alerta: 'Alerta crítico.'
-  },
-
-  ausencia_de_sinal: {
-    categoria: 'especial',
-    ativo: true,
-    usar_como_principal: false,
-    bloqueia_leitura_clinica: true,
-    sintese: 'Nenhum sinal registrado.',
-    interpretacao: 'Pode ser ausência real ou falha de engajamento.',
-    implicacoes: 'Ambiguidade.',
-    limites: 'Não conclusivo.',
-    conduta: 'Reavaliar.',
-    longitudinal: null,
-    _alerta: null
-  },
-
-  inconsistencia_tecnica: {
-    categoria: 'tecnico',
-    ativo: true,
-    usar_como_principal: false,
-    bloqueia_leitura_clinica: true,
-    sintese: 'Erro técnico.',
-    interpretacao: 'Dados inválidos.',
-    implicacoes: 'Sem leitura.',
-    limites: 'Não clínico.',
-    conduta: 'Refazer.',
-    longitudinal: null,
-    _alerta: null
-  },
-
-  falso_funcional: {
-    categoria: 'complementar',
-    ativo: true,
-    usar_como_principal: false,
-    bloqueia_leitura_clinica: false,
-    confiabilidade_reduzida: true,
-    sintese: 'Parece que está tudo bem.',
-    interpretacao: 'Custo oculto.',
-    implicacoes: 'Risco silencioso.',
-    limites: 'Não estável.',
-    conduta: 'Reduzir ritmo.',
-    longitudinal: 'Pode evoluir para colapso.',
-    _alerta: null
-  },
-
-  melhora_funcional: {
-    categoria: 'modulador_longitudinal',
-    ativo: true,
-    usar_como_principal: false,
-    bloqueia_leitura_clinica: false,
-    sintese: 'Melhora observada.',
-    interpretacao: 'Redução de carga.',
-    implicacoes: 'Possível recuperação.',
-    limites: 'Pode ser transitório.',
-    conduta: 'Manter.',
-    longitudinal: 'Tendência de melhora.',
-    _alerta: null
-  },
-
-  saturacao_maxima: {
-    categoria: 'principal',
-    ativo: true,
-    usar_como_principal: true,
-    bloqueia_leitura_clinica: false,
-    sintese: 'Tudo no limite.',
-    interpretacao: 'Saturação total.',
-    implicacoes: 'Risco crítico.',
-    limites: 'Não diagnóstico.',
-    conduta: 'Parar.',
-    longitudinal: 'Repetição indica colapso crônico.',
-    _alerta: 'Estado crítico.'
-  },
-
-  agir_dominante: { ativo:false },
-  sobrecarga_distribuida: { ativo:false }
-};
-</script>
-
-<!-- ================= FUNÇÃO ================= -->
-<script>
-function obterDevolutiva(p){
-  if(!p||p.dados_validos!==true) return { _bloqueado:true,_categoria:'tecnico',_codigo:null,longitudinal:'Baseline — sem leitura longitudinal disponível.' };
-
-  var e=devolutivas[p.estado];
-  if(!p.estado||!e||e.ativo===false) return { _bloqueado:false,_categoria:'ausente',_codigo:p.estado,longitudinal:'Baseline — sem leitura longitudinal disponível.' };
-
-  if(e.bloqueia_leitura_clinica) return { ...e,_bloqueado:true,_codigo:p.estado,longitudinal:'Baseline — sem leitura longitudinal disponível.' };
-
-  var l = p.sessoes<2 ? 'Baseline — sem leitura longitudinal disponível.' : (e.longitudinal||'Leitura longitudinal não disponível.');
-
-  return { ...e,_bloqueado:false,_codigo:p.estado,longitudinal:l };
-}
-</script>
-
-<!-- ================= TESTE ================= -->
 <script>
 var casos = [
- {estado:'sobrecarga_de_acao',sessoes:2,dados_validos:true},
- {estado:'colapso_global',sessoes:1,dados_validos:true},
- {estado:'colapso_global',sessoes:2,dados_validos:false},
- {estado:'ausencia_de_sinal',sessoes:1,dados_validos:true},
- {estado:'falso_funcional',sessoes:2,dados_validos:true},
- {estado:'melhora_funcional',sessoes:1,dados_validos:true},
- {estado:'melhora_funcional',sessoes:2,dados_validos:true},
- {estado:'agir_dominante',sessoes:2,dados_validos:true},
- {estado:'sobrecarga_distribuida',sessoes:2,dados_validos:true},
- {estado:'saturacao_maxima',sessoes:2,dados_validos:true}
+  {
+    id: 'T01',
+    desc: 'Estado principal válido · 2 sessões · longitudinal ativo',
+    entrada: { estado: 'sobrecarga_de_acao', sessoes: 2, dados_validos: true },
+    esperado: { _bloqueado: false, _categoria: 'principal', _codigo: 'sobrecarga_de_acao', temLongitudinal: true }
+  },
+  {
+    id: 'T02',
+    desc: 'Estado principal válido · 1 sessão · longitudinal baseline',
+    entrada: { estado: 'colapso_global', sessoes: 1, dados_validos: true },
+    esperado: { _bloqueado: false, _categoria: 'principal', _codigo: 'colapso_global', longitudinalBaseline: true }
+  },
+  {
+    id: 'T03',
+    desc: 'dados_validos: false · fallback técnico',
+    entrada: { estado: 'colapso_global', sessoes: 2, dados_validos: false },
+    esperado: { _bloqueado: true, _categoria: 'tecnico', _codigo: 'colapso_global', longitudinalBaseline: true }
+  },
+  {
+    id: 'T04',
+    desc: 'dados_validos ausente · fallback técnico',
+    entrada: { estado: 'colapso_global', sessoes: 2 },
+    esperado: { _bloqueado: true, _categoria: 'tecnico', _codigo: 'colapso_global', longitudinalBaseline: true }
+  },
+  {
+    id: 'T05',
+    desc: 'ausencia_de_sinal · bloqueia leitura clínica',
+    entrada: { estado: 'ausencia_de_sinal', sessoes: 1, dados_validos: true },
+    esperado: { _bloqueado: true, _categoria: 'especial', _codigo: 'ausencia_de_sinal', longitudinalBaseline: true }
+  },
+  {
+    id: 'T06',
+    desc: 'inconsistencia_tecnica · bloqueia leitura clínica',
+    entrada: { estado: 'inconsistencia_tecnica', sessoes: 1, dados_validos: true },
+    esperado: { _bloqueado: true, _categoria: 'tecnico', _codigo: 'inconsistencia_tecnica', longitudinalBaseline: true }
+  },
+  {
+    id: 'T07',
+    desc: 'Estado complementar como principal',
+    entrada: { estado: 'falso_funcional', sessoes: 2, dados_validos: true },
+    esperado: { _bloqueado: false, _categoria: 'complementar', _codigo: 'falso_funcional', temLongitudinal: true }
+  },
+  {
+    id: 'T08',
+    desc: 'Modulador longitudinal · 1 sessão',
+    entrada: { estado: 'melhora_funcional', sessoes: 1, dados_validos: true },
+    esperado: { _bloqueado: false, _categoria: 'modulador_longitudinal', _codigo: 'melhora_funcional', longitudinalBaseline: true }
+  },
+  {
+    id: 'T09',
+    desc: 'Modulador longitudinal · 2 sessões',
+    entrada: { estado: 'melhora_funcional', sessoes: 2, dados_validos: true },
+    esperado: { _bloqueado: false, _categoria: 'modulador_longitudinal', _codigo: 'melhora_funcional', temLongitudinal: true }
+  },
+  {
+    id: 'T10',
+    desc: 'Estado inativo (agir_dominante) · retorna ausente',
+    entrada: { estado: 'agir_dominante', sessoes: 2, dados_validos: true },
+    esperado: { _bloqueado: false, _categoria: 'ausente', _codigo: 'agir_dominante', longitudinalBaseline: true }
+  },
+  {
+    id: 'T11',
+    desc: 'Estado fundido (sobrecarga_distribuida) · retorna ausente',
+    entrada: { estado: 'sobrecarga_distribuida', sessoes: 2, dados_validos: true },
+    esperado: { _bloqueado: false, _categoria: 'ausente', _codigo: 'sobrecarga_distribuida', longitudinalBaseline: true }
+  },
+  {
+    id: 'T12',
+    desc: 'saturacao_maxima · _alerta preenchido',
+    entrada: { estado: 'saturacao_maxima', sessoes: 2, dados_validos: true },
+    esperado: { _bloqueado: false, _categoria: 'principal', _codigo: 'saturacao_maxima', temLongitudinal: true, temAlerta: true }
+  },
+  {
+    id: 'T13',
+    desc: 'Estado inexistente · fallback ausente',
+    entrada: { estado: 'estado_que_nao_existe', sessoes: 2, dados_validos: true },
+    esperado: { _bloqueado: false, _categoria: 'ausente', _codigo: 'estado_que_nao_existe', longitudinalBaseline: true }
+  },
+  {
+    id: 'T14',
+    desc: 'parametros inválido (null) · fallback técnico',
+    entrada: null,
+    esperado: { _bloqueado: true, _categoria: 'tecnico', _codigo: null, longitudinalBaseline: true }
+  },
+  {
+    id: 'T15',
+    desc: 'estado ausente (string vazia) · fallback ausente',
+    entrada: { estado: '', sessoes: 2, dados_validos: true },
+    esperado: { _bloqueado: false, _categoria: 'ausente', _codigo: null, longitudinalBaseline: true }
+  },
+  {
+    id: 'T16',
+    desc: 'sessoes como string · tratado como 0 · baseline',
+    entrada: { estado: 'sobrecarga_de_acao', sessoes: '2', dados_validos: true },
+    esperado: { _bloqueado: false, _categoria: 'principal', _codigo: 'sobrecarga_de_acao', longitudinalBaseline: true }
+  }
 ];
 
-var ok=0;
+function renderValor(v) {
+  if (v === null)            return '<span class="val-null">null</span>';
+  if (v === true)            return '<span class="val-bool-true">true</span>';
+  if (v === false)           return '<span class="val-bool-false">false</span>';
+  if (typeof v === 'string') return '<span class="val-str">"' + v.substring(0, 80) + (v.length > 80 ? '…' : '') + '"</span>';
+  return '<span class="val">' + v + '</span>';
+}
 
-casos.forEach(function(c){
-  var r=obterDevolutiva(c);
-  if(r) ok++;
+function verificar(resultado, esperado) {
+  var erros = [];
+
+  if (!resultado || typeof resultado !== 'object') {
+    erros.push('resultado inválido');
+    return erros;
+  }
+
+  if (!resultado.sintese || !resultado.interpretacao || !resultado.conduta) {
+    erros.push('estrutura incompleta: sintese/interpretacao/conduta ausentes');
+  }
+
+  if ('_bloqueado' in esperado && resultado._bloqueado !== esperado._bloqueado) {
+    erros.push('_bloqueado: esperado ' + esperado._bloqueado + ', obtido ' + resultado._bloqueado);
+  }
+
+  if ('_categoria' in esperado && resultado._categoria !== esperado._categoria) {
+    erros.push('_categoria: esperado "' + esperado._categoria + '", obtido "' + resultado._categoria + '"');
+  }
+
+  if ('_codigo' in esperado && resultado._codigo !== esperado._codigo) {
+    erros.push('_codigo: esperado "' + esperado._codigo + '", obtido "' + resultado._codigo + '"');
+  }
+
+  if (esperado.temLongitudinal) {
+    if (!resultado.longitudinal ||
+        resultado.longitudinal === 'Baseline — sem leitura longitudinal disponível.' ||
+        resultado.longitudinal === 'Leitura longitudinal não disponível.') {
+      erros.push('longitudinal: esperado texto útil, obtido baseline/vazio');
+    }
+  }
+
+  if (esperado.longitudinalBaseline) {
+    if (resultado.longitudinal !== 'Baseline — sem leitura longitudinal disponível.') {
+      erros.push('longitudinal: esperado baseline, obtido "' + String(resultado.longitudinal).substring(0, 60) + '"');
+    }
+  }
+
+  if (esperado.temAlerta && !resultado._alerta) {
+    erros.push('_alerta: esperado string, obtido null');
+  }
+
+  return erros;
+}
+
+var out = document.getElementById('output');
+var total = 0, passou = 0;
+
+casos.forEach(function(c) {
+  total++;
+  var resultado;
+
+  try {
+    resultado = obterDevolutiva(c.entrada);
+  } catch(e) {
+    resultado = {
+      sintese: null,
+      interpretacao: null,
+      implicacoes: null,
+      limites: null,
+      conduta: null,
+      longitudinal: null,
+      _alerta: null,
+      _bloqueado: true,
+      _codigo: null,
+      _categoria: null,
+      _erro: e.message
+    };
+  }
+
+  var erros = verificar(resultado, c.esperado);
+  var ok = erros.length === 0;
+  if (ok) passou++;
+
+  var cls = resultado._bloqueado ? 'bloqueado' : (ok ? 'ok' : 'warn');
+
+  var html = '<div class="caso ' + cls + '">';
+  html += '<div class="label">' + c.id + ' — ' + c.desc + '</div>';
+  html += '<div class="entrada">Entrada: ' + JSON.stringify(c.entrada) + '</div>';
+
+  var camposExibir = ['sintese', '_codigo', '_categoria', '_bloqueado', '_alerta', 'longitudinal'];
+  camposExibir.forEach(function(k) {
+    html += '<div class="campo"><span class="key">' + k + '</span>: ' + renderValor(resultado[k]) + '</div>';
+  });
+
+  if (resultado._erro) {
+    html += '<div class="campo"><span class="key" style="color:#ff6b6b">_erro</span>: ' + renderValor(resultado._erro) + '</div>';
+  }
+
+  html += '<div class="campo" style="margin-top:6px">';
+  if (ok) {
+    html += '<span class="pass">✓ PASS</span>';
+  } else {
+    html += '<span class="fail">✗ FAIL — ' + erros.join(' | ') + '</span>';
+  }
+  html += '</div></div>';
+
+  out.innerHTML += html;
 });
 
 document.getElementById('resumo').innerHTML =
-  '<span class="pass">✓ TESTE EXECUTADO ('+ok+'/'+casos.length+')</span>';
+  '<div style="font-size:14px">' +
+  (passou === total
+    ? '<span class="pass">✓ TODOS OS TESTES PASSARAM (' + passou + '/' + total + ')</span>'
+    : '<span class="fail">✗ ' + (total - passou) + ' FALHA(S) — ' + passou + '/' + total + ' passaram</span>') +
+  '</div>';
 </script>
-
 </body>
 </html>
