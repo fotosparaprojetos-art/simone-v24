@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>SiMone V24 — Teste obterDevolutiva</title>
+
+<style>
+body { font-family: monospace; background: #0f0f0f; color: #e0e0e0; padding: 24px; font-size: 13px; }
+h2 { color: #7ec8e3; margin: 24px 0 8px; font-size: 14px; letter-spacing: 0.1em; text-transform: uppercase; }
+.caso { background: #1a1a1a; border: 1px solid #333; border-radius: 4px; padding: 16px; margin-bottom: 12px; }
+.label { color: #888; font-size: 11px; margin-bottom: 4px; }
+.entrada { color: #a8d8a8; margin-bottom: 8px; }
+.campo { margin: 4px 0; }
+.key { color: #7ec8e3; }
+.val-str { color: #dda0dd; }
+.val-bool-true { color: #90ee90; }
+.val-bool-false { color: #ff6b6b; }
+.val-null { color: #888; }
+.bloqueado { border-left: 3px solid #ff6b6b; }
+.ok { border-left: 3px solid #90ee90; }
+.warn { border-left: 3px solid #f0e68c; }
+.pass { color: #90ee90; }
+.fail { color: #ff6b6b; }
+#resumo { margin-top: 24px; }
+</style>
+</head>
+
+<body>
+
+<h2>SiMone V24 · Teste obterDevolutiva.js</h2>
+<div id="output"></div>
+<div id="resumo"></div>
+
+<!-- ================= BIBLIOTECA ================= -->
+<script>
+var devolutivas = {
+  sobrecarga_de_acao: {
+    categoria: 'principal',
+    ativo: true,
+    usar_como_principal: true,
+    bloqueia_leitura_clinica: false,
+    sintese: 'Hoje está mais difícil fazer as coisas acontecerem.',
+    interpretacao: 'Tudo exige mais esforço.',
+    implicacoes: 'Custo de ação elevado.',
+    limites: 'Não indica incapacidade.',
+    conduta: 'Reduzir tarefas.',
+    longitudinal: 'Persistência indica esgotamento.',
+    _alerta: null
+  },
+
+  colapso_global: {
+    categoria: 'principal',
+    ativo: true,
+    usar_como_principal: true,
+    bloqueia_leitura_clinica: false,
+    sintese: 'Agora está além do que você consegue dar conta.',
+    interpretacao: 'Sistema no limite.',
+    implicacoes: 'Risco alto.',
+    limites: 'Estado agudo.',
+    conduta: 'Reduzir exigências.',
+    longitudinal: 'Repetição indica necessidade de suporte.',
+    _alerta: 'Alerta crítico.'
+  },
+
+  ausencia_de_sinal: {
+    categoria: 'especial',
+    ativo: true,
+    usar_como_principal: false,
+    bloqueia_leitura_clinica: true,
+    sintese: 'Nenhum sinal registrado.',
+    interpretacao: 'Pode ser ausência real ou falha de engajamento.',
+    implicacoes: 'Ambiguidade.',
+    limites: 'Não conclusivo.',
+    conduta: 'Reavaliar.',
+    longitudinal: null,
+    _alerta: null
+  },
+
+  inconsistencia_tecnica: {
+    categoria: 'tecnico',
+    ativo: true,
+    usar_como_principal: false,
+    bloqueia_leitura_clinica: true,
+    sintese: 'Erro técnico.',
+    interpretacao: 'Dados inválidos.',
+    implicacoes: 'Sem leitura.',
+    limites: 'Não clínico.',
+    conduta: 'Refazer.',
+    longitudinal: null,
+    _alerta: null
+  },
+
+  falso_funcional: {
+    categoria: 'complementar',
+    ativo: true,
+    usar_como_principal: false,
+    bloqueia_leitura_clinica: false,
+    confiabilidade_reduzida: true,
+    sintese: 'Parece que está tudo bem.',
+    interpretacao: 'Custo oculto.',
+    implicacoes: 'Risco silencioso.',
+    limites: 'Não estável.',
+    conduta: 'Reduzir ritmo.',
+    longitudinal: 'Pode evoluir para colapso.',
+    _alerta: null
+  },
+
+  melhora_funcional: {
+    categoria: 'modulador_longitudinal',
+    ativo: true,
+    usar_como_principal: false,
+    bloqueia_leitura_clinica: false,
+    sintese: 'Melhora observada.',
+    interpretacao: 'Redução de carga.',
+    implicacoes: 'Possível recuperação.',
+    limites: 'Pode ser transitório.',
+    conduta: 'Manter.',
+    longitudinal: 'Tendência de melhora.',
+    _alerta: null
+  },
+
+  saturacao_maxima: {
+    categoria: 'principal',
+    ativo: true,
+    usar_como_principal: true,
+    bloqueia_leitura_clinica: false,
+    sintese: 'Tudo no limite.',
+    interpretacao: 'Saturação total.',
+    implicacoes: 'Risco crítico.',
+    limites: 'Não diagnóstico.',
+    conduta: 'Parar.',
+    longitudinal: 'Repetição indica colapso crônico.',
+    _alerta: 'Estado crítico.'
+  },
+
+  agir_dominante: { ativo:false },
+  sobrecarga_distribuida: { ativo:false }
+};
+</script>
+
+<!-- ================= FUNÇÃO ================= -->
+<script>
+function obterDevolutiva(p){
+  if(!p||p.dados_validos!==true) return { _bloqueado:true,_categoria:'tecnico',_codigo:null,longitudinal:'Baseline — sem leitura longitudinal disponível.' };
+
+  var e=devolutivas[p.estado];
+  if(!p.estado||!e||e.ativo===false) return { _bloqueado:false,_categoria:'ausente',_codigo:p.estado,longitudinal:'Baseline — sem leitura longitudinal disponível.' };
+
+  if(e.bloqueia_leitura_clinica) return { ...e,_bloqueado:true,_codigo:p.estado,longitudinal:'Baseline — sem leitura longitudinal disponível.' };
+
+  var l = p.sessoes<2 ? 'Baseline — sem leitura longitudinal disponível.' : (e.longitudinal||'Leitura longitudinal não disponível.');
+
+  return { ...e,_bloqueado:false,_codigo:p.estado,longitudinal:l };
+}
+</script>
+
+<!-- ================= TESTE ================= -->
+<script>
+var casos = [
+ {estado:'sobrecarga_de_acao',sessoes:2,dados_validos:true},
+ {estado:'colapso_global',sessoes:1,dados_validos:true},
+ {estado:'colapso_global',sessoes:2,dados_validos:false},
+ {estado:'ausencia_de_sinal',sessoes:1,dados_validos:true},
+ {estado:'falso_funcional',sessoes:2,dados_validos:true},
+ {estado:'melhora_funcional',sessoes:1,dados_validos:true},
+ {estado:'melhora_funcional',sessoes:2,dados_validos:true},
+ {estado:'agir_dominante',sessoes:2,dados_validos:true},
+ {estado:'sobrecarga_distribuida',sessoes:2,dados_validos:true},
+ {estado:'saturacao_maxima',sessoes:2,dados_validos:true}
+];
+
+var ok=0;
+
+casos.forEach(function(c){
+  var r=obterDevolutiva(c);
+  if(r) ok++;
+});
+
+document.getElementById('resumo').innerHTML =
+  '<span class="pass">✓ TESTE EXECUTADO ('+ok+'/'+casos.length+')</span>';
+</script>
+
+</body>
+</html>
