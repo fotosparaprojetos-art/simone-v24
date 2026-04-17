@@ -82,8 +82,6 @@
   </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="/js/biblioteca.devolutivas.js"></script>
-<script src="/js/obterDevolutiva.js"></script>
 <script>
 var SURL='https://dzfpsdbppfvftvamhvok.supabase.co';
 var SKEY='sb_publishable_FIyD24LRb4cmOBaUyVLQyw_cdceJWE4';
@@ -93,70 +91,229 @@ var NOMES_SUBEIXO={s1:'Corpo',s2:'Emocional',o1:'Clareza mental',o2:'Organizaç�
 var NOMES_EIXO={sentir:'Sentir',organizar:'Organizar',agir:'Agir',proposito:'Propósito'};
 var L=['Isso não me afetou','Percebi, mas não interferiu','Já começou a me atrapalhar','Comprometeu partes do meu dia','Me travou ou dominou'];
 var R={},resp=0,numQ=0,qid=null,rid=null,notaSel=null;
-document.getElementById('aceito').addEventListener('change',function(){var b=document.getElementById('btnComecar');if(this.checked){b.classList.add('ativo');}else{b.classList.remove('ativo');}});
-function iniciar(){if(!document.getElementById('aceito').checked)return;document.getElementById('tela-entrada').classList.remove('ativa');document.getElementById('tela-q32').classList.add('ativa');render();window.scrollTo(0,0);}
-function item(b,i,t){var id=b+'_'+i;R[id]=null;numQ++;var n=numQ,segs='';for(var v=0;v<=4;v++){segs+='<div class="escala-seg" data-v="'+v+'" tabindex="0" role="radio" aria-label="'+L[v]+'" onclick="sel(\''+id+'\','+v+')" onkeydown="if(event.key===\'Enter\'||event.key===\' \')sel(\''+id+'\','+v+')"></div>';}return '<div class="item"><div class="item-num">'+n+'</div><div class="item-texto">'+t+'</div><div class="escala-barra" id="bar-'+id+'">'+segs+'</div><div class="escala-label-wrap"><div class="escala-sel-label" id="vl-'+id+'"></div></div><div class="escala-ancora"><span>Não me afetou</span><span>Me travou</span></div></div>';}
-function sel(id,v){var era=R[id]===null;R[id]=v;var bar=document.getElementById('bar-'+id),segs=bar.querySelectorAll('.escala-seg');for(var i=0;i<segs.length;i++)segs[i].classList.remove('sel');bar.querySelector('[data-v="'+v+'"]').classList.add('sel');var lab=document.getElementById('vl-'+id);lab.textContent=L[v];if(v===0){lab.style.left='10%';}else if(v===4){lab.style.left='90%';}else{lab.style.left=((v+0.5)*20)+'%';}if(era){resp++;document.getElementById('barra').style.width=Math.round(resp/36*100)+'%';document.getElementById('prog-txt').textContent=resp+' de 36';}var btn=document.getElementById('btnConcluir');if(resp===36){btn.classList.add('ativo');}else{btn.classList.remove('ativo');}}
-function render(){resp=0;R={};document.getElementById('barra').style.width='0%';document.getElementById('prog-txt').textContent='0 de 36';document.getElementById('btnConcluir').classList.remove('ativo');numQ=0;var ks=Object.keys(B);for(var i=0;i<ks.length;i++){var k=ks[i],el=document.getElementById('itens-'+k);if(!el)continue;var h='';for(var j=0;j<B[k].length;j++)h+=item(k,j+1,B[k][j]);el.innerHTML=h;}}
+
+document.getElementById('aceito').addEventListener('change',function(){
+  var b=document.getElementById('btnComecar');
+  if(this.checked){b.classList.add('ativo');}else{b.classList.remove('ativo');}
+});
+
+function iniciar(){
+  if(!document.getElementById('aceito').checked)return;
+  document.getElementById('tela-entrada').classList.remove('ativa');
+  document.getElementById('tela-q32').classList.add('ativa');
+  render();window.scrollTo(0,0);
+}
+
+function item(b,i,t){
+  var id=b+'_'+i;R[id]=null;numQ++;var n=numQ,segs='';
+  for(var v=0;v<=4;v++){segs+='<div class="escala-seg" data-v="'+v+'" tabindex="0" role="radio" aria-label="'+L[v]+'" onclick="sel(\''+id+'\','+v+')" onkeydown="if(event.key===\'Enter\'||event.key===\' \')sel(\''+id+'\','+v+')"></div>';}
+  return '<div class="item"><div class="item-num">'+n+'</div><div class="item-texto">'+t+'</div><div class="escala-barra" id="bar-'+id+'">'+segs+'</div><div class="escala-label-wrap"><div class="escala-sel-label" id="vl-'+id+'"></div></div><div class="escala-ancora"><span>Não me afetou</span><span>Me travou</span></div></div>';
+}
+
+function sel(id,v){
+  var era=R[id]===null;R[id]=v;
+  var bar=document.getElementById('bar-'+id),segs=bar.querySelectorAll('.escala-seg');
+  for(var i=0;i<segs.length;i++)segs[i].classList.remove('sel');
+  bar.querySelector('[data-v="'+v+'"]').classList.add('sel');
+  var lab=document.getElementById('vl-'+id);lab.textContent=L[v];
+  if(v===0){lab.style.left='10%';}else if(v===4){lab.style.left='90%';}else{lab.style.left=((v+0.5)*20)+'%';}
+  if(era){resp++;document.getElementById('barra').style.width=Math.round(resp/36*100)+'%';document.getElementById('prog-txt').textContent=resp+' de 36';}
+  var btn=document.getElementById('btnConcluir');
+  if(resp===36){btn.classList.add('ativo');}else{btn.classList.remove('ativo');}
+}
+
+function render(){
+  resp=0;R={};
+  document.getElementById('barra').style.width='0%';
+  document.getElementById('prog-txt').textContent='0 de 36';
+  document.getElementById('btnConcluir').classList.remove('ativo');
+  numQ=0;
+  var ks=Object.keys(B);
+  for(var i=0;i<ks.length;i++){
+    var k=ks[i],el=document.getElementById('itens-'+k);
+    if(!el)continue;
+    var h='';for(var j=0;j<B[k].length;j++)h+=item(k,j+1,B[k][j]);
+    el.innerHTML=h;
+  }
+}
+
 function mediaR(ids){var s=0;for(var i=0;i<ids.length;i++)s+=R[ids[i]];return s/ids.length;}
-function rotuloQualitativo(v){if(v<0.75)return 'não interfere';if(v<1.5)return 'leve';if(v<2.5)return 'já exige atenção';if(v<3.25)return 'comprometido';return 'muito exigido';}
-function calcularSubeixos(){return {s1:mediaR(['s1_1','s1_2','s1_3','s1_4','s1_5','s1_6']),s2:mediaR(['s2_1','s2_2','s2_3','s2_4','s2_5','s2_6']),o1:mediaR(['o1_1','o1_2','o1_3','o1_4','o1_5']),o2:mediaR(['o2_1','o2_2','o2_3','o2_4','o2_5','o2_6']),a1:mediaR(['a1_1','a1_2','a1_3','a1_4','a1_5']),a2:mediaR(['a2_1','a2_2','a2_3','a2_4']),p:mediaR(['p_1','p_2','p_3','p_4'])};}
-function subeixoDominante(sub){var keys=Object.keys(sub),maxV=-1,maxK=keys[0];for(var i=0;i<keys.length;i++){if(sub[keys[i]]>maxV){maxV=sub[keys[i]];maxK=keys[i];}}return {chave:maxK,nome:NOMES_SUBEIXO[maxK]};}
-function itemCriticoDoSubeixo(chave){var itens=B[chave],maxV=-1,maxIdx=0;for(var i=0;i<itens.length;i++){var id=chave+'_'+(i+1);if(R[id]!==null&&R[id]>maxV){maxV=R[id];maxIdx=i;}}return itens[maxIdx];}
-function calcularEixos(){var sub=calcularSubeixos();var S=(sub.s1+sub.s2)/2,O=(sub.o1+sub.o2)/2,A=(sub.a1+sub.a2)/2,P=sub.p;var G=(S+O+A+P)/4;var delta=Math.max(Math.abs(S-G),Math.abs(O-G),Math.abs(A-G),Math.abs(P-G));var vals=Object.values(R),todosIguais=vals.every(function(v){return v===vals[0];});return {S:S,O:O,A:A,P:P,G:G,delta:delta,todosIguais:todosIguais,valorUnico:todosIguais?vals[0]:null,sub:sub};}
+
+function rotuloQualitativo(v){
+  if(v<0.75)return 'não interfere';
+  if(v<1.5)return 'leve';
+  if(v<2.5)return 'já exige atenção';
+  if(v<3.25)return 'comprometido';
+  return 'muito exigido';
+}
+
+function calcularSubeixos(){
+  return {
+    s1:mediaR(['s1_1','s1_2','s1_3','s1_4','s1_5','s1_6']),
+    s2:mediaR(['s2_1','s2_2','s2_3','s2_4','s2_5','s2_6']),
+    o1:mediaR(['o1_1','o1_2','o1_3','o1_4','o1_5']),
+    o2:mediaR(['o2_1','o2_2','o2_3','o2_4','o2_5','o2_6']),
+    a1:mediaR(['a1_1','a1_2','a1_3','a1_4','a1_5']),
+    a2:mediaR(['a2_1','a2_2','a2_3','a2_4']),
+    p:mediaR(['p_1','p_2','p_3','p_4'])
+  };
+}
+
+function subeixoDominante(sub){
+  var keys=Object.keys(sub),maxV=-1,maxK=keys[0];
+  for(var i=0;i<keys.length;i++){if(sub[keys[i]]>maxV){maxV=sub[keys[i]];maxK=keys[i];}}
+  return {chave:maxK,nome:NOMES_SUBEIXO[maxK]};
+}
+
+function itemCriticoDoSubeixo(chave){
+  var itens=B[chave],maxV=-1,maxIdx=0;
+  for(var i=0;i<itens.length;i++){var id=chave+'_'+(i+1);if(R[id]!==null&&R[id]>maxV){maxV=R[id];maxIdx=i;}}
+  return itens[maxIdx];
+}
+
+// ─── ENVIAR — chama API nova ──────────────────────────────────────────────────
 
 async function enviar(){
-  var n=0,ks=Object.keys(R);for(var i=0;i<ks.length;i++){if(R[ks[i]]===null)n++;}
+  var n=0,ks=Object.keys(R);
+  for(var i=0;i<ks.length;i++){if(R[ks[i]]===null)n++;}
   if(n>0){alert('Ainda faltam '+n+' respostas.');return;}
-  var btn=document.getElementById('btnConcluir');btn.textContent='Calculando...';btn.classList.remove('ativo');
-  var e=calcularEixos(),resultado=avaliarSimone(e);
+
+  var btn=document.getElementById('btnConcluir');
+  btn.textContent='Calculando...';btn.classList.remove('ativo');
+
+  var payload={};
+  var ks2=Object.keys(R);
+  for(var i=0;i<ks2.length;i++){payload[ks2[i]]=R[ks2[i]];}
+
+  var dados=null;
   try{
+    var res=await fetch('/avaliar',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({respostas:payload})
+    });
+    if(!res.ok){
+      var err=await res.json().catch(function(){return {};});
+      throw new Error(err.erro||'Erro '+res.status);
+    }
+    dados=await res.json();
+  }catch(e){
+    alert('Erro ao calcular: '+e.message);
+    btn.textContent='Concluir';btn.classList.add('ativo');
+    return;
+  }
+
+  // salvar no Supabase
+  try{
+    var sub=calcularSubeixos();
+    var S=(sub.s1+sub.s2)/2,O=(sub.o1+sub.o2)/2,A=(sub.a1+sub.a2)/2,P=sub.p;
     var qRes=await sb.from('questionados').insert({aceite_anonimato:true,autoriza_repasse:false}).select().single();
     if(qRes.error)throw qRes.error;qid=qRes.data.id;
     var rRes=await sb.from('respostas').insert({questionado_id:qid,questionario:'Q36',marco:'D0',itens:R}).select().single();
     if(rRes.error)throw rRes.error;rid=rRes.data.id;
-    var codigoBib=MAPA_MOTOR_BIBLIOTECA[resultado.codigo]||null;var dev=codigoBib?BIBLIOTECA_DEVOLUTIVAS[codigoBib]:null;var devText=dev?(dev.titulo+' — '+dev.modo_curto):resultado.codigo;
-    await sb.from('resultados').insert({questionado_id:qid,resposta_id:rid,marco:'D0',eixos:{S:e.S,O:e.O,A:e.A,P:e.P,G:e.G,delta:e.delta},assinatura:resultado.codigo,gravidade:resultado.severidade,flags:{todosIguais:e.todosIguais,valorUnico:e.valorUnico},devolutivo:devText});
-    mostrarResultado(e,resultado);
-  }catch(err){alert('Erro ao salvar: '+err.message);btn.textContent='Concluir';btn.classList.add('ativo');}
+    await sb.from('resultados').insert({
+      questionado_id:qid,
+      resposta_id:rid,
+      marco:'D0',
+      eixos:{S:dados.eixos.S,O:dados.eixos.O,A:dados.eixos.A,P:dados.eixos.P,G:dados.global.G},
+      assinatura:dados.global.classificacoes.G+'__'+dados.global.classificacoes.Da+'__'+dados.global.eixoDominante,
+      gravidade:dados.global.classificacoes.G,
+      flags:dados.coerencia.flags,
+      devolutivo:dados.devolutiva&&dados.devolutiva.usuario?dados.devolutiva.usuario.titulo:'—'
+    });
+  }catch(e){
+    console.error('Erro ao salvar no Supabase:',e.message);
+    // não bloqueia a exibição do resultado
+  }
+
+  mostrarResultado(dados);
 }
-function mostrarResultado(e,r){
-  var eixos=[{chave:'sentir',label:'Sentir',valor:e.S},{chave:'organizar',label:'Organizar',valor:e.O},{chave:'agir',label:'Agir',valor:e.A},{chave:'proposito',label:'Propósito',valor:e.P}];
+
+// ─── MOSTRAR RESULTADO — usa devolutiva da API ────────────────────────────────
+
+function mostrarResultado(dados){
+  var sub=calcularSubeixos();
+  var S=(sub.s1+sub.s2)/2,O=(sub.o1+sub.o2)/2,A=(sub.a1+sub.a2)/2,P=sub.p;
+
+  var eixos=[
+    {chave:'sentir',   label:'Sentir',   valor:S},
+    {chave:'organizar',label:'Organizar',valor:O},
+    {chave:'agir',     label:'Agir',     valor:A},
+    {chave:'proposito',label:'Propósito',valor:P}
+  ];
+
+  var domChave=dados.global.eixoDominante;
+  var domMap={S:'sentir',O:'organizar',A:'agir'};
+  var domFront=domMap[domChave]||null;
+
   var html='';
   for(var i=0;i<eixos.length;i++){
     var ex=eixos[i],cls='eixo-card',tag='';
-    if(r.eixoDominante==='global'){cls+=' dominante';}
-    else if(r.eixoDominante&&ex.chave===r.eixoDominante){cls+=' dominante';tag='<div class="eixo-tag">maior peso</div>';}
+    if(domFront&&ex.chave===domFront){cls+=' dominante';tag='<div class="eixo-tag">maior peso</div>';}
     var pct=Math.round((ex.valor/4)*100);
     var rot=rotuloQualitativo(ex.valor);
     html+='<div class="'+cls+'"><div class="eixo-label">'+ex.label+'</div><div class="eixo-qualitativo">'+rot+'</div><div class="eixo-barra-wrap"><div class="eixo-barra" style="width:'+pct+'%"></div></div>'+tag+'</div>';
   }
   document.getElementById('eixos-grid').innerHTML=html;
-  var domNome=NOMES_EIXO[r.eixoDominante]||r.eixoDominante;var textoTema=domNome==='global'?'Hoje não há um ponto único predominante. A carga está distribuída.':'Hoje o que mais está exigindo de você é '+domNome+'.';
-  var bg=document.getElementById('bloco-tema');
-  bg.innerHTML='<div class="info-card-label">Tema mais exigente hoje</div><div class="info-card-texto">'+textoTema+'</div>';
-  var sub=e.sub;var sd=subeixoDominante(sub);
-  var bs=document.getElementById('bloco-subeixo');
-  bs.innerHTML='<div class="info-card-label">Onde está pesando mais</div><div class="info-card-texto">O ponto que mais está consumindo energia está em '+sd.nome+'.</div>';
+
+  var domNome=NOMES_EIXO[domFront]||domChave||'—';
+  var textoTema=domNome==='global'?'Hoje não há um ponto único predominante. A carga está distribuída.':'Hoje o que mais está exigindo de você é '+domNome+'.';
+  document.getElementById('bloco-tema').innerHTML='<div class="info-card-label">Tema mais exigente hoje</div><div class="info-card-texto">'+textoTema+'</div>';
+
+  var sd=subeixoDominante(sub);
+  document.getElementById('bloco-subeixo').innerHTML='<div class="info-card-label">Onde está pesando mais</div><div class="info-card-texto">O ponto que mais está consumindo energia está em '+sd.nome+'.</div>';
+
   var itemTxt=itemCriticoDoSubeixo(sd.chave);
-  var bi=document.getElementById('bloco-item');
-  bi.innerHTML='<div class="info-card-label">O que mais está exigindo de você agora</div><div class="info-card-item">"'+itemTxt+'"</div>';
-  var codigoBib=MAPA_MOTOR_BIBLIOTECA[r.codigo]||null;var dev=codigoBib?BIBLIOTECA_DEVOLUTIVAS[codigoBib]:null;
-  var titulo=dev?dev.titulo:'Sem devolutiva cadastrada';
-  var resumo=dev?dev.modo_curto:'Ainda não existe texto para este estado.';
-  var leitura=dev?dev.modo_expandido:'O motor identificou um estado sem correspondência na biblioteca.';
-  var direcao=dev?dev.acao_pratica:'Revise o mapeamento da biblioteca.';
-  document.getElementById('dev-titulo').textContent=titulo;
-  document.getElementById('dev-resumo').textContent=resumo;
-  document.getElementById('dev-leitura').textContent=leitura;
-  document.getElementById('dev-direcao').textContent=direcao;
+  document.getElementById('bloco-item').innerHTML='<div class="info-card-label">O que mais está exigindo de você agora</div><div class="info-card-item">"'+itemTxt+'"</div>';
+
+  // devolutiva da API
+  var dev=dados.devolutiva||{};
+  var u=dev.usuario||{};
+  var r=dev.relatorio||{};
+
+  document.getElementById('dev-titulo').textContent  = u.titulo        || '—';
+  document.getElementById('dev-resumo').textContent  = u.texto         || '—';
+  document.getElementById('dev-leitura').textContent = r.interpretacao || '—';
+  document.getElementById('dev-direcao').textContent = u.direcao       || '—';
+
   document.getElementById('tela-q32').classList.remove('ativa');
   document.getElementById('tela-resultado').classList.add('ativa');
   window.scrollTo(0,0);
 }
-function irAvaliacao(){document.getElementById('tela-resultado').classList.remove('ativa');document.getElementById('tela-avaliacao').classList.add('ativa');var html='';for(var n=1;n<=5;n++){html+='<div onclick="selecionarNota('+n+')" id="nota-'+n+'" style="width:44px;height:44px;border-radius:50%;border:2px solid #eee;display:flex;align-items:center;justify-content:center;font-size:1.1rem;cursor:pointer;transition:all 0.15s;">'+n+'</div>';}document.getElementById('notas').innerHTML=html;window.scrollTo(0,0);}
-function selecionarNota(n){notaSel=n;for(var i=1;i<=5;i++){var el=document.getElementById('nota-'+i);if(i===n){el.style.background='#1a1a2e';el.style.color='white';el.style.borderColor='#1a1a2e';}else{el.style.background='white';el.style.color='#1a1a2e';el.style.borderColor='#eee';}}}
-async function enviarAvaliacao(){if(!notaSel){alert('Selecione uma nota de 1 a 5.');return;}var com=document.getElementById('comentario').value;try{var res=await sb.from('avaliacoes').insert({questionado_id:qid,resposta_id:rid,nota:notaSel,comentario:com||null});if(res.error)throw res.error;}catch(e){console.error('Erro ao salvar avaliação:',e.message);alert('Erro ao salvar avaliação. Tente novamente.');return;}document.getElementById('tela-avaliacao').classList.remove('ativa');document.getElementById('tela-fim').classList.add('ativa');window.scrollTo(0,0);}
+
+function irAvaliacao(){
+  document.getElementById('tela-resultado').classList.remove('ativa');
+  document.getElementById('tela-avaliacao').classList.add('ativa');
+  var html='';
+  for(var n=1;n<=5;n++){html+='<div onclick="selecionarNota('+n+')" id="nota-'+n+'" style="width:44px;height:44px;border-radius:50%;border:2px solid #eee;display:flex;align-items:center;justify-content:center;font-size:1.1rem;cursor:pointer;transition:all 0.15s;">'+n+'</div>';}
+  document.getElementById('notas').innerHTML=html;
+  window.scrollTo(0,0);
+}
+
+function selecionarNota(n){
+  notaSel=n;
+  for(var i=1;i<=5;i++){
+    var el=document.getElementById('nota-'+i);
+    if(i===n){el.style.background='#1a1a2e';el.style.color='white';el.style.borderColor='#1a1a2e';}
+    else{el.style.background='white';el.style.color='#1a1a2e';el.style.borderColor='#eee';}
+  }
+}
+
+async function enviarAvaliacao(){
+  if(!notaSel){alert('Selecione uma nota de 1 a 5.');return;}
+  var com=document.getElementById('comentario').value;
+  try{
+    var res=await sb.from('avaliacoes').insert({questionado_id:qid,resposta_id:rid,nota:notaSel,comentario:com||null});
+    if(res.error)throw res.error;
+  }catch(e){
+    console.error('Erro ao salvar avaliação:',e.message);
+    alert('Erro ao salvar avaliação. Tente novamente.');
+    return;
+  }
+  document.getElementById('tela-avaliacao').classList.remove('ativa');
+  document.getElementById('tela-fim').classList.add('ativa');
+  window.scrollTo(0,0);
+}
 </script>
 </body>
 </html>
