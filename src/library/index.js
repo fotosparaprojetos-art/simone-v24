@@ -14,21 +14,16 @@
  * - Leitura clínica plena apenas em status "consolidado"
  */
 
-// ─── BIBLIOTECA (a preencher) ─────────────────────────────────────────────────
-//
-// Chave gerada por gerarChave():
-//   'G_{g}__Da_{da}__dom_{eixo}__{diadeId}'
-// Exemplo:
-//   'G_elevado__Da_polarizado__dom_S__D1'
-//
-// Estrutura de cada entrada:
-// {
-//   relatorio: { sintese, interpretacao, implicacoes, limites, conduta },
-//   usuario:   { titulo, texto, direcao }
-// }
-
 const BIBLIOTECA = {
   // TODO: preencher com textos profissionais
+  // Chave: 'G_{g}__Da_{da}__dom_{eixo}__{diadeId}'
+  // Exemplo: 'G_elevado__Da_polarizado__dom_S__D1'
+  //
+  // Estrutura:
+  // {
+  //   relatorio: { sintese, interpretacao, implicacoes, limites, conduta },
+  //   usuario:   { titulo, texto, direcao }
+  // }
 };
 
 // ─── TRADUÇÃO LONGITUDINAL ────────────────────────────────────────────────────
@@ -50,17 +45,10 @@ function traduzirLongitudinal(longitudinal) {
 }
 
 // ─── MODULAÇÃO LONGITUDINAL ───────────────────────────────────────────────────
-//
-// insuficiente → sem leitura interpretativa
-// pontual      → sem leitura interpretativa
-// repeticao    → sem leitura interpretativa, apenas observação
-// padrao       → observação qualificada, ainda sem leitura sólida
-// consolidado  → leitura clínica plena
 
 const LIMITES_PADRAO = 'Leitura baseada em autorrelato. Sujeita a variação de percepção. Confirmação longitudinal recomendada.';
 
 function modularPorLongitudinal(status, relatorio, usuario, textoLongitudinal) {
-
   switch (status) {
 
     case 'insuficiente':
@@ -109,8 +97,8 @@ function modularPorLongitudinal(status, relatorio, usuario, textoLongitudinal) {
           conduta:       'Acompanhar evolução. Nova medição recomendada para consolidação.'
         },
         usuario: {
-          titulo:  usuario.titulo || '—',
-          texto:   usuario.texto  || '—',
+          titulo:  usuario.titulo  || '—',
+          texto:   usuario.texto   || '—',
           direcao: 'Este padrão está se consolidando. Acompanhe as próximas medições.'
         }
       };
@@ -221,19 +209,15 @@ function devolutivaFallback(resultado, chave, textoLongitudinal) {
 
 // ─── ENTRADA PRINCIPAL ────────────────────────────────────────────────────────
 
-/**
- * @param {object} resultado - saída de calcular() do engine.js novo
- * @returns {object} DevolutivaResult
- */
 function obterDevolutiva(resultado) {
   if (!resultado || !resultado.global || !resultado.diades || !resultado.coerencia) {
     throw new Error('obterDevolutiva: resultado inválido ou incompleto');
   }
 
-  const chave          = gerarChave(resultado);
-  const textoLong      = traduzirLongitudinal(resultado.longitudinal);
-  const status         = resultado.longitudinal?.status || 'insuficiente';
-  const entrada        = BIBLIOTECA[chave];
+  const chave     = gerarChave(resultado);
+  const textoLong = traduzirLongitudinal(resultado.longitudinal);
+  const status    = resultado.longitudinal?.status || 'insuficiente';
+  const entrada   = BIBLIOTECA[chave];
 
   if (!entradaValida(entrada)) {
     return devolutivaFallback(resultado, chave, textoLong);
