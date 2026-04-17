@@ -5,8 +5,7 @@ const rateLimit  = require('express-rate-limit');
 const { calcular }        = require('../core/engine');
 const { obterDevolutiva } = require('../library/index');
 
-const app  = express();
-const PORT = process.env.PORT || 3000;
+const app = express();
 
 // ─── MAPEAMENTO FRONT → ENGINE ────────────────────────────────────────────────
 //
@@ -114,10 +113,6 @@ app.post('/avaliar', limiter, (req, res) => {
   return res.json(sanitizarResposta({ ...resultado, devolutiva }));
 });
 
-// ─── INICIALIZAÇÃO ────────────────────────────────────────────────────────────
-
-app.listen(PORT, () => {
-  console.log(`[SiMone] V24 rodando na porta ${PORT}`);
-});
+// ─── EXPORT (Vercel serverless — sem app.listen) ──────────────────────────────
 
 module.exports = app;
