@@ -49,15 +49,15 @@ function modularPorLongitudinal(status, relatorio, usuario, textoLongitudinal) {
       return {
         relatorio: {
           sintese:       relatorio.sintese,
-          interpretacao: 'Esta é uma leitura de momento único. O que aparece aqui reflete o estado funcional nas últimas 24 a 48 horas — não um padrão estabelecido. Uma segunda medição é necessária para qualquer leitura com consistência.',
+          interpretacao: 'Esta é uma leitura de momento único. O que aparece aqui reflete o estado funcional recente — não um padrão estabelecido. Uma nova medição em outro momento é necessária para avaliar consistência.',
           implicacoes:   'Sem implicações geradas a partir de uma única medição.',
           longitudinal:  textoLongitudinal,
           limites:       relatorio.limites || LIMITES_PADRAO,
-          conduta:       'Registrar e repetir a medição em outro momento antes de qualquer orientação.'
+          conduta:       'Uma nova medição em outro momento é necessária para avaliar consistência.'
         },
         usuario: {
           titulo:  relatorio.sintese || '—',
-          texto:   'Este é o seu primeiro registro. Uma medição mostra o estado de agora — não quem você é ou um padrão fixo. Volte amanhã ou em alguns dias para uma leitura com mais consistência.',
+          texto:   'Este é o seu primeiro registro. Uma medição mostra o estado de agora — não define um padrão. Novas medições em outros momentos permitem verificar se isso se repete ou não.',
           direcao: '—'
         }
       };
