@@ -5,6 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SiMone</title>
 <link rel="stylesheet" href="/css/style.css">
+<style>
+  /* Remove aparência clicável dos cards de eixo */
+  .eixo-card {
+    cursor: default !important;
+    user-select: none;
+  }
+  .eixo-card:hover {
+    transform: none !important;
+    box-shadow: none !important;
+  }
+  .eixo-card:active {
+    transform: none !important;
+  }
+</style>
 </head>
 <body>
 <div id="tela-entrada" class="tela ativa">
@@ -88,7 +102,7 @@ var SKEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6I
 var sb=supabase.createClient(SURL,SKEY);
 var B={s1:['Tenho começado o dia sem energia no corpo','Meu corpo fica tenso ao longo do dia','Acordo sem me sentir descansado','Minha energia física vai caindo ao longo do dia','Tarefas simples me custam mais esforço do que deveriam','Meu corpo dá sinais de sobrecarga ao longo do dia'],s2:['Tenho me irritado com facilidade','Sinto inquietação ao longo do dia','Reagi de forma mais intensa do que o normal','O peso emocional do dia tem me deixado esgotado','Quando me abalo, demoro para me recuperar','O que estou sentindo interfere no que preciso fazer'],o1:['Minha mente tem ficado lenta para entender as coisas','Minhas ideias têm ficado embaralhadas','Tenho ficado preso nos mesmos pensamentos','Minha atenção tem se dispersado com facilidade','Minha cabeça tem ficado acelerada'],o2:['Tenho tido dificuldade de organizar o que preciso fazer','Tenho dificuldade de definir o que fazer primeiro','Fico organizando mas não avanço nas tarefas','Quando as demandas aumentam, perco a organização','Tenho misturado o que é urgente com o que pode esperar','A ordem das tarefas fica confusa'],a1:['Tenho tido dificuldade de começar as tarefas','Tenho adiado tarefas que sei que preciso fazer','Tenho evitado iniciar tarefas mesmo sabendo que preciso','Preciso de muito esforço para dar o primeiro passo','Resisto a tarefas que exigem fazer algo diferente do que já conheço'],a2:['Tenho dificuldade de manter o que estou fazendo','Tenho parado tarefas antes de terminar','Perco o ritmo no meio das tarefas','Termino o dia com tarefas importantes por fazer'],p:['O que tenho feito parece sem sentido','O que tenho feito não combina comigo','Não vejo motivo no que estou fazendo','Tenho sentido que o esforço que faço não vale o que produzo']};
 var NOMES_SUBEIXO={s1:'Corpo',s2:'Emocional',o1:'Clareza mental',o2:'Organização',a1:'Início',a2:'Sustentação',p:'Propósito'};
-var NOMES_EIXO={sentir:'Sentir',organizar:'Organizar',agir:'Agir',proposito:'Propósito'};
+var NOMES_EIXO={S:'Sentir',O:'Organizar',A:'Agir',P:'Propósito'};
 var L=['Isso não me afetou','Percebi, mas não interferiu','Já começou a me atrapalhar','Comprometeu partes do meu dia','Me travou ou dominou'];
 var R={},resp=0,numQ=0,qid=null,rid=null,notaSel=null;
 
@@ -203,7 +217,6 @@ async function enviar(){
 
   try{
     var sub=calcularSubeixos();
-    var S=(sub.s1+sub.s2)/2,O=(sub.o1+sub.o2)/2,A=(sub.a1+sub.a2)/2,P=sub.p;
     var qRes=await sb.from('questionados').insert({aceite_anonimato:true,autoriza_repasse:false}).select().single();
     if(qRes.error)throw qRes.error;qid=qRes.data.id;
     var rRes=await sb.from('respostas').insert({questionado_id:qid,questionario:'Q36',marco:'D0',itens:R}).select().single();
@@ -237,7 +250,7 @@ function mostrarResultado(dados){
   ];
 
   var domChave=dados.global.eixoDominante;
-  var domMap={S:'sentir',O:'organizar',A:'agir'};
+  var domMap={S:'sentir',O:'organizar',A:'agir',P:'proposito'};
   var domFront=domMap[domChave]||null;
 
   var html='';
@@ -250,8 +263,8 @@ function mostrarResultado(dados){
   }
   document.getElementById('eixos-grid').innerHTML=html;
 
-  var domNome=NOMES_EIXO[domFront]||domChave||'—';
-  var textoTema=domNome==='global'?'Hoje não há um ponto único predominante. A carga está distribuída.':'Hoje o que mais está exigindo de você é '+domNome+'.';
+  var domNome=NOMES_EIXO[domChave]||'—';
+  var textoTema='Hoje o que mais está exigindo de você é '+domNome+'.';
   document.getElementById('bloco-tema').innerHTML='<div class="info-card-label">Tema mais exigente hoje</div><div class="info-card-texto">'+textoTema+'</div>';
 
   var sd=subeixoDominante(sub);
