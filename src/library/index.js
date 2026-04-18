@@ -17,13 +17,6 @@
 const BIBLIOTECA = {
   // TODO: preencher com textos profissionais
   // Chave: 'G_{g}__Da_{da}__dom_{eixo}__{diadeId}'
-  // Exemplo: 'G_elevado__Da_polarizado__dom_S__D1'
-  //
-  // Estrutura:
-  // {
-  //   relatorio: { sintese, interpretacao, implicacoes, limites, conduta },
-  //   usuario:   { titulo, texto, direcao }
-  // }
 };
 
 // ─── TRADUÇÃO LONGITUDINAL ────────────────────────────────────────────────────
@@ -56,15 +49,15 @@ function modularPorLongitudinal(status, relatorio, usuario, textoLongitudinal) {
       return {
         relatorio: {
           sintese:       relatorio.sintese,
-          interpretacao: 'Medição única. Leitura interpretativa não aplicável.',
-          implicacoes:   'Sem implicações disponíveis neste momento.',
+          interpretacao: 'Esta é uma leitura de momento único. O que aparece aqui reflete o estado funcional nas últimas 24 a 48 horas — não um padrão estabelecido. Uma segunda medição é necessária para qualquer leitura com consistência.',
+          implicacoes:   'Sem implicações geradas a partir de uma única medição.',
           longitudinal:  textoLongitudinal,
           limites:       relatorio.limites || LIMITES_PADRAO,
-          conduta:       'Realizar nova medição antes de qualquer orientação.'
+          conduta:       'Registrar e repetir a medição em outro momento antes de qualquer orientação.'
         },
         usuario: {
-          titulo:  '—',
-          texto:   'Esta é uma leitura inicial. Uma única medição não é suficiente para orientações.',
+          titulo:  relatorio.sintese || '—',
+          texto:   'Este é o seu primeiro registro. Uma medição mostra o estado de agora — não quem você é ou um padrão fixo. Volte amanhã ou em alguns dias para uma leitura com mais consistência.',
           direcao: '—'
         }
       };
@@ -73,7 +66,7 @@ function modularPorLongitudinal(status, relatorio, usuario, textoLongitudinal) {
       return {
         relatorio: {
           sintese:       relatorio.sintese,
-          interpretacao: 'Padrão em observação. Ainda sem consistência suficiente para leitura interpretativa.',
+          interpretacao: 'Padrão em observação. Presente em mais de uma medição, mas ainda sem consistência suficiente para leitura interpretativa.',
           implicacoes:   'Sem implicações geradas neste estágio.',
           longitudinal:  textoLongitudinal,
           limites:       relatorio.limites || LIMITES_PADRAO,
@@ -81,7 +74,7 @@ function modularPorLongitudinal(status, relatorio, usuario, textoLongitudinal) {
         },
         usuario: {
           titulo:  usuario.titulo || '—',
-          texto:   'Este padrão está sendo observado, mas ainda precisa de mais medições para confirmação.',
+          texto:   'Este padrão apareceu mais de uma vez. Ainda é cedo para conclusões — mais medições vão definir se é consistente ou passageiro.',
           direcao: '—'
         }
       };
@@ -143,23 +136,14 @@ function modularPorLongitudinal(status, relatorio, usuario, textoLongitudinal) {
 
 function entradaValida(entrada) {
   if (!entrada || typeof entrada !== 'object') return false;
-
   const r = entrada.relatorio;
   const u = entrada.usuario;
-
   if (!r || typeof r !== 'object') return false;
   if (!u || typeof u !== 'object') return false;
-
   const camposRelatorio = ['sintese', 'interpretacao', 'implicacoes', 'limites', 'conduta'];
   const camposUsuario   = ['titulo', 'texto', 'direcao'];
-
-  for (const c of camposRelatorio) {
-    if (!r[c] || typeof r[c] !== 'string') return false;
-  }
-  for (const c of camposUsuario) {
-    if (!u[c] || typeof u[c] !== 'string') return false;
-  }
-
+  for (const c of camposRelatorio) { if (!r[c] || typeof r[c] !== 'string') return false; }
+  for (const c of camposUsuario)   { if (!u[c] || typeof u[c] !== 'string') return false; }
   return true;
 }
 
@@ -171,7 +155,6 @@ function gerarChave(resultado) {
   const da  = global.classificacoes.Da;
   const dom = global.eixoDominante;
   const d   = diades.ativas.length > 0 ? diades.ativas[0].id : 'nenhuma';
-
   return `G_${g}__Da_${da}__dom_${dom}__${d}`;
 }
 
@@ -181,18 +164,14 @@ function devolutivaFallback(resultado, chave, textoLongitudinal) {
   const { global, coerencia, diades } = resultado;
 
   const relatorioBase = {
-    sintese:       `G = ${global.G} (${global.classificacoes.G}) · Δa = ${global.Da} (${global.classificacoes.Da}) · Eixo dominante: ${global.eixoDominante}`,
+    sintese:       `${global.classificacoes.G.charAt(0).toUpperCase() + global.classificacoes.G.slice(1)} · Eixo dominante: ${global.eixoDominante} · Dispersão: ${global.classificacoes.Da}`,
     interpretacao: '—',
     implicacoes:   '—',
     limites:       LIMITES_PADRAO,
     conduta:       '—'
   };
 
-  const usuarioBase = {
-    titulo:  '—',
-    texto:   '—',
-    direcao: '—'
-  };
+  const usuarioBase = { titulo: '—', texto: '—', direcao: '—' };
 
   const status   = resultado.longitudinal?.status || 'insuficiente';
   const modulado = modularPorLongitudinal(status, relatorioBase, usuarioBase, textoLongitudinal);
