@@ -83,8 +83,8 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-var SURL='https://dzfpsdbppfvftvamhvok.supabase.co';
-var SKEY='sb_publishable_FIyD24LRb4cmOBaUyVLQyw_cdceJWE4';
+var SURL='https://nckowmvbugmalrvyuobk.supabase.co';
+var SKEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5ja293bXZidWdtYWxydnl1b2JrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0ODkxMzUsImV4cCI6MjA5MjA2NTEzNX0.UmFwK9imRXGJzPGHVV7g4FvwHePgMYnDWPaf4pey1a4';
 var sb=supabase.createClient(SURL,SKEY);
 var B={s1:['Tenho começado o dia sem energia no corpo','Meu corpo fica tenso ao longo do dia','Acordo sem me sentir descansado','Minha energia física vai caindo ao longo do dia','Tarefas simples me custam mais esforço do que deveriam','Meu corpo dá sinais de sobrecarga ao longo do dia'],s2:['Tenho me irritado com facilidade','Sinto inquietação ao longo do dia','Reagi de forma mais intensa do que o normal','O peso emocional do dia tem me deixado esgotado','Quando me abalo, demoro para me recuperar','O que estou sentindo interfere no que preciso fazer'],o1:['Minha mente tem ficado lenta para entender as coisas','Minhas ideias têm ficado embaralhadas','Tenho ficado preso nos mesmos pensamentos','Minha atenção tem se dispersado com facilidade','Minha cabeça tem ficado acelerada'],o2:['Tenho tido dificuldade de organizar o que preciso fazer','Tenho dificuldade de definir o que fazer primeiro','Fico organizando mas não avanço nas tarefas','Quando as demandas aumentam, perco a organização','Tenho misturado o que é urgente com o que pode esperar','A ordem das tarefas fica confusa'],a1:['Tenho tido dificuldade de começar as tarefas','Tenho adiado tarefas que sei que preciso fazer','Tenho evitado iniciar tarefas mesmo sabendo que preciso','Preciso de muito esforço para dar o primeiro passo','Resisto a tarefas que exigem fazer algo diferente do que já conheço'],a2:['Tenho dificuldade de manter o que estou fazendo','Tenho parado tarefas antes de terminar','Perco o ritmo no meio das tarefas','Termino o dia com tarefas importantes por fazer'],p:['O que tenho feito parece sem sentido','O que tenho feito não combina comigo','Não vejo motivo no que estou fazendo','Tenho sentido que o esforço que faço não vale o que produzo']};
 var NOMES_SUBEIXO={s1:'Corpo',s2:'Emocional',o1:'Clareza mental',o2:'Organização',a1:'Início',a2:'Sustentação',p:'Propósito'};
@@ -171,8 +171,6 @@ function itemCriticoDoSubeixo(chave){
   return itens[maxIdx];
 }
 
-// ─── ENVIAR — chama API nova ──────────────────────────────────────────────────
-
 async function enviar(){
   var n=0,ks=Object.keys(R);
   for(var i=0;i<ks.length;i++){if(R[ks[i]]===null)n++;}
@@ -203,7 +201,6 @@ async function enviar(){
     return;
   }
 
-  // salvar no Supabase
   try{
     var sub=calcularSubeixos();
     var S=(sub.s1+sub.s2)/2,O=(sub.o1+sub.o2)/2,A=(sub.a1+sub.a2)/2,P=sub.p;
@@ -223,13 +220,10 @@ async function enviar(){
     });
   }catch(e){
     console.error('Erro ao salvar no Supabase:',e.message);
-    // não bloqueia a exibição do resultado
   }
 
   mostrarResultado(dados);
 }
-
-// ─── MOSTRAR RESULTADO — usa devolutiva da API ────────────────────────────────
 
 function mostrarResultado(dados){
   var sub=calcularSubeixos();
@@ -266,7 +260,6 @@ function mostrarResultado(dados){
   var itemTxt=itemCriticoDoSubeixo(sd.chave);
   document.getElementById('bloco-item').innerHTML='<div class="info-card-label">O que mais está exigindo de você agora</div><div class="info-card-item">"'+itemTxt+'"</div>';
 
-  // devolutiva da API
   var dev=dados.devolutiva||{};
   var u=dev.usuario||{};
   var r=dev.relatorio||{};
