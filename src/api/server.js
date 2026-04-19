@@ -10,14 +10,23 @@ const { obterDevolutiva } = require('../library/index');
 
 const app = express();
 
-// ─── SUPABASE (service_role — nunca exposto ao cliente) ───────────────────────
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-);
+let supabase = null;
 
-// ─── GERAÇÃO DE CÓDIGOS ───────────────────────────────────────────────────────
+if (SUPABASE_URL && SUPABASE_KEY) {
+  supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+} else {
+  console.error('[SiMone] Supabase não configurado — SUPABASE_URL ou SUPABASE_SERVICE_ROLE_KEY ausente');
+}
+
+function requireSupabase(req, res, next) {
+  if (!supabase) {
+    return res.status(503).json({ erro: 'backend não configurado' });
+  }
+  next();
+}
 
 const ALFABETO = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
 
@@ -31,8 +40,6 @@ function gerarCodigo(tamanho = 7) {
 function gerarToken(tamanho = 10) {
   return gerarCodigo(tamanho);
 }
-
-// ─── MAPEAMENTO FRONT → ENGINE ────────────────────────────────────────────────
 
 const MAPA = [
   null,
@@ -51,12 +58,10 @@ function adaptarPayload(respostas) {
   if (!respostas || typeof respostas !== 'object' || Array.isArray(respostas)) {
     throw new TypeError('respostas ausentes ou formato inválido');
   }
-
   const faltam = CHAVES_ESPERADAS.filter(k => !(k in respostas));
   if (faltam.length > 0) {
     throw new RangeError(`payload incompleto: faltam ${faltam.length} campo(s)`);
   }
-
   const out = {};
   for (let i = 1; i <= 36; i++) {
     const chave = MAPA[i];
@@ -66,33 +71,25 @@ function adaptarPayload(respostas) {
     }
     out[i] = val;
   }
-
   return out;
 }
 
-// ─── SANITIZAÇÃO ─────────────────────────────────────────────────────────────
-
 function sanitizarResposta(obj) {
   const limpo = JSON.parse(JSON.stringify(obj));
-
   function removerInterno(o) {
     if (o && typeof o === 'object') {
       delete o._interno;
       for (const k of Object.keys(o)) removerInterno(o[k]);
     }
   }
-
   removerInterno(limpo);
   return limpo;
 }
 
-// ─── MIDDLEWARE DE SESSÃO PROFISSIONAL ────────────────────────────────────────
-
 async function verificarSessao(req, res, next) {
   const token = req.headers['x-session-token'];
-  if (!token) {
-    return res.status(401).json({ erro: 'sessão ausente' });
-  }
+  if (!token) return res.status(401).json({ erro: 'sessão ausente' });
+  if (!supabase) return res.status(503).json({ erro: 'backend não configurado' });
 
   try {
     const { data: sessao, error } = await supabase
@@ -101,25 +98,17 @@ async function verificarSessao(req, res, next) {
       .eq('session_token', token)
       .maybeSingle();
 
-    if (error || !sessao) {
-      return res.status(401).json({ erro: 'sessão inválida' });
-    }
-
-    if (new Date(sessao.expira_em) < new Date()) {
-      return res.status(401).json({ erro: 'sessão expirada' });
-    }
+    if (error || !sessao) return res.status(401).json({ erro: 'sessão inválida' });
+    if (new Date(sessao.expira_em) < new Date()) return res.status(401).json({ erro: 'sessão expirada' });
 
     req.profissional_id = sessao.profissional_id;
     req.questionado_id  = sessao.questionado_id;
     next();
-
   } catch (e) {
     console.error('[SiMone] verificarSessao falhou:', e.message);
     return res.status(500).json({ erro: 'erro interno' });
   }
 }
-
-// ─── MIDDLEWARES GLOBAIS ──────────────────────────────────────────────────────
 
 app.use(cors({ origin: true }));
 app.use(express.json({ limit: '32kb' }));
@@ -132,15 +121,12 @@ const limiter = rateLimit({
   message: { erro: 'muitas requisições, tente novamente em breve' }
 });
 
-// ─── ROTAS ───────────────────────────────────────────────────────────────────
-
 app.get('/health', (_, res) => {
-  res.json({ status: 'ok', versao: 'V24' });
+  res.json({ status: 'ok', versao: 'V24', supabase: !!supabase });
 });
 
 app.post('/avaliar', limiter, (req, res) => {
   let respostas;
-
   try {
     respostas = adaptarPayload(req.body?.respostas);
   } catch (e) {
@@ -149,7 +135,6 @@ app.post('/avaliar', limiter, (req, res) => {
   }
 
   let resultado;
-
   try {
     resultado = calcular({ respostas, historico: [] });
   } catch (e) {
@@ -158,7 +143,6 @@ app.post('/avaliar', limiter, (req, res) => {
   }
 
   let devolutiva;
-
   try {
     devolutiva = obterDevolutiva(resultado);
   } catch (e) {
@@ -169,12 +153,9 @@ app.post('/avaliar', limiter, (req, res) => {
   return res.json(sanitizarResposta({ ...resultado, devolutiva }));
 });
 
-// POST /questionado/identificar
-app.post('/questionado/identificar', limiter, async (req, res) => {
+app.post('/questionado/identificar', limiter, requireSupabase, async (req, res) => {
   const { email } = req.body || {};
-  if (!email || typeof email !== 'string') {
-    return res.status(400).json({ erro: 'email obrigatório' });
-  }
+  if (!email || typeof email !== 'string') return res.status(400).json({ erro: 'email obrigatório' });
 
   try {
     const { data: existente } = await supabase
@@ -184,47 +165,27 @@ app.post('/questionado/identificar', limiter, async (req, res) => {
       .maybeSingle();
 
     if (existente) {
-      return res.json({
-        questionado_id:     existente.id,
-        codigo_questionado: existente.codigo_questionado,
-        existente:          true
-      });
+      return res.json({ questionado_id: existente.id, codigo_questionado: existente.codigo_questionado, existente: true });
     }
 
     const codigo_questionado = gerarCodigo(7);
-
     const { data: novo, error } = await supabase
       .from('questionados')
-      .insert({
-        email:            email.toLowerCase().trim(),
-        codigo_questionado,
-        aceite_anonimato: true,
-        autoriza_repasse: false,
-        ativo:            true
-      })
+      .insert({ email: email.toLowerCase().trim(), codigo_questionado, aceite_anonimato: true, autoriza_repasse: false, ativo: true })
       .select('id, codigo_questionado')
       .single();
 
     if (error) throw error;
-
-    return res.json({
-      questionado_id:     novo.id,
-      codigo_questionado: novo.codigo_questionado,
-      existente:          false
-    });
-
+    return res.json({ questionado_id: novo.id, codigo_questionado: novo.codigo_questionado, existente: false });
   } catch (e) {
     console.error('[SiMone] identificar falhou:', e.message);
     return res.status(500).json({ erro: 'erro interno' });
   }
 });
 
-// POST /questionado/gerar-autorizacao
-app.post('/questionado/gerar-autorizacao', limiter, async (req, res) => {
+app.post('/questionado/gerar-autorizacao', limiter, requireSupabase, async (req, res) => {
   const { codigo_questionado, email } = req.body || {};
-  if (!codigo_questionado || !email) {
-    return res.status(400).json({ erro: 'campos obrigatórios ausentes' });
-  }
+  if (!codigo_questionado || !email) return res.status(400).json({ erro: 'campos obrigatórios ausentes' });
 
   try {
     const { data: q } = await supabase
@@ -235,9 +196,7 @@ app.post('/questionado/gerar-autorizacao', limiter, async (req, res) => {
       .eq('ativo', true)
       .maybeSingle();
 
-    if (!q) {
-      return res.status(404).json({ erro: 'questionado não encontrado' });
-    }
+    if (!q) return res.status(404).json({ erro: 'questionado não encontrado' });
 
     await supabase
       .from('vinculos')
@@ -249,28 +208,18 @@ app.post('/questionado/gerar-autorizacao', limiter, async (req, res) => {
 
     const { error } = await supabase
       .from('vinculos')
-      .insert({
-        questionado_id:   q.id,
-        profissional_id:  null,
-        token_autorizacao,
-        expira_em,
-        autorizado:       false
-      });
+      .insert({ questionado_id: q.id, profissional_id: null, token_autorizacao, expira_em, autorizado: false });
 
     if (error) throw error;
-
     return res.json({ token_autorizacao, expira_em });
-
   } catch (e) {
     console.error('[SiMone] gerar-autorizacao falhou:', e.message);
     return res.status(500).json({ erro: 'erro interno' });
   }
 });
 
-// POST /profissional/validar-acesso
-app.post('/profissional/validar-acesso', limiter, async (req, res) => {
+app.post('/profissional/validar-acesso', limiter, requireSupabase, async (req, res) => {
   const { crm, uf_crm, codigo_profissional, codigo_questionado, token_autorizacao } = req.body || {};
-
   if (!crm || !uf_crm || !codigo_profissional || !codigo_questionado || !token_autorizacao) {
     return res.status(400).json({ erro: 'campos obrigatórios ausentes' });
   }
@@ -285,9 +234,7 @@ app.post('/profissional/validar-acesso', limiter, async (req, res) => {
       .eq('ativo', true)
       .maybeSingle();
 
-    if (!prof) {
-      return res.status(403).json({ autorizado: false, erro: 'profissional não autorizado' });
-    }
+    if (!prof) return res.status(403).json({ autorizado: false, erro: 'profissional não autorizado' });
 
     const { data: q } = await supabase
       .from('questionados')
@@ -296,9 +243,7 @@ app.post('/profissional/validar-acesso', limiter, async (req, res) => {
       .eq('ativo', true)
       .maybeSingle();
 
-    if (!q) {
-      return res.status(404).json({ autorizado: false, erro: 'questionado não encontrado' });
-    }
+    if (!q) return res.status(404).json({ autorizado: false, erro: 'questionado não encontrado' });
 
     const { data: vinculo } = await supabase
       .from('vinculos')
@@ -308,13 +253,8 @@ app.post('/profissional/validar-acesso', limiter, async (req, res) => {
       .eq('autorizado', false)
       .maybeSingle();
 
-    if (!vinculo) {
-      return res.status(403).json({ autorizado: false, erro: 'token inválido ou já utilizado' });
-    }
-
-    if (new Date(vinculo.expira_em) < new Date()) {
-      return res.status(403).json({ autorizado: false, erro: 'token expirado' });
-    }
+    if (!vinculo) return res.status(403).json({ autorizado: false, erro: 'token inválido ou já utilizado' });
+    if (new Date(vinculo.expira_em) < new Date()) return res.status(403).json({ autorizado: false, erro: 'token expirado' });
 
     const { error: errVinculo } = await supabase
       .from('vinculos')
@@ -328,36 +268,20 @@ app.post('/profissional/validar-acesso', limiter, async (req, res) => {
 
     const { error: errSessao } = await supabase
       .from('sessoes_profissional')
-      .insert({
-        profissional_id: prof.id,
-        questionado_id:  q.id,
-        session_token,
-        expira_em:       sessao_expira
-      });
+      .insert({ profissional_id: prof.id, questionado_id: q.id, session_token, expira_em: sessao_expira });
 
     if (errSessao) throw errSessao;
 
-    return res.json({
-      autorizado:      true,
-      questionado_id:  q.id,
-      profissional_id: prof.id,
-      session_token,
-      expira_em:       sessao_expira
-    });
-
+    return res.json({ autorizado: true, questionado_id: q.id, profissional_id: prof.id, session_token, expira_em: sessao_expira });
   } catch (e) {
     console.error('[SiMone] validar-acesso falhou:', e.message);
     return res.status(500).json({ erro: 'erro interno' });
   }
 });
 
-// GET /profissional/questionado/:id
 app.get('/profissional/questionado/:id', limiter, verificarSessao, async (req, res) => {
   const alvo = req.params.id;
-
-  if (req.questionado_id !== alvo) {
-    return res.status(403).json({ erro: 'acesso não autorizado' });
-  }
+  if (req.questionado_id !== alvo) return res.status(403).json({ erro: 'acesso não autorizado' });
 
   try {
     const { data: resultados, error } = await supabase
@@ -368,23 +292,15 @@ app.get('/profissional/questionado/:id', limiter, verificarSessao, async (req, r
 
     if (error) throw error;
 
-    const textoLongitudinal =
-      !resultados || resultados.length <= 1
-        ? 'Dados insuficientes para leitura longitudinal.'
-        : 'Leitura longitudinal ainda em consolidação nesta fase.';
+    const textoLongitudinal = !resultados || resultados.length <= 1
+      ? 'Dados insuficientes para leitura longitudinal.'
+      : 'Leitura longitudinal ainda em consolidação nesta fase.';
 
-    return res.json({
-      questionado_id: alvo,
-      resultados:     resultados || [],
-      longitudinal:   { texto: textoLongitudinal }
-    });
-
+    return res.json({ questionado_id: alvo, resultados: resultados || [], longitudinal: { texto: textoLongitudinal } });
   } catch (e) {
     console.error('[SiMone] carregar questionado falhou:', e.message);
     return res.status(500).json({ erro: 'erro interno' });
   }
 });
-
-// ─── EXPORT (Vercel serverless — sem app.listen) ──────────────────────────────
 
 module.exports = app;
