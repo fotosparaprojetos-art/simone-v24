@@ -7,330 +7,371 @@
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; color: #1a1a2e; min-height: 100vh; }
-.topo { background: #1a1a2e; color: white; padding: 1rem 2rem; display: flex; align-items: center; gap: 1rem; }
+.topo { background: #1a1a2e; color: white; padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.topo-esq { display: flex; align-items: center; gap: 1rem; }
 .topo img { width: 90px; }
 .topo h1 { font-size: 0.95rem; font-weight: 600; letter-spacing: 0.05em; opacity: 0.9; }
+.btn-sair { background: transparent; border: 1px solid rgba(255,255,255,0.3); color: white; border-radius: 8px; padding: 0.35rem 0.9rem; font-size: 0.78rem; cursor: pointer; }
+.btn-sair:hover { background: rgba(255,255,255,0.1); }
 .container { max-width: 900px; margin: 0 auto; padding: 2rem 1.25rem; }
-.filtro { background: white; border-radius: 12px; border: 1px solid #eee; padding: 1rem 1.25rem; margin-bottom: 1.5rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
-.filtro label { font-size: 0.75rem; color: #999; margin-right: 3px; }
-.filtro input, .filtro select { border: 1px solid #ddd; border-radius: 8px; padding: 0.4rem 0.7rem; font-size: 0.82rem; font-family: inherit; color: #1a1a2e; }
-.btn-buscar { background: #1a1a2e; color: white; border: none; border-radius: 8px; padding: 0.45rem 1.1rem; font-size: 0.82rem; cursor: pointer; }
-.btn-buscar:hover { background: #f5a623; color: #1a1a2e; }
-.lista { display: flex; flex-direction: column; gap: 0.75rem; }
-.caso { background: white; border-radius: 12px; border: 1px solid #eee; padding: 1rem 1.25rem; cursor: pointer; transition: border 0.15s; }
-.caso:hover { border-color: #f5a623; }
-.caso-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
-.caso-id { font-size: 0.65rem; color: #ccc; font-family: monospace; }
-.caso-data { font-size: 0.72rem; color: #aaa; }
-.caso-assinatura { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.4rem; }
-.caso-eixos { display: flex; gap: 1rem; flex-wrap: wrap; }
-.em { font-size: 0.72rem; color: #777; }
-.em b { color: #1a1a2e; }
-.badge { display:inline-block;font-size:0.58rem;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;padding:2px 7px;border-radius:99px;margin-left:6px; }
-.badge-critico{background:#fde8e8;color:#c0392b;}
-.badge-alto{background:#fef3e2;color:#e67e22;}
-.badge-moderado{background:#fef9e7;color:#b7950b;}
-.badge-leve{background:#eafaf1;color:#27ae60;}
-.badge-especial{background:#eaf0fb;color:#2980b9;}
-.badge-tecnico{background:#f5f5f5;color:#aaa;}
-.painel { display: none; margin-top: 0.75rem; border-top: 1px solid #f0f0f0; padding-top: 1rem; }
-.painel.aberto { display: block; }
+
+/* ── Tela de validação ── */
+.tela-validacao { max-width: 420px; margin: 4rem auto; background: white; border-radius: 16px; border: 1px solid #eee; padding: 2rem 1.75rem; }
+.tela-validacao h2 { font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; }
+.tela-validacao p { font-size: 0.82rem; color: #888; margin-bottom: 1.5rem; }
+.campo { margin-bottom: 1rem; }
+.campo label { display: block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: #999; margin-bottom: 4px; }
+.campo input, .campo select { width: 100%; border: 1px solid #ddd; border-radius: 8px; padding: 0.55rem 0.8rem; font-size: 0.88rem; font-family: inherit; color: #1a1a2e; }
+.campo input:focus { outline: none; border-color: #1a1a2e; }
+.btn-validar { width: 100%; background: #1a1a2e; color: white; border: none; border-radius: 10px; padding: 0.7rem; font-size: 0.9rem; font-weight: 600; cursor: pointer; margin-top: 0.5rem; }
+.btn-validar:hover { background: #f5a623; color: #1a1a2e; }
+.erro-validacao { font-size: 0.82rem; color: #c0392b; margin-top: 0.75rem; min-height: 1.2rem; }
+
+/* ── Painel ── */
+.painel-container { display: none; }
+.painel-container.visivel { display: block; }
+.info-sessao { background: white; border-radius: 12px; border: 1px solid #eee; padding: 0.85rem 1.25rem; margin-bottom: 1.5rem; display: flex; gap: 2rem; flex-wrap: wrap; }
+.info-sessao span { font-size: 0.78rem; color: #888; }
+.info-sessao b { color: #1a1a2e; }
+
+/* ── Resultado do questionado ── */
+.resultado-card { background: white; border-radius: 12px; border: 1px solid #eee; padding: 1.25rem; margin-bottom: 1rem; }
+.resultado-card h3 { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #bbb; margin-bottom: 0.75rem; }
 .p-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem; }
-.p-bloco { background: #f7f7f5; border-radius: 10px; padding: 0.85rem 1rem; margin-bottom: 0.75rem; }
-.p-bloco:last-child { margin-bottom: 0; }
+.p-bloco { background: #f7f7f5; border-radius: 10px; padding: 0.85rem 1rem; }
 .p-label { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #bbb; margin-bottom: 5px; }
 .p-valor { font-size: 0.88rem; color: #1a1a2e; line-height: 1.5; }
 .p-sub { font-size: 0.8rem; color: #666; margin-top: 3px; line-height: 1.5; }
-.p-item { font-size: 0.8rem; color: #555; font-style: italic; margin-top: 4px; }
-.p-nota { font-size: 0.75rem; color: #999; margin-top: 5px; }
+.badge { display:inline-block;font-size:0.58rem;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;padding:2px 7px;border-radius:99px;margin-left:6px; }
+.badge-elevado{background:#fde8e8;color:#c0392b;}
+.badge-moderado{background:#fef3e2;color:#e67e22;}
+.badge-leve{background:#eafaf1;color:#27ae60;}
 .heatmap-row { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 6px; }
 .hm-nome { font-size: 0.75rem; color: #666; width: 90px; flex-shrink: 0; }
 .hm-wrap { flex: 1; height: 8px; background: #eee; border-radius: 99px; }
-.hm-barra { height: 8px; border-radius: 99px; background: #f5a623; transition: width 0.3s; }
+.hm-barra { height: 8px; border-radius: 99px; background: #f5a623; }
 .hm-dominante { background: #e74c3c; }
 .hm-pct { font-size: 0.68rem; color: #aaa; width: 30px; text-align: right; }
-.tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
-.tag-sec { font-size: 0.75rem; background: #f0f0f0; color: #444; border-radius: 8px; padding: 3px 10px; }
-.tag-alerta { font-size: 0.75rem; background: #fde8e8; color: #c0392b; border-radius: 8px; padding: 3px 10px; font-weight: 600; }
-.secao-titulo { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #1a1a2e; margin: 1.25rem 0 0.75rem; padding-bottom: 4px; border-bottom: 1px solid #eee; }
-.timeline-wrap { overflow-x: auto; margin-bottom: 0.75rem; }
-.timeline-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
-.timeline-table th { background: #1a1a2e; color: white; padding: 6px 10px; text-align: left; font-weight: 600; white-space: nowrap; }
-.timeline-table td { padding: 6px 10px; border-bottom: 1px solid #f0f0f0; white-space: nowrap; color: #444; }
-.timeline-table tr:last-child td { border-bottom: none; }
-.timeline-table tr:hover td { background: #fafafa; }
-.tend-row { display: flex; gap: 0.75rem; flex-wrap: wrap; }
-.tend-item { font-size: 0.82rem; color: #444; }
-.tend-item b { color: #1a1a2e; }
-.tend-piora { color: #c0392b; }
-.tend-melhora { color: #27ae60; }
-.tend-estabilidade { color: #2980b9; }
-.tend-oscilacao { color: #e67e22; }
-.resumo-frase { font-size: 0.85rem; color: #444; line-height: 1.7; padding: 2px 0; }
 .empty { text-align: center; color: #bbb; padding: 3rem; font-size: 0.88rem; }
 .loading { text-align: center; color: #aaa; padding: 2rem; font-size: 0.85rem; }
+.longitudinal-label { font-size: 0.78rem; color: #888; line-height: 1.7; }
 </style>
 </head>
 <body>
+
 <div class="topo">
-  <img src="logo.png" alt="SiMone">
-  <h1>Painel Profissional</h1>
-</div>
-<div class="container">
-  <div class="filtro">
-    <div><label>De</label><input type="date" id="f-de"></div>
-    <div><label>Até</label><input type="date" id="f-ate"></div>
-    <div><label>Severidade</label>
-      <select id="f-sev">
-        <option value="">Todas</option>
-        <option value="critico">Crítico</option>
-        <option value="alto">Alto</option>
-        <option value="moderado">Moderado</option>
-        <option value="leve">Leve</option>
-        <option value="especial">Especial</option>
-      </select>
-    </div>
-    <button class="btn-buscar" onclick="buscar()">Buscar</button>
+  <div class="topo-esq">
+    <img src="logo.png" alt="SiMone">
+    <h1>Painel Profissional</h1>
   </div>
-  <div id="lista" class="lista"><div class="loading">Carregando...</div></div>
+  <button class="btn-sair" id="btn-sair" style="display:none" onclick="sair()">Sair</button>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="/js/motor.js"></script>
-<script src="/js/biblioteca.js"></script>
-<script src="/js/profissional.js"></script>
+
+<!-- Tela de validação -->
+<div id="tela-validacao" class="container">
+  <div class="tela-validacao">
+    <h2>Acesso profissional</h2>
+    <p>Preencha os dados de acesso para visualizar o questionado autorizado.</p>
+
+    <div class="campo">
+      <label>CRM</label>
+      <input type="text" id="v-crm" placeholder="Ex: 123456" autocomplete="off">
+    </div>
+    <div class="campo">
+      <label>UF do CRM</label>
+      <input type="text" id="v-uf" placeholder="Ex: SP" maxlength="2" autocomplete="off">
+    </div>
+    <div class="campo">
+      <label>Código profissional</label>
+      <input type="text" id="v-codigo-prof" placeholder="Ex: AB3K7MN" autocomplete="off">
+    </div>
+    <div class="campo">
+      <label>Código do questionado</label>
+      <input type="text" id="v-codigo-q" placeholder="Ex: XY4R2WP" autocomplete="off">
+    </div>
+    <div class="campo">
+      <label>Token de autorização</label>
+      <input type="text" id="v-token" placeholder="Token fornecido pelo questionado" autocomplete="off">
+    </div>
+
+    <button class="btn-validar" onclick="validarAcesso()">Validar acesso</button>
+    <div class="erro-validacao" id="erro-validacao"></div>
+  </div>
+</div>
+
+<!-- Painel profissional -->
+<div id="painel-container" class="painel-container">
+  <div class="container">
+    <div class="info-sessao" id="info-sessao"></div>
+    <div id="conteudo-painel"><div class="loading">Carregando dados...</div></div>
+  </div>
+</div>
+
 <script>
-var SURL='https://dzfpsdbppfvftvamhvok.supabase.co';
-var SKEY='sb_publishable_FIyD24LRb4cmOBaUyVLQyw_cdceJWE4';
-var sb=supabase.createClient(SURL,SKEY);
-var casos=[];
-var aberto=null;
+// ─── SESSÃO ───────────────────────────────────────────────────────────────────
 
-function inicioDiaISO(dataStr){var d=new Date(dataStr+'T00:00:00-03:00');return d.toISOString();}
-function fimDiaISO(dataStr){var d=new Date(dataStr+'T23:59:59-03:00');return d.toISOString();}
-function fmtData(iso){
-  if(!iso) return '—';
-  var d=new Date(iso.indexOf('Z')===-1&&iso.indexOf('+')===-1?iso+'Z':iso);
-  return d.toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'})+' '+d.toLocaleTimeString('pt-BR',{timeZone:'America/Sao_Paulo',hour:'2-digit',minute:'2-digit'});
-}
-function fmtDataCurta(iso){
-  if(!iso) return '—';
-  var d=new Date(iso.indexOf('Z')===-1&&iso.indexOf('+')===-1?iso+'Z':iso);
-  return d.toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'});
-}
-function badgeCls(sev){return 'badge badge-'+(sev||'tecnico');}
-
-function renderLista(dados){
-  var el=document.getElementById('lista');
-  if(!dados||!dados.length){el.innerHTML='<div class="empty">Nenhum resultado.</div>';return;}
-  casos=dados;
-  var html='';
-  for(var i=0;i<dados.length;i++){
-    var c=dados[i],ex=c.eixos||{};
-    var devTitulo=tituloDev(c.assinatura);
-    html+='<div class="caso" id="caso-'+i+'" onclick="togglePainel('+i+')">';
-    html+='<div class="caso-header"><span class="caso-id">'+c.questionado_id+'</span><span class="caso-data">'+fmtData(c.created_at)+'</span></div>';
-    html+='<div class="caso-assinatura">'+devTitulo+'<span class="'+badgeCls(c.gravidade)+'">'+(c.gravidade||'—')+'</span></div>';
-    html+='<div class="caso-eixos">';
-    ['S','O','A','P','G'].forEach(function(k){if(ex[k]!=null)html+='<div class="em">'+k+' <b>'+Number(ex[k]).toFixed(1)+'</b></div>';});
-    if(ex.delta!=null)html+='<div class="em">Δ <b>'+Number(ex.delta).toFixed(2)+'</b></div>';
-    html+='</div>';
-    html+='<div class="painel" id="painel-'+i+'"><div class="loading">Carregando...</div></div>';
-    html+='</div>';
-  }
-  el.innerHTML=html;
+function obterSessao() {
+  return {
+    session_token:   sessionStorage.getItem('simone_session_token'),
+    questionado_id:  sessionStorage.getItem('simone_questionado_id'),
+    profissional_id: sessionStorage.getItem('simone_profissional_id')
+  };
 }
 
-async function togglePainel(i){
-  var el=document.getElementById('painel-'+i);
-  if(el.classList.contains('aberto')){el.classList.remove('aberto');return;}
-  if(aberto!==null){var prev=document.getElementById('painel-'+aberto);if(prev)prev.classList.remove('aberto');}
-  aberto=i;el.classList.add('aberto');
-  if(el.dataset.loaded)return;
-  el.dataset.loaded='1';
+function salvarSessao(dados) {
+  sessionStorage.setItem('simone_session_token',   dados.session_token);
+  sessionStorage.setItem('simone_questionado_id',  dados.questionado_id);
+  sessionStorage.setItem('simone_profissional_id', dados.profissional_id);
+}
 
-  var c=casos[i];
-  var rRes=await sb.from('respostas').select('itens').eq('questionado_id',c.questionado_id).order('created_at',{ascending:false}).limit(1).single();
-  var itens=(rRes.data&&rRes.data.itens)||{};
-  var hRes=await sb.from('resultados').select('*').eq('questionado_id',c.questionado_id).order('created_at',{ascending:true});
-  var historico=(hRes.data)||[c];
+function limparSessao() {
+  sessionStorage.removeItem('simone_session_token');
+  sessionStorage.removeItem('simone_questionado_id');
+  sessionStorage.removeItem('simone_profissional_id');
+}
 
-  var saida=montarPainelProfissional({eixos:c.eixos||{},assinatura:c.assinatura,respostas:itens});
-  var codigoBib=MAPA_MOTOR_BIBLIOTECA[c.assinatura]||null;
-  var dev=codigoBib?BIBLIOTECA_DEVOLUTIVAS[codigoBib]:null;
-  var analise=analisarEvolucaoClinica(historico);
-  var usoRepetido=c.flags&&c.flags.uso_repetido===true;
-  var extremosMensais=historico.length>=2?extrairExtremosMensais(historico):[];
+function sair() {
+  limparSessao();
+  mostrarValidacao();
+}
 
-  var html='';
+// ─── EXIBIÇÃO ─────────────────────────────────────────────────────────────────
 
-  // SESSÃO ATUAL
-  html+='<div class="secao-titulo">Leitura da sessão</div>';
-  if(usoRepetido)html+='<div class="tags" style="margin-bottom:0.75rem;"><span class="tag-sec" style="background:#fef9e7;color:#b7950b;">Resposta repetida no mesmo dia</span></div>';
-  html+='<div class="p-grid">';
+function mostrarValidacao() {
+  document.getElementById('tela-validacao').style.display = '';
+  document.getElementById('painel-container').classList.remove('visivel');
+  document.getElementById('btn-sair').style.display = 'none';
+  document.getElementById('erro-validacao').textContent = '';
+}
 
-  var domNomeExib=saida.dominanteNome==='Distribuído'?'Carga distribuída sem vetor dominante':saida.dominanteNome;
-  html+='<div class="p-bloco"><div class="p-label">Onde está concentrado o esforço</div>';
-  html+='<div class="p-valor">'+domNomeExib+'</div></div>';
+function mostrarPainel(sessao) {
+  document.getElementById('tela-validacao').style.display = 'none';
+  document.getElementById('painel-container').classList.add('visivel');
+  document.getElementById('btn-sair').style.display = '';
 
-  if(saida.recurso){
-    html+='<div class="p-bloco"><div class="p-label">Área com menor exigência</div>';
-    html+='<div class="p-valor">'+saida.recursoNome+'</div>';
-    html+='<div class="p-sub">'+saida.recursoNome+' aparece com menor carga relativa, podendo funcionar como ponto de apoio.</div></div>';
-  } else {
-    html+='<div class="p-bloco"><div class="p-label">Área com menor exigência</div>';
-    html+='<div class="p-valor">—</div><div class="p-sub">Sem diferença clara entre os eixos menores.</div></div>';
+  document.getElementById('info-sessao').innerHTML =
+    '<span>Questionado: <b>' + sessao.questionado_id + '</b></span>' +
+    '<span>Sessão ativa</span>';
+
+  carregarDados(sessao);
+}
+
+// ─── VALIDAÇÃO ────────────────────────────────────────────────────────────────
+
+async function validarAcesso() {
+  var crm             = document.getElementById('v-crm').value.trim();
+  var uf_crm          = document.getElementById('v-uf').value.trim().toUpperCase();
+  var codigo_prof     = document.getElementById('v-codigo-prof').value.trim();
+  var codigo_q        = document.getElementById('v-codigo-q').value.trim();
+  var token           = document.getElementById('v-token').value.trim();
+  var erroEl          = document.getElementById('erro-validacao');
+
+  erroEl.textContent = '';
+
+  if (!crm || !uf_crm || !codigo_prof || !codigo_q || !token) {
+    erroEl.textContent = 'Preencha todos os campos.';
+    return;
   }
 
-  var subeixoExib=saida.subeixoDominante||'Não identificado';
-  html+='<div class="p-bloco"><div class="p-label">Ponto mais exigido</div>';
-  html+='<div class="p-valor">'+subeixoExib+'</div></div>';
+  var btn = document.querySelector('.btn-validar');
+  btn.textContent = 'Validando...';
+  btn.disabled = true;
 
-  html+='<div class="p-bloco"><div class="p-label">Item de maior custo</div>';
-  if(saida.itemCritico && saida.itemCritico.valor != null){
-    html+='<div class="p-valor">'+saida.itemCritico.valor+'/4</div>';
-    if(saida.itemCritico.texto)html+='<div class="p-item">"'+saida.itemCritico.texto+'"</div>';
-    html+='<div class="p-nota">Representa o ponto de maior consumo de energia dentro da sessão.</div>';
-  } else {
-    html+='<div class="p-valor">—</div><div class="p-sub">Não identificado</div>';
+  try {
+    var res = await fetch('/profissional/validar-acesso', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        crm:                crm,
+        uf_crm:             uf_crm,
+        codigo_profissional: codigo_prof,
+        codigo_questionado:  codigo_q,
+        token_autorizacao:   token
+      })
+    });
+
+    var dados = await res.json();
+
+    if (!res.ok || !dados.autorizado) {
+      erroEl.textContent = dados.erro || 'Acesso não autorizado.';
+      return;
+    }
+
+    salvarSessao(dados);
+    mostrarPainel(dados);
+
+  } catch (e) {
+    erroEl.textContent = 'Erro ao conectar. Tente novamente.';
+  } finally {
+    btn.textContent = 'Validar acesso';
+    btn.disabled = false;
   }
-  html+='</div>';
-  html+='</div>';
+}
 
-  // HEATMAP
-  html+='<div class="p-bloco"><div class="p-label">Intensidade por eixo</div>';
-  Object.keys(saida.heatmap).forEach(function(k){
-    var isDom=(k===saida.dominante);
-    var nomeLeg=NOMES_EIXO_PROF[k]||k;
-    var pct=saida.heatmap[k];
-    if(pct===null){
-      html+='<div class="heatmap-row"><div class="hm-nome">'+nomeLeg+'</div><div class="hm-wrap"><div class="hm-barra" style="width:0%"></div></div><div class="hm-pct">—</div></div>';
-    } else {
-      html+='<div class="heatmap-row"><div class="hm-nome">'+nomeLeg+'</div>';
-      html+='<div class="hm-wrap"><div class="hm-barra'+(isDom?' hm-dominante':'')+'" style="width:'+pct+'%"></div></div>';
-      html+='<div class="hm-pct">'+pct+'%</div></div>';
+// ─── CARREGAR DADOS DO QUESTIONADO ───────────────────────────────────────────
+
+async function carregarDados(sessao) {
+  var el = document.getElementById('conteudo-painel');
+  el.innerHTML = '<div class="loading">Carregando...</div>';
+
+  try {
+    var res = await fetch('/profissional/questionado/' + sessao.questionado_id, {
+      headers: {
+        'x-session-token': sessao.session_token
+      }
+    });
+
+    if (res.status === 401) {
+      limparSessao();
+      mostrarValidacao();
+      return;
+    }
+
+    var dados = await res.json();
+
+    if (!res.ok || dados.erro) {
+      el.innerHTML = '<div class="empty">' + (dados.erro || 'Erro ao carregar dados.') + '</div>';
+      return;
+    }
+
+    renderPainel(dados, el);
+
+  } catch (e) {
+    el.innerHTML = '<div class="empty">Erro ao carregar. Tente novamente.</div>';
+  }
+}
+
+// ─── RENDERIZAR PAINEL ────────────────────────────────────────────────────────
+
+function renderPainel(dados, el) {
+  if (!dados || !dados.resultados || dados.resultados.length === 0) {
+    el.innerHTML = '<div class="empty">Nenhum resultado disponível para este questionado.</div>';
+    return;
+  }
+
+  var html = '';
+  var ultimo = dados.resultados[0];
+  var eixos  = ultimo.eixos || {};
+
+  // card: último resultado
+  html += '<div class="resultado-card">';
+  html += '<h3>Último resultado — ' + fmtData(ultimo.criado_em || ultimo.created_at) + '</h3>';
+  html += '<div class="p-grid">';
+
+  ['S','O','A','P'].forEach(function(k) {
+    if (eixos[k] != null) {
+      html += '<div class="p-bloco">';
+      html += '<div class="p-label">' + nomeEixo(k) + '</div>';
+      html += '<div class="p-valor">' + Number(eixos[k]).toFixed(1) + '</div>';
+      html += '</div>';
     }
   });
-  html+='</div>';
 
-  // SECUNDÁRIAS
-  if(saida.assinaturasSecundarias&&saida.assinaturasSecundarias.length){
-    html+='<div class="p-bloco"><div class="p-label">Outras tendências identificadas</div>';
-    html+='<div class="tags">';
-    saida.assinaturasSecundarias.forEach(function(s){html+='<span class="tag-sec">'+tituloDev(s)+'</span>';});
-    html+='</div></div>';
+  html += '</div>';
+
+  if (eixos.G != null) {
+    html += '<div class="p-bloco">';
+    html += '<div class="p-label">G — Carga global</div>';
+    html += '<div class="p-valor">' + Number(eixos.G).toFixed(1);
+    if (ultimo.gravidade) html += '<span class="badge badge-' + ultimo.gravidade + '">' + ultimo.gravidade + '</span>';
+    html += '</div></div>';
   }
 
-  // DEVOLUTIVA
-  if(dev){
-    html+='<div class="p-bloco"><div class="p-label">Devolutiva principal</div>';
-    html+='<div class="p-valor" style="font-weight:600;margin-bottom:4px">'+dev.titulo+'</div>';
-    html+='<div class="p-valor">'+dev.modo_curto+'</div>';
-    html+='<div class="p-item" style="margin-top:6px">Ação sugerida: '+dev.acao_pratica+'</div></div>';
-  }
-
-  // FILME DO CASO
-  if(historico.length>0){
-    html+='<div class="secao-titulo">Filme do caso ('+historico.length+' '+(historico.length===1?'sessão':'sessões')+')</div>';
-    html+='<div class="timeline-wrap"><table class="timeline-table"><thead><tr>';
-    html+='<th>Marco</th><th>Data</th><th>S</th><th>O</th><th>A</th><th>P</th><th>G</th><th>Δ</th><th>Assinatura</th>';
-    html+='</tr></thead><tbody>';
-    historico.forEach(function(s,idx){
-      var ex=s.eixos||{};
-      html+='<tr><td>'+(s.marco||'D'+idx)+'</td><td>'+fmtDataCurta(s.created_at)+'</td>';
-      ['S','O','A','P','G'].forEach(function(k){html+='<td>'+(ex[k]!=null?Number(ex[k]).toFixed(1):'—')+'</td>';});
-      html+='<td>'+(ex.delta!=null?Number(ex.delta).toFixed(2):'—')+'</td>';
-      html+='<td>'+tituloDev(s.assinatura)+'</td></tr>';
-    });
-    html+='</tbody></table></div>';
-
-    // GRÁFICO LONGITUDINAL
-    html+='<div class="p-bloco"><div class="p-label">Evolução dos eixos</div>';
-    html+=gerarGraficoLongitudinal(historico);
-    html+='</div>';
-
-    // TENDÊNCIA / LEITURA LONGITUDINAL
-    if(historico.length===1){
-      html+='<div class="p-bloco"><div class="p-label">Leitura longitudinal</div>';
-      html+='<div class="p-valor">Dados insuficientes para análise de tendência.</div></div>';
-      html+='<div class="p-bloco"><div class="p-label">Leitura inicial</div>';
-      html+='<div class="p-valor">'+tituloDev(c.assinatura)+'</div></div>';
-    } else if(analise){
-      var tendLabel=historico.length===2?'Tendência inicial (dados ainda limitados)':'Tendência do caso';
-      html+='<div class="p-bloco"><div class="p-label">'+tendLabel+'</div>';
-      html+='<div class="tend-row">';
-      var tClass='tend-'+analise.tendenciaGlobal;
-      var eixoLabel=historico.length===2?'Eixo predominante até aqui':'Eixo mais recorrente';
-      var assLabel=historico.length===2?'Assinatura predominante até aqui':'Assinatura mais recorrente';
-      html+='<div class="tend-item">Tendência global: <b class="'+tClass+'">'+_tendenciaTexto(analise.tendenciaGlobal)+'</b></div>';
-      html+='<div class="tend-item">'+eixoLabel+': <b>'+analise.eixoRecorrente+'</b></div>';
-      html+='<div class="tend-item">'+assLabel+': <b>'+analise.assinaturaRecorrente+'</b></div>';
-      html+='</div></div>';
-
-      if(analise.resumoClinico&&analise.resumoClinico.length){
-        html+='<div class="p-bloco"><div class="p-label">Leitura longitudinal</div>';
-        analise.resumoClinico.forEach(function(f){html+='<div class="resumo-frase">'+f+'</div>';});
-        html+='</div>';
-      }
-
-      var alertas=[];
-      if(analise.riscoCrescente)alertas.push('Risco crescente');
-      if(analise.perdaDeProposito)alertas.push('Perda de propósito');
-      if(analise.oscilacaoRelevante)alertas.push('Oscilação relevante');
-      if(analise.alertaMudancaBrusca)alertas.push('Mudança brusca entre sessões');
-      if(alertas.length){
-        html+='<div class="p-bloco"><div class="p-label">Alertas clínicos</div><div class="tags">';
-        alertas.forEach(function(a){html+='<span class="tag-alerta">'+a+'</span>';});
-        html+='</div></div>';
-      }
-
-      html+='<div class="p-bloco"><div class="p-label">Padrão recorrente</div>';
-      html+='<div class="p-valor">'+(analise.eixoRecorrente||'—')+'</div>';
-      html+='<div class="p-sub">'+(analise.assinaturaRecorrente||'—')+'</div>';
-      if(analise.subeixoRecorrente)html+='<div class="p-sub">Subeixo: '+analise.subeixoRecorrente+'</div>';
-      html+='</div>';
+  // heatmap de eixos
+  html += '<div class="p-bloco"><div class="p-label">Intensidade por eixo</div>';
+  ['S','O','A','P'].forEach(function(k) {
+    if (eixos[k] != null) {
+      var pct = Math.round((eixos[k] / 4) * 100);
+      html += '<div class="heatmap-row">';
+      html += '<div class="hm-nome">' + nomeEixo(k) + '</div>';
+      html += '<div class="hm-wrap"><div class="hm-barra" style="width:' + pct + '%"></div></div>';
+      html += '<div class="hm-pct">' + pct + '%</div>';
+      html += '</div>';
     }
+  });
+  html += '</div>';
+
+  // assinatura
+  if (ultimo.assinatura) {
+    html += '<div class="p-bloco"><div class="p-label">Assinatura</div>';
+    html += '<div class="p-valor">' + ultimo.assinatura + '</div></div>';
   }
 
-  // OSCILAÇÃO MENSAL
-  if(extremosMensais.length>0){
-    html+='<div class="secao-titulo">Oscilação mensal</div>';
-    extremosMensais.forEach(function(m){
-      var gMax=Number((m.max.eixos||{}).G)||0;
-      var gMin=Number((m.min.eixos||{}).G)||0;
-      var diff=Math.round((gMax-gMin)*100)/100;
-      html+='<div class="p-bloco">';
-      html+='<div class="p-label">'+nomeMes(m.mes)+'</div>';
-      html+='<div class="tend-row">';
-      html+='<div class="tend-item">Pico: <b>G '+gMax.toFixed(1)+'</b> ('+fmtDataCurta(m.max.created_at)+')</div>';
-      html+='<div class="tend-item">Base: <b>G '+gMin.toFixed(1)+'</b> ('+fmtDataCurta(m.min.created_at)+')</div>';
-      html+='<div class="tend-item">Variação: <b>'+diff.toFixed(1)+'</b></div>';
-      html+='</div>';
-      if(diff>2.5)html+='<div class=\"tags\" style=\"margin-top:6px;\"><span class=\"tag-alerta\">Alta variabilidade de estado</span></div>';
-      else if(diff>1.5)html+='<div class=\"tags\" style=\"margin-top:6px;\"><span class=\"tag-alerta\">Oscilação relevante no período</span></div>';
-      html+='</div>';
+  // flags de coerência
+  if (ultimo.flags && Array.isArray(ultimo.flags) && ultimo.flags.length > 0) {
+    html += '<div class="p-bloco"><div class="p-label">Flags de coerência</div>';
+    html += '<div class="p-sub">' + ultimo.flags.join(', ') + '</div></div>';
+  }
+
+  html += '</div>'; // fecha resultado-card
+
+  // histórico de sessões
+  if (dados.resultados.length > 1) {
+    html += '<div class="resultado-card">';
+    html += '<h3>Histórico (' + dados.resultados.length + ' medições)</h3>';
+    html += '<table style="width:100%;border-collapse:collapse;font-size:0.78rem;">';
+    html += '<thead><tr style="background:#1a1a2e;color:white;">';
+    html += '<th style="padding:6px 10px;text-align:left;">Data</th>';
+    html += '<th style="padding:6px 10px;">S</th><th style="padding:6px 10px;">O</th>';
+    html += '<th style="padding:6px 10px;">A</th><th style="padding:6px 10px;">P</th>';
+    html += '<th style="padding:6px 10px;">G</th><th style="padding:6px 10px;text-align:left;">Gravidade</th>';
+    html += '</tr></thead><tbody>';
+
+    dados.resultados.forEach(function(r) {
+      var ex = r.eixos || {};
+      html += '<tr style="border-bottom:1px solid #f0f0f0;">';
+      html += '<td style="padding:6px 10px;color:#666;">' + fmtDataCurta(r.criado_em || r.created_at) + '</td>';
+      ['S','O','A','P','G'].forEach(function(k) {
+        html += '<td style="padding:6px 10px;text-align:center;">' + (ex[k] != null ? Number(ex[k]).toFixed(1) : '—') + '</td>';
+      });
+      html += '<td style="padding:6px 10px;">' + (r.gravidade || '—') + '</td>';
+      html += '</tr>';
     });
+
+    html += '</tbody></table></div>';
   }
 
-  el.innerHTML=html;
+  // longitudinal
+  if (dados.longitudinal) {
+    html += '<div class="resultado-card">';
+    html += '<h3>Leitura longitudinal</h3>';
+    html += '<div class="longitudinal-label">' + (dados.longitudinal.texto || '—') + '</div>';
+    html += '</div>';
+  }
+
+  el.innerHTML = html;
 }
 
-async function buscar(){
-  var el=document.getElementById('lista');
-  el.innerHTML='<div class="loading">Buscando...</div>';
-  aberto=null;
-  var q=sb.from('resultados').select('*').order('created_at',{ascending:false}).limit(100);
-  var de=document.getElementById('f-de').value;
-  var ate=document.getElementById('f-ate').value;
-  var sev=document.getElementById('f-sev').value;
-  if(de)q=q.gte('created_at',inicioDiaISO(de));
-  if(ate)q=q.lte('created_at',fimDiaISO(ate));
-  if(sev)q=q.eq('gravidade',sev);
-  var res=await q;
-  if(res.error){el.innerHTML='<div class="empty">Erro: '+res.error.message+'</div>';return;}
-  renderLista(res.data);
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
+
+function nomeEixo(k) {
+  var nomes = { S: 'Sentir', O: 'Organizar', A: 'Agir', P: 'Propósito' };
+  return nomes[k] || k;
 }
 
-buscar();
+function fmtData(iso) {
+  if (!iso) return '—';
+  var d = new Date(iso.indexOf('Z') === -1 && iso.indexOf('+') === -1 ? iso + 'Z' : iso);
+  return d.toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' }) + ' ' +
+         d.toLocaleTimeString('pt-BR', { timeZone: 'America/Sao_Paulo', hour: '2-digit', minute: '2-digit' });
+}
+
+function fmtDataCurta(iso) {
+  if (!iso) return '—';
+  var d = new Date(iso.indexOf('Z') === -1 && iso.indexOf('+') === -1 ? iso + 'Z' : iso);
+  return d.toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+}
+
+// ─── INICIALIZAÇÃO ────────────────────────────────────────────────────────────
+
+(function init() {
+  var sessao = obterSessao();
+  if (sessao.session_token && sessao.questionado_id) {
+    mostrarPainel(sessao);
+  } else {
+    mostrarValidacao();
+  }
+})();
 </script>
 </body>
 </html>
