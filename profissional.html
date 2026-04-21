@@ -5,56 +5,147 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SiMone · Painel Profissional</title>
 <style>
+
+/* ─── BASE ─── */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; color: #1a1a2e; min-height: 100vh; }
-.topo { background: #1a1a2e; color: white; padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+
+/* ─── TOPO ─── */
+.topo { background: #1a1a2e; color: white; padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; }
 .topo-esq { display: flex; align-items: center; gap: 1rem; }
-.topo img { width: 90px; }
-.topo h1 { font-size: 0.95rem; font-weight: 600; letter-spacing: 0.05em; opacity: 0.9; }
-.btn-sair { background: transparent; border: 1px solid rgba(255,255,255,0.3); color: white; border-radius: 8px; padding: 0.35rem 0.9rem; font-size: 0.78rem; cursor: pointer; }
-.btn-sair:hover { background: rgba(255,255,255,0.1); }
-.container { max-width: 900px; margin: 0 auto; padding: 2rem 1.25rem; }
+.topo img { width: 80px; }
+.topo h1 { font-size: 0.9rem; font-weight: 600; letter-spacing: 0.05em; opacity: 0.9; }
+.topo-dir { display: flex; align-items: center; gap: 0.75rem; }
+.perfil-badge { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; background: rgba(255,255,255,0.12); border-radius: 6px; padding: 3px 8px; }
+.btn-topo { background: transparent; border: 1px solid rgba(255,255,255,0.3); color: white; border-radius: 8px; padding: 0.35rem 0.9rem; font-size: 0.78rem; cursor: pointer; }
+.btn-topo:hover { background: rgba(255,255,255,0.1); }
 
-/* ── Tela de validação ── */
-.tela-validacao { max-width: 420px; margin: 4rem auto; background: white; border-radius: 16px; border: 1px solid #eee; padding: 2rem 1.75rem; }
-.tela-validacao h2 { font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; }
-.tela-validacao p { font-size: 0.82rem; color: #888; margin-bottom: 1.5rem; }
+/* ─── CONTAINER ─── */
+.container { max-width: 860px; margin: 0 auto; padding: 2rem 1.25rem; }
+
+/* ─── LOGIN ─── */
+.tela-login { max-width: 380px; margin: 5rem auto; background: white; border-radius: 16px; border: 1px solid #eee; padding: 2rem 1.75rem; }
+.tela-login h2 { font-size: 1rem; font-weight: 700; margin-bottom: 0.3rem; }
+.tela-login p { font-size: 0.82rem; color: #999; margin-bottom: 1.5rem; }
+
+/* ─── CAMPOS ─── */
 .campo { margin-bottom: 1rem; }
-.campo label { display: block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: #999; margin-bottom: 4px; }
-.campo input, .campo select { width: 100%; border: 1px solid #ddd; border-radius: 8px; padding: 0.55rem 0.8rem; font-size: 0.88rem; font-family: inherit; color: #1a1a2e; }
-.campo input:focus { outline: none; border-color: #1a1a2e; }
-.btn-validar { width: 100%; background: #1a1a2e; color: white; border: none; border-radius: 10px; padding: 0.7rem; font-size: 0.9rem; font-weight: 600; cursor: pointer; margin-top: 0.5rem; }
-.btn-validar:hover { background: #f5a623; color: #1a1a2e; }
-.erro-validacao { font-size: 0.82rem; color: #c0392b; margin-top: 0.75rem; min-height: 1.2rem; }
+.campo label { display: block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: #999; margin-bottom: 4px; }
+.campo input, .campo textarea { width: 100%; border: 1px solid #ddd; border-radius: 8px; padding: 0.55rem 0.8rem; font-size: 0.88rem; font-family: inherit; color: #1a1a2e; }
+.campo input:focus, .campo textarea:focus { outline: none; border-color: #1a1a2e; }
+.campo textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
 
-/* ── Painel ── */
-.painel-container { display: none; }
-.painel-container.visivel { display: block; }
-.info-sessao { background: white; border-radius: 12px; border: 1px solid #eee; padding: 0.85rem 1.25rem; margin-bottom: 1.5rem; display: flex; gap: 2rem; flex-wrap: wrap; }
-.info-sessao span { font-size: 0.78rem; color: #888; }
-.info-sessao b { color: #1a1a2e; }
+/* ─── BOTÕES ─── */
+.btn-principal { width: 100%; background: #1a1a2e; color: white; border: none; border-radius: 10px; padding: 0.7rem; font-size: 0.9rem; font-weight: 600; cursor: pointer; margin-top: 0.25rem; }
+.btn-principal:hover:not(:disabled) { background: #f5a623; color: #1a1a2e; }
+.btn-principal:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-secundario { background: #f0f2f5; color: #1a1a2e; border: 1px solid #ddd; border-radius: 8px; padding: 0.5rem 1rem; font-size: 0.82rem; cursor: pointer; white-space: nowrap; }
+.btn-secundario:hover { background: #e8e4de; }
+.btn-imprimir { background: #f0f2f5; color: #1a1a2e; border: 1px solid #ddd; border-radius: 8px; padding: 0.4rem 0.9rem; font-size: 0.78rem; cursor: pointer; }
+.btn-imprimir:hover { background: #e8e4de; }
 
-/* ── Resultado do questionado ── */
-.resultado-card { background: white; border-radius: 12px; border: 1px solid #eee; padding: 1.25rem; margin-bottom: 1rem; }
-.resultado-card h3 { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #bbb; margin-bottom: 0.75rem; }
-.p-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem; }
-.p-bloco { background: #f7f7f5; border-radius: 10px; padding: 0.85rem 1rem; }
-.p-label { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #bbb; margin-bottom: 5px; }
-.p-valor { font-size: 0.88rem; color: #1a1a2e; line-height: 1.5; }
-.p-sub { font-size: 0.8rem; color: #666; margin-top: 3px; line-height: 1.5; }
-.badge { display:inline-block;font-size:0.58rem;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;padding:2px 7px;border-radius:99px;margin-left:6px; }
-.badge-elevado{background:#fde8e8;color:#c0392b;}
-.badge-moderado{background:#fef3e2;color:#e67e22;}
-.badge-leve{background:#eafaf1;color:#27ae60;}
-.heatmap-row { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 6px; }
-.hm-nome { font-size: 0.75rem; color: #666; width: 90px; flex-shrink: 0; }
-.hm-wrap { flex: 1; height: 8px; background: #eee; border-radius: 99px; }
-.hm-barra { height: 8px; border-radius: 99px; background: #f5a623; }
-.hm-dominante { background: #e74c3c; }
-.hm-pct { font-size: 0.68rem; color: #aaa; width: 30px; text-align: right; }
-.empty { text-align: center; color: #bbb; padding: 3rem; font-size: 0.88rem; }
-.loading { text-align: center; color: #aaa; padding: 2rem; font-size: 0.85rem; }
-.longitudinal-label { font-size: 0.78rem; color: #888; line-height: 1.7; }
+/* ─── MENSAGENS ─── */
+.erro-msg { font-size: 0.82rem; color: #c0392b; margin-top: 0.75rem; min-height: 1.2rem; }
+
+/* ─── PAINEL ─── */
+.painel { display: none; }
+.painel.visivel { display: block; }
+
+/* ─── CARDS ─── */
+.card { background: white; border-radius: 12px; border: 1px solid #eee; padding: 1.25rem; margin-bottom: 1rem; }
+.card-titulo { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #bbb; margin-bottom: 0.75rem; }
+
+/* ─── LISTA ─── */
+.q-lista { display: flex; flex-direction: column; gap: 0.5rem; }
+.q-item { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; background: #f7f7f5; border-radius: 10px; cursor: pointer; }
+.q-item:hover { background: #f0ede8; }
+.q-codigo { font-family: monospace; font-size: 0.88rem; font-weight: 600; color: #1a1a2e; }
+.q-data { font-size: 0.72rem; color: #aaa; }
+.q-seta { font-size: 0.8rem; color: #bbb; }
+.empty { text-align: center; color: #bbb; padding: 2rem; font-size: 0.85rem; }
+.loading { text-align: center; color: #aaa; padding: 1.5rem; font-size: 0.82rem; }
+
+/* ─── ACESSO MANUAL ─── */
+.acesso-linha { display: flex; gap: 0.75rem; align-items: flex-end; flex-wrap: wrap; }
+.acesso-linha .campo { flex: 1; min-width: 180px; margin-bottom: 0; }
+
+/* ─── DETALHE ─── */
+.detalhe { display: none; }
+.detalhe.visivel { display: block; }
+.detalhe-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.5rem; }
+.detalhe-header-esq { display: flex; align-items: center; gap: 0.75rem; }
+.btn-voltar { background: transparent; border: none; font-size: 0.85rem; color: #888; cursor: pointer; padding: 0; }
+.btn-voltar:hover { color: #1a1a2e; }
+.eixo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-bottom: 0.75rem; }
+.eixo-bloco { background: #f7f7f5; border-radius: 10px; padding: 0.75rem 1rem; }
+.eixo-label { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #bbb; margin-bottom: 3px; }
+.eixo-valor { font-size: 0.95rem; color: #1a1a2e; font-weight: 600; }
+.badge { display: inline-block; font-size: 0.58rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; padding: 2px 7px; border-radius: 99px; margin-left: 5px; }
+.badge-elevado { background: #fde8e8; color: #c0392b; }
+.badge-moderado { background: #fef3e2; color: #e67e22; }
+.badge-leve     { background: #eafaf1; color: #27ae60; }
+.hm-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 5px; }
+.hm-nome { font-size: 0.72rem; color: #666; width: 80px; flex-shrink: 0; }
+.hm-wrap { flex: 1; height: 7px; background: #eee; border-radius: 99px; }
+.hm-barra { height: 7px; border-radius: 99px; background: #f5a623; }
+.hm-pct { font-size: 0.65rem; color: #aaa; width: 28px; text-align: right; }
+.hist-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
+.hist-table th { background: #1a1a2e; color: white; padding: 5px 8px; text-align: left; }
+.hist-table td { padding: 5px 8px; border-bottom: 1px solid #f0f0f0; color: #444; }
+.long-texto { font-size: 0.78rem; color: #888; line-height: 1.6; }
+
+/* ─── VALIDAÇÃO PROFISSIONAL ─── */
+.card-validacao { background: #f9f7f4; border: 1px solid #e8e0d5; }
+.card-validacao .card-titulo { color: #c0a87a; }
+.validacao-lista { list-style: none; padding: 0; margin: 0; }
+.validacao-lista li { font-size: 0.78rem; color: #666; padding: 4px 0; border-bottom: 1px solid #f0ebe3; line-height: 1.5; }
+.validacao-lista li:last-child { border-bottom: none; }
+.validacao-lista li::before { content: '·  '; color: #c0a87a; font-weight: 700; }
+
+/* ─── IMPRESSÃO A4 ─── */
+@media print {
+  .topo,
+  .btn-voltar,
+  .btn-imprimir,
+  .btn-topo,
+  .btn-sair,
+  #tela-lista,
+  .tela-login,
+  .card.secao-acesso,
+  .detalhe-header-esq button { display: none !important; }
+
+  /* observação técnica ENTRA na impressão — decisão consciente */
+  .card-observacao { display: block !important; }
+
+  body { background: white; color: black; font-size: 11pt; }
+  .container { max-width: 100%; padding: 0; }
+  .detalhe { display: block !important; }
+  .detalhe.visivel { display: block !important; }
+  .painel { display: block !important; }
+  .painel.visivel { display: block !important; }
+
+  .card {
+    border: 1px solid #ccc;
+    border-radius: 0;
+    margin-bottom: 0.5cm;
+    padding: 0.4cm;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .card-validacao { background: #f9f9f9 !important; }
+  .badge-elevado, .badge-moderado, .badge-leve {
+    background: #eee !important; color: black !important; border: 1px solid #aaa;
+  }
+  .hm-barra { background: #333 !important; }
+  .hm-wrap  { background: #ddd !important; }
+  .eixo-bloco { background: #f5f5f5 !important; }
+  .hist-table th { background: #333 !important; color: white !important; }
+  .detalhe-header { margin-bottom: 0.3cm; }
+
+  @page { size: A4; margin: 1.5cm; }
+}
+
 </style>
 </head>
 <body>
@@ -64,129 +155,311 @@ body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; color: #1a1a2e;
     <img src="logo.png" alt="SiMone">
     <h1>Painel Profissional</h1>
   </div>
-  <button class="btn-sair" id="btn-sair" style="display:none" onclick="sair()">Sair</button>
-</div>
-
-<!-- Tela de validação -->
-<div id="tela-validacao" class="container">
-  <div class="tela-validacao">
-    <h2>Acesso profissional</h2>
-    <p>Preencha os dados de acesso para visualizar o questionado autorizado.</p>
-
-    <div class="campo">
-      <label>CRM</label>
-      <input type="text" id="v-crm" placeholder="Ex: 123456" autocomplete="off">
-    </div>
-    <div class="campo">
-      <label>UF do CRM</label>
-      <input type="text" id="v-uf" placeholder="Ex: SP" maxlength="2" autocomplete="off">
-    </div>
-    <div class="campo">
-      <label>Código profissional</label>
-      <input type="text" id="v-codigo-prof" placeholder="Ex: AB3K7MN" autocomplete="off">
-    </div>
-    <div class="campo">
-      <label>Código do questionado</label>
-      <input type="text" id="v-codigo-q" placeholder="Ex: XY4R2WP" autocomplete="off">
-    </div>
-    <div class="campo">
-      <label>Token de autorização</label>
-      <input type="text" id="v-token" placeholder="Token fornecido pelo questionado" autocomplete="off">
-    </div>
-
-    <button class="btn-validar" onclick="validarAcesso()">Validar acesso</button>
-    <div class="erro-validacao" id="erro-validacao"></div>
+  <div class="topo-dir">
+    <span class="perfil-badge" id="badge-perfil" style="display:none"></span>
+    <button class="btn-topo" id="btn-sair" style="display:none" onclick="sair()">Sair</button>
   </div>
 </div>
 
-<!-- Painel profissional -->
-<div id="painel-container" class="painel-container">
+<!-- Login — campo CRM mantido por compatibilidade com backend -->
+<div id="tela-login">
+  <div class="tela-login">
+    <h2>Acesso profissional</h2>
+    <p>Entre com seu CRM e senha para acessar o painel.</p>
+    <div class="campo">
+      <label>CRM</label>
+      <input type="text" id="l-crm" placeholder="Ex: 123456" autocomplete="off">
+    </div>
+    <div class="campo">
+      <label>Senha</label>
+      <input type="password" id="l-senha" placeholder="Sua senha" autocomplete="current-password">
+    </div>
+    <button class="btn-principal" id="btn-login" onclick="fazerLogin()">Entrar</button>
+    <div class="erro-msg" id="erro-login"></div>
+  </div>
+</div>
+
+<!-- Painel -->
+<div id="painel" class="painel">
   <div class="container">
-    <div class="info-sessao" id="info-sessao"></div>
-    <div id="conteudo-painel"><div class="loading">Carregando dados...</div></div>
+
+    <!-- Lista -->
+    <div id="tela-lista">
+      <div class="card">
+        <div class="card-titulo">Questionados autorizados</div>
+        <div id="q-lista-conteudo"><div class="loading">Carregando...</div></div>
+      </div>
+
+      <div class="card secao-acesso">
+        <button id="btn-toggle-manual"
+          style="font-size:0.78rem;color:#aaa;border:none;background:transparent;padding:0;cursor:pointer;">
+          + Acessar com código manual (avançado)
+        </button>
+        <div id="painel-acesso-manual" style="display:none;margin-top:1rem;">
+          <div class="acesso-linha">
+            <div class="campo">
+              <label>Código do questionado</label>
+              <input type="text" id="a-codigo" placeholder="Ex: XY4R2WP" autocomplete="off">
+            </div>
+            <div class="campo">
+              <label>Token de autorização</label>
+              <input type="text" id="a-token" placeholder="Token fornecido pelo questionado" autocomplete="off">
+            </div>
+            <button id="btn-acessar-token" class="btn-secundario">Acessar</button>
+          </div>
+          <div class="erro-msg" id="erro-acesso"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detalhe -->
+    <div id="tela-detalhe" class="detalhe">
+      <div class="detalhe-header">
+        <div class="detalhe-header-esq">
+          <button class="btn-voltar" id="btn-voltar">← Voltar</button>
+          <span id="detalhe-codigo" style="font-family:monospace;font-size:0.9rem;color:#1a1a2e;font-weight:600;"></span>
+        </div>
+        <button class="btn-imprimir" onclick="window.print()">⎙ Imprimir relatório</button>
+      </div>
+
+      <div id="detalhe-conteudo"><div class="loading">Carregando...</div></div>
+
+      <div class="card card-validacao" id="card-validacao" style="display:none">
+        <div class="card-titulo">Nota de validação do instrumento</div>
+        <ul class="validacao-lista">
+          <li>Ferramenta de leitura funcional — não diagnóstica.</li>
+          <li>Os resultados indicam padrões de custo energético e funcionalidade, não patologia.</li>
+          <li>A leitura depende de contexto clínico e longitudinal para interpretação adequada.</li>
+          <li>Não substitui avaliação clínica, psicológica ou médica.</li>
+          <li>Dados baseados em autorrelato, sujeitos a variação de percepção e estado momentâneo.</li>
+        </ul>
+      </div>
+
+      <div class="card card-observacao" id="card-observacao" style="display:none">
+        <div class="card-titulo">Observação técnica</div>
+        <div class="campo">
+          <textarea id="obs-texto"
+            placeholder="Registrar observações clínicas, limites da leitura e conduta sugerida."></textarea>
+        </div>
+      </div>
+
+    </div>
   </div>
 </div>
 
 <script>
-// ─── SESSÃO ───────────────────────────────────────────────────────────────────
 
-function obterSessao() {
-  return {
-    session_token:   sessionStorage.getItem('simone_session_token'),
-    questionado_id:  sessionStorage.getItem('simone_questionado_id'),
-    profissional_id: sessionStorage.getItem('simone_profissional_id')
-  };
+// ─── ESCAPE DE HTML ───────────────────────────────────────────────────────────
+
+function esc(valor) {
+  return String(valor == null ? '' : valor)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
 
+// ─── SESSÃO ───────────────────────────────────────────────────────────────────
+
 function salvarSessao(dados) {
-  sessionStorage.setItem('simone_session_token',   dados.session_token);
-  sessionStorage.setItem('simone_questionado_id',  dados.questionado_id);
-  sessionStorage.setItem('simone_profissional_id', dados.profissional_id);
+  sessionStorage.setItem('pro_token',  dados.session_token);
+  sessionStorage.setItem('pro_id',     dados.profissional_id);
+  sessionStorage.setItem('pro_perfil', dados.perfil || 'profissional');
+}
+
+function obterToken() {
+  return sessionStorage.getItem('pro_token');
+}
+
+function perfilAtual() {
+  return sessionStorage.getItem('pro_perfil') || 'profissional';
 }
 
 function limparSessao() {
-  sessionStorage.removeItem('simone_session_token');
-  sessionStorage.removeItem('simone_questionado_id');
-  sessionStorage.removeItem('simone_profissional_id');
+  sessionStorage.removeItem('pro_token');
+  sessionStorage.removeItem('pro_id');
+  sessionStorage.removeItem('pro_perfil');
 }
 
-function sair() {
+async function sair() {
+  var token = obterToken();
+  if (token) {
+    await fetch('/profissional/logout', {
+      method:  'POST',
+      headers: { 'x-session-token': token }
+    }).catch(function() {});
+  }
   limparSessao();
-  mostrarValidacao();
+  mostrarLogin();
 }
 
-// ─── EXIBIÇÃO ─────────────────────────────────────────────────────────────────
+// ─── NAVEGAÇÃO ────────────────────────────────────────────────────────────────
 
-function mostrarValidacao() {
-  document.getElementById('tela-validacao').style.display = '';
-  document.getElementById('painel-container').classList.remove('visivel');
+function mostrarLogin() {
+  document.getElementById('tela-login').style.display = '';
+  document.getElementById('painel').classList.remove('visivel');
   document.getElementById('btn-sair').style.display = 'none';
-  document.getElementById('erro-validacao').textContent = '';
+  document.getElementById('badge-perfil').style.display = 'none';
 }
 
-function mostrarPainel(sessao) {
-  document.getElementById('tela-validacao').style.display = 'none';
-  document.getElementById('painel-container').classList.add('visivel');
+function mostrarPainel() {
+  document.getElementById('tela-login').style.display = 'none';
+  document.getElementById('painel').classList.add('visivel');
   document.getElementById('btn-sair').style.display = '';
 
-  document.getElementById('info-sessao').innerHTML =
-    '<span>Questionado: <b>' + sessao.questionado_id + '</b></span>' +
-    '<span>Sessão ativa</span>';
+  var badge = document.getElementById('badge-perfil');
+  badge.style.display = '';
+  badge.textContent = perfilAtual();
 
-  carregarDados(sessao);
+  document.getElementById('tela-lista').style.display = '';
+  document.getElementById('tela-detalhe').classList.remove('visivel');
+  carregarQuestionados();
 }
 
-// ─── VALIDAÇÃO ────────────────────────────────────────────────────────────────
+function voltarLista() {
+  document.getElementById('tela-lista').style.display = '';
+  document.getElementById('tela-detalhe').classList.remove('visivel');
+  document.getElementById('card-validacao').style.display = 'none';
+  document.getElementById('card-observacao').style.display = 'none';
+  document.getElementById('obs-texto').value = '';
+}
 
-async function validarAcesso() {
-  var crm             = document.getElementById('v-crm').value.trim();
-  var uf_crm          = document.getElementById('v-uf').value.trim().toUpperCase();
-  var codigo_prof     = document.getElementById('v-codigo-prof').value.trim();
-  var codigo_q        = document.getElementById('v-codigo-q').value.trim();
-  var token           = document.getElementById('v-token').value.trim();
-  var erroEl          = document.getElementById('erro-validacao');
+// ─── LOGIN ────────────────────────────────────────────────────────────────────
+// Nota: validação de força de senha aplicada apenas no cadastro/redefinição,
+// não no login — para não bloquear contas com senha anterior ao enforcement.
+
+async function fazerLogin() {
+  var crm    = document.getElementById('l-crm').value.trim();
+  var senha  = document.getElementById('l-senha').value;
+  var erroEl = document.getElementById('erro-login');
+  var btn    = document.getElementById('btn-login');
 
   erroEl.textContent = '';
 
-  if (!crm || !uf_crm || !codigo_prof || !codigo_q || !token) {
-    erroEl.textContent = 'Preencha todos os campos.';
+  if (!crm || !senha) {
+    erroEl.textContent = 'Preencha CRM e senha.';
     return;
   }
 
-  var btn = document.querySelector('.btn-validar');
-  btn.textContent = 'Validando...';
+  btn.textContent = 'Entrando...';
   btn.disabled = true;
 
   try {
-    var res = await fetch('/profissional/validar-acesso', {
-      method: 'POST',
+    var res = await fetch('/profissional/login', {
+      method:  'POST',
       headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ crm: crm, senha: senha })
+    });
+
+    var dados = await res.json();
+
+    if (!res.ok) {
+      erroEl.textContent = dados.erro || 'Credenciais inválidas.';
+      return;
+    }
+
+    salvarSessao(dados);
+    mostrarPainel();
+
+  } catch (e) {
+    erroEl.textContent = 'Erro ao conectar. Tente novamente.';
+  } finally {
+    btn.textContent = 'Entrar';
+    btn.disabled = false;
+  }
+}
+
+// ─── LISTA DE QUESTIONADOS ────────────────────────────────────────────────────
+
+async function carregarQuestionados() {
+  var el = document.getElementById('q-lista-conteudo');
+  el.innerHTML = '<div class="loading">Carregando...</div>';
+
+  var token = obterToken();
+  if (!token) { limparSessao(); mostrarLogin(); return; }
+
+  try {
+    var res = await fetch('/profissional/questionados', {
+      headers: {
+        'x-session-token': token,
+        'x-perfil':        perfilAtual()
+      }
+    });
+
+    if (res.status === 401) { limparSessao(); mostrarLogin(); return; }
+
+    var dados = await res.json();
+
+    if (!dados.questionados || dados.questionados.length === 0) {
+      el.innerHTML = '<div class="empty">Nenhum questionado autorizado ainda.</div>';
+      return;
+    }
+
+    var lista = document.createElement('div');
+    lista.className = 'q-lista';
+
+    dados.questionados.forEach(function(q, idx) {
+      var item = document.createElement('div');
+      item.className = 'q-item';
+      item.innerHTML =
+        '<span class="q-codigo">' + esc(q.codigo_questionado) + '</span>' +
+        '<span class="q-data">'   + fmtDataCurta(q.criado_em || q.created_at) + '</span>' +
+        '<span class="q-seta">›</span>';
+      item.addEventListener('click', function() {
+        abrirDetalhe(dados.questionados[idx].id, dados.questionados[idx].codigo_questionado);
+      });
+      lista.appendChild(item);
+    });
+
+    el.innerHTML = '';
+    el.appendChild(lista);
+
+  } catch (e) {
+    el.innerHTML = '<div class="empty">Erro ao carregar.</div>';
+  }
+}
+
+// ─── ACESSO MANUAL ────────────────────────────────────────────────────────────
+
+function toggleAcessoManual() {
+  var painel = document.getElementById('painel-acesso-manual');
+  var btn    = document.getElementById('btn-toggle-manual');
+  if (painel.style.display === 'none') {
+    painel.style.display = '';
+    btn.textContent = '− Fechar acesso manual';
+  } else {
+    painel.style.display = 'none';
+    btn.textContent = '+ Acessar com código manual (avançado)';
+  }
+}
+
+async function acessarComToken() {
+  var codigo     = document.getElementById('a-codigo').value.trim();
+  var tokenAcesso = document.getElementById('a-token').value.trim();
+  var erroEl     = document.getElementById('erro-acesso');
+
+  erroEl.textContent = '';
+
+  if (!codigo || !tokenAcesso) {
+    erroEl.textContent = 'Preencha código e token.';
+    return;
+  }
+
+  var sessaoToken = obterToken();
+  if (!sessaoToken) { limparSessao(); mostrarLogin(); return; }
+
+  try {
+    var res = await fetch('/profissional/validar-acesso', {
+      method:  'POST',
+      headers: {
+        'Content-Type':    'application/json',
+        'x-session-token': sessaoToken
+      },
       body: JSON.stringify({
-        crm:                crm,
-        uf_crm:             uf_crm,
-        codigo_profissional: codigo_prof,
-        codigo_questionado:  codigo_q,
-        token_autorizacao:   token
+        codigo_questionado: codigo,
+        token_autorizacao:  tokenAcesso,
+        _via_sessao:        true
       })
     });
 
@@ -197,146 +470,130 @@ async function validarAcesso() {
       return;
     }
 
-    salvarSessao(dados);
-    mostrarPainel(dados);
+    document.getElementById('a-codigo').value = '';
+    document.getElementById('a-token').value  = '';
+
+    await carregarQuestionados();
+    await abrirDetalhe(dados.questionado_id, codigo);
 
   } catch (e) {
     erroEl.textContent = 'Erro ao conectar. Tente novamente.';
-  } finally {
-    btn.textContent = 'Validar acesso';
-    btn.disabled = false;
   }
 }
 
-// ─── CARREGAR DADOS DO QUESTIONADO ───────────────────────────────────────────
+// ─── DETALHE ──────────────────────────────────────────────────────────────────
 
-async function carregarDados(sessao) {
-  var el = document.getElementById('conteudo-painel');
+async function abrirDetalhe(questionadoId, codigo) {
+  var token = obterToken();
+  if (!token) { limparSessao(); mostrarLogin(); return; }
+
+  document.getElementById('tela-lista').style.display = 'none';
+  document.getElementById('tela-detalhe').classList.add('visivel');
+  document.getElementById('detalhe-codigo').textContent = esc(codigo);
+  document.getElementById('card-validacao').style.display = 'none';
+  document.getElementById('card-observacao').style.display = 'none';
+  document.getElementById('obs-texto').value = '';
+
+  var el = document.getElementById('detalhe-conteudo');
   el.innerHTML = '<div class="loading">Carregando...</div>';
 
   try {
-    var res = await fetch('/profissional/questionado/' + sessao.questionado_id, {
-      headers: {
-        'x-session-token': sessao.session_token
-      }
+    var res = await fetch('/profissional/questionado/' + encodeURIComponent(questionadoId), {
+      headers: { 'x-session-token': token }
     });
 
-    if (res.status === 401) {
-      limparSessao();
-      mostrarValidacao();
+    if (res.status === 401) { limparSessao(); mostrarLogin(); return; }
+    if (res.status === 403) {
+      el.innerHTML = '<div class="empty">Acesso não autorizado para este questionado.</div>';
       return;
     }
 
     var dados = await res.json();
 
-    if (!res.ok || dados.erro) {
-      el.innerHTML = '<div class="empty">' + (dados.erro || 'Erro ao carregar dados.') + '</div>';
+    if (!dados.resultados || dados.resultados.length === 0) {
+      el.innerHTML = '<div class="empty">Nenhum resultado disponível.</div>';
       return;
     }
 
-    renderPainel(dados, el);
+    renderDetalhe(dados, el);
+    document.getElementById('card-validacao').style.display = '';
+    document.getElementById('card-observacao').style.display = '';
 
   } catch (e) {
-    el.innerHTML = '<div class="empty">Erro ao carregar. Tente novamente.</div>';
+    el.innerHTML = '<div class="empty">Erro ao carregar dados.</div>';
   }
 }
 
-// ─── RENDERIZAR PAINEL ────────────────────────────────────────────────────────
-
-function renderPainel(dados, el) {
-  if (!dados || !dados.resultados || dados.resultados.length === 0) {
-    el.innerHTML = '<div class="empty">Nenhum resultado disponível para este questionado.</div>';
-    return;
-  }
-
-  var html = '';
+function renderDetalhe(dados, el) {
   var ultimo = dados.resultados[0];
   var eixos  = ultimo.eixos || {};
+  var html   = '';
 
-  // card: último resultado
-  html += '<div class="resultado-card">';
-  html += '<h3>Último resultado — ' + fmtData(ultimo.criado_em || ultimo.created_at) + '</h3>';
-  html += '<div class="p-grid">';
-
+  html += '<div class="card">';
+  html += '<div class="card-titulo">Último resultado — ' + fmtData(ultimo.criado_em || ultimo.created_at) + '</div>';
+  html += '<div class="eixo-grid">';
   ['S','O','A','P'].forEach(function(k) {
     if (eixos[k] != null) {
-      html += '<div class="p-bloco">';
-      html += '<div class="p-label">' + nomeEixo(k) + '</div>';
-      html += '<div class="p-valor">' + Number(eixos[k]).toFixed(1) + '</div>';
-      html += '</div>';
+      html += '<div class="eixo-bloco"><div class="eixo-label">' + esc(nomeEixo(k)) + '</div>';
+      html += '<div class="eixo-valor">' + Number(eixos[k]).toFixed(1) + '</div></div>';
     }
   });
-
   html += '</div>';
 
   if (eixos.G != null) {
-    html += '<div class="p-bloco">';
-    html += '<div class="p-label">G — Carga global</div>';
-    html += '<div class="p-valor">' + Number(eixos.G).toFixed(1);
-    if (ultimo.gravidade) html += '<span class="badge badge-' + ultimo.gravidade + '">' + ultimo.gravidade + '</span>';
+    html += '<div class="eixo-bloco" style="margin-bottom:0.75rem;">';
+    html += '<div class="eixo-label">G — Carga global</div>';
+    html += '<div class="eixo-valor">' + Number(eixos.G).toFixed(1);
+    if (ultimo.gravidade) {
+      var g = esc(ultimo.gravidade);
+      html += '<span class="badge badge-' + g + '">' + g + '</span>';
+    }
     html += '</div></div>';
   }
 
-  // heatmap de eixos
-  html += '<div class="p-bloco"><div class="p-label">Intensidade por eixo</div>';
+  html += '<div class="eixo-bloco"><div class="eixo-label">Intensidade por eixo</div>';
   ['S','O','A','P'].forEach(function(k) {
     if (eixos[k] != null) {
       var pct = Math.round((eixos[k] / 4) * 100);
-      html += '<div class="heatmap-row">';
-      html += '<div class="hm-nome">' + nomeEixo(k) + '</div>';
+      html += '<div class="hm-row"><div class="hm-nome">' + esc(nomeEixo(k)) + '</div>';
       html += '<div class="hm-wrap"><div class="hm-barra" style="width:' + pct + '%"></div></div>';
-      html += '<div class="hm-pct">' + pct + '%</div>';
-      html += '</div>';
+      html += '<div class="hm-pct">' + pct + '%</div></div>';
     }
   });
   html += '</div>';
 
-  // assinatura
   if (ultimo.assinatura) {
-    html += '<div class="p-bloco"><div class="p-label">Assinatura</div>';
-    html += '<div class="p-valor">' + ultimo.assinatura + '</div></div>';
+    html += '<div class="eixo-bloco" style="margin-top:0.75rem;"><div class="eixo-label">Assinatura</div>';
+    html += '<div style="font-size:0.82rem;color:#444;">' + esc(ultimo.assinatura) + '</div></div>';
   }
 
-  // flags de coerência
   if (ultimo.flags && Array.isArray(ultimo.flags) && ultimo.flags.length > 0) {
-    html += '<div class="p-bloco"><div class="p-label">Flags de coerência</div>';
-    html += '<div class="p-sub">' + ultimo.flags.join(', ') + '</div></div>';
+    html += '<div class="eixo-bloco" style="margin-top:0.5rem;"><div class="eixo-label">Flags de coerência</div>';
+    html += '<div style="font-size:0.78rem;color:#888;">' + esc(ultimo.flags.join(', ')) + '</div></div>';
   }
 
-  html += '</div>'; // fecha resultado-card
+  html += '</div>';
 
-  // histórico de sessões
   if (dados.resultados.length > 1) {
-    html += '<div class="resultado-card">';
-    html += '<h3>Histórico (' + dados.resultados.length + ' medições)</h3>';
-    html += '<table style="width:100%;border-collapse:collapse;font-size:0.78rem;">';
-    html += '<thead><tr style="background:#1a1a2e;color:white;">';
-    html += '<th style="padding:6px 10px;text-align:left;">Data</th>';
-    html += '<th style="padding:6px 10px;">S</th><th style="padding:6px 10px;">O</th>';
-    html += '<th style="padding:6px 10px;">A</th><th style="padding:6px 10px;">P</th>';
-    html += '<th style="padding:6px 10px;">G</th><th style="padding:6px 10px;text-align:left;">Gravidade</th>';
+    html += '<div class="card"><div class="card-titulo">Histórico (' + dados.resultados.length + ' medições)</div>';
+    html += '<div style="overflow-x:auto;">';
+    html += '<table class="hist-table"><thead><tr>';
+    html += '<th>Data</th><th>S</th><th>O</th><th>A</th><th>P</th><th>G</th><th>Gravidade</th>';
     html += '</tr></thead><tbody>';
-
     dados.resultados.forEach(function(r) {
       var ex = r.eixos || {};
-      html += '<tr style="border-bottom:1px solid #f0f0f0;">';
-      html += '<td style="padding:6px 10px;color:#666;">' + fmtDataCurta(r.criado_em || r.created_at) + '</td>';
+      html += '<tr><td>' + fmtDataCurta(r.criado_em || r.created_at) + '</td>';
       ['S','O','A','P','G'].forEach(function(k) {
-        html += '<td style="padding:6px 10px;text-align:center;">' + (ex[k] != null ? Number(ex[k]).toFixed(1) : '—') + '</td>';
+        html += '<td style="text-align:center;">' + (ex[k] != null ? Number(ex[k]).toFixed(1) : '—') + '</td>';
       });
-      html += '<td style="padding:6px 10px;">' + (r.gravidade || '—') + '</td>';
-      html += '</tr>';
+      html += '<td>' + esc(r.gravidade || '—') + '</td></tr>';
     });
-
-    html += '</tbody></table></div>';
+    html += '</tbody></table></div></div>';
   }
 
-  // longitudinal
   if (dados.longitudinal) {
-    html += '<div class="resultado-card">';
-    html += '<h3>Leitura longitudinal</h3>';
-    html += '<div class="longitudinal-label">' + (dados.longitudinal.texto || '—') + '</div>';
-    html += '</div>';
+    html += '<div class="card"><div class="card-titulo">Leitura longitudinal</div>';
+    html += '<div class="long-texto">' + esc(dados.longitudinal.texto || '—') + '</div></div>';
   }
 
   el.innerHTML = html;
@@ -345,33 +602,45 @@ function renderPainel(dados, el) {
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
 
 function nomeEixo(k) {
-  var nomes = { S: 'Sentir', O: 'Organizar', A: 'Agir', P: 'Propósito' };
-  return nomes[k] || k;
+  return { S: 'Sentir', O: 'Organizar', A: 'Agir', P: 'Propósito' }[k] || k;
 }
 
 function fmtData(iso) {
   if (!iso) return '—';
-  var d = new Date(iso.indexOf('Z') === -1 && iso.indexOf('+') === -1 ? iso + 'Z' : iso);
+  var s = String(iso);
+  var d = new Date(s.indexOf('Z') === -1 && s.indexOf('+') === -1 ? s + 'Z' : s);
+  if (isNaN(d.getTime())) return '—';
   return d.toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' }) + ' ' +
          d.toLocaleTimeString('pt-BR', { timeZone: 'America/Sao_Paulo', hour: '2-digit', minute: '2-digit' });
 }
 
 function fmtDataCurta(iso) {
   if (!iso) return '—';
-  var d = new Date(iso.indexOf('Z') === -1 && iso.indexOf('+') === -1 ? iso + 'Z' : iso);
+  var s = String(iso);
+  var d = new Date(s.indexOf('Z') === -1 && s.indexOf('+') === -1 ? s + 'Z' : s);
+  if (isNaN(d.getTime())) return '—';
   return d.toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' });
 }
+
+// ─── BIND DE EVENTOS ─────────────────────────────────────────────────────────
+
+document.getElementById('btn-voltar').addEventListener('click', voltarLista);
+document.getElementById('btn-toggle-manual').addEventListener('click', toggleAcessoManual);
+document.getElementById('btn-acessar-token').addEventListener('click', acessarComToken);
+document.getElementById('l-senha').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') fazerLogin();
+});
 
 // ─── INICIALIZAÇÃO ────────────────────────────────────────────────────────────
 
 (function init() {
-  var sessao = obterSessao();
-  if (sessao.session_token && sessao.questionado_id) {
-    mostrarPainel(sessao);
+  if (obterToken()) {
+    mostrarPainel();
   } else {
-    mostrarValidacao();
+    mostrarLogin();
   }
 })();
+
 </script>
 </body>
 </html>
