@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SiMone · Admin — Solicitações de e-mail</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; color: #1a1a2e; min-height: 100vh; }
+
+.topo { background: #1a1a2e; color: white; padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; }
+.topo h1 { font-size: 0.9rem; font-weight: 600; letter-spacing: 0.05em; opacity: 0.9; }
+.topo img { width: 72px; }
+.topo-esq { display: flex; align-items: center; gap: 1rem; }
+
+.container { max-width: 960px; margin: 0 auto; padding: 2rem 1.25rem; }
+.page-title { font-size: 1rem; font-weight: 700; margin-bottom: 0.25rem; }
+.page-sub   { font-size: 0.8rem; color: #999; margin-bottom: 1.75rem; }
+
+/* ── FILTROS ── */
+.filtros { display: flex; gap: 0.5rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+.btn-filtro { padding: 0.35rem 0.9rem; border-radius: 99px; font-size: 0.75rem; font-weight: 600; border: 1px solid #ddd; background: white; cursor: pointer; transition: background .15s; }
+.btn-filtro:hover { background: #e8e4de; }
+.btn-filtro.ativo { background: #1a1a2e; color: white; border-color: #1a1a2e; }
+
+/* ── TABELA ── */
+.card { background: white; border-radius: 12px; border: 1px solid #eee; overflow: hidden; }
+.tabela { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+.tabela th { background: #1a1a2e; color: white; padding: 0.65rem 0.9rem; text-align: left; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; white-space: nowrap; }
+.tabela td { padding: 0.7rem 0.9rem; border-bottom: 1px solid #f0f0f0; color: #333; vertical-align: middle; }
+.tabela tr:last-child td { border-bottom: none; }
+.tabela tr:hover td { background: #fafaf8; }
+
+.crm-cell   { font-family: monospace; font-weight: 700; font-size: 0.88rem; color: #1a1a2e; }
+.email-cell { font-size: 0.78rem; color: #555; word-break: break-all; }
+.email-novo { color: #1a6e2e; font-weight: 600; }
+.nome-cell  { font-size: 0.78rem; }
+.doc-cell   { font-family: monospace; font-size: 0.75rem; color: #888; }
+.data-cell  { font-size: 0.72rem; color: #aaa; white-space: nowrap; }
+
+/* ── BADGES ── */
+.badge { display: inline-block; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; padding: 2px 8px; border-radius: 99px; }
+.badge-pendente { background: #fef3e2; color: #b7770d; }
+.badge-aprovado { background: #eafaf1; color: #1a6e2e; }
+.badge-negado   { background: #fde8e8; color: #c0392b; }
+
+/* ── AUDITORIA ── */
+.auditoria { font-size: 0.65rem; color: #bbb; margin-top: 4px; line-height: 1.45; }
+.auditoria strong { color: #aaa; font-weight: 600; }
+
+/* ── AÇÕES ── */
+.acoes { display: flex; gap: 0.4rem; }
+.btn-aprovar { background: #eafaf1; color: #1a6e2e; border: 1px solid #b7e4c7; border-radius: 7px; padding: 0.3rem 0.75rem; font-size: 0.75rem; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.btn-aprovar:hover:not(:disabled) { background: #c6efce; }
+.btn-negar   { background: #fde8e8; color: #c0392b; border: 1px solid #f5c6cb; border-radius: 7px; padding: 0.3rem 0.75rem; font-size: 0.75rem; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.btn-negar:hover:not(:disabled)   { background: #f5c6cb; }
+.btn-aprovar:disabled, .btn-negar:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.empty   { text-align: center; color: #bbb; padding: 2.5rem; font-size: 0.85rem; }
+.loading { text-align: center; color: #aaa; padding: 2rem; font-size: 0.82rem; }
+
+/* ── TOAST ── */
+.toast { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); background: #1a1a2e; color: white; padding: 0.6rem 1.25rem; border-radius: 99px; font-size: 0.82rem; font-weight: 600; opacity: 0; pointer-events: none; transition: opacity .25s; z-index: 200; }
+.toast.visivel { opacity: 1; }
+.toast.erro    { background: #c0392b; }
+
+/* ── CONFIRM OVERLAY ── */
+.confirm-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 150; align-items: center; justify-content: center; }
+.confirm-overlay.visivel { display: flex; }
+.confirm-box { background: white; border-radius: 14px; padding: 1.5rem; max-width: 360px; width: 90%; box-shadow: 0 8px 32px rgba(0,0,0,0.16); }
+.confirm-box h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.4rem; }
+.confirm-box p  { font-size: 0.8rem; color: #666; line-height: 1.5; margin-bottom: 1.25rem; }
+.confirm-footer { display: flex; gap: 0.5rem; justify-content: flex-end; }
+.btn-confirm-ok     { background: #1a1a2e; color: white; border: none; border-radius: 8px; padding: 0.55rem 1.2rem; font-size: 0.85rem; font-weight: 600; cursor: pointer; }
+.btn-confirm-ok:hover { background: #f5a623; color: #1a1a2e; }
+.btn-confirm-cancel { background: #f0f2f5; color: #555; border: 1px solid #ddd; border-radius: 8px; padding: 0.55rem 1rem; font-size: 0.85rem; cursor: pointer; }
+.btn-confirm-cancel:hover { background: #e8e4de; }
+
+@media (max-width: 700px) {
+  .tabela { font-size: 0.74rem; }
+  .tabela th, .tabela td { padding: 0.55rem 0.6rem; }
+  .acoes { flex-direction: column; gap: 0.3rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="topo">
+  <div class="topo-esq">
+    <img src="logo.png" alt="SiMone">
+    <h1>Admin · Solicitações de atualização de e-mail</h1>
+  </div>
+  <div style="display:flex;align-items:center;gap:0.6rem;">
+    <input type="password" id="input-admin-key"
+      placeholder="Admin Key"
+      autocomplete="new-password"
+      style="font-size:0.78rem;padding:0.35rem 0.7rem;border-radius:8px;border:1px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.08);color:white;width:160px;">
+    <button id="btn-carregar"
+      style="font-size:0.75rem;padding:0.35rem 0.85rem;border-radius:8px;border:1px solid rgba(255,255,255,0.3);background:transparent;color:white;cursor:pointer;">
+      Carregar
+    </button>
+  </div>
+</div>
+
+<div class="container">
+  <p class="page-title">Solicitações de troca de e-mail</p>
+  <p class="page-sub">Nenhuma alteração é automática. Aprove ou negue manualmente após verificar os dados do profissional.</p>
+
+  <div class="filtros">
+    <button class="btn-filtro ativo" data-filtro="pendente">Pendentes</button>
+    <button class="btn-filtro"       data-filtro="aprovado">Aprovadas</button>
+    <button class="btn-filtro"       data-filtro="negado">Negadas</button>
+    <button class="btn-filtro"       data-filtro="">Todas</button>
+  </div>
+
+  <div class="card">
+    <div id="tabela-wrapper"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="confirm-overlay" id="confirm-overlay">
+  <div class="confirm-box">
+    <h4 id="confirm-titulo"></h4>
+    <p  id="confirm-texto"></p>
+    <div class="confirm-footer">
+      <button class="btn-confirm-cancel" id="btn-confirm-cancel">Cancelar</button>
+      <button class="btn-confirm-ok"     id="btn-confirm-ok">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+
+var todasSolicitacoes = [];
+var filtroAtual       = 'pendente';
+var confirmCallback   = null;
+
+// ── ADMIN KEY ─────────────────────────────────────────────────────────────────
+
+function adminKey() {
+  return document.getElementById('input-admin-key').value.trim();
+}
+
+function adminHeaders(extra) {
+  return Object.assign({ 'x-admin-key': adminKey() }, extra || {});
+}
+
+// ── UTIL ──────────────────────────────────────────────────────────────────────
+
+function esc(v) {
+  return String(v == null ? '' : v)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function fmtData(iso) {
+  if (!iso) return '—';
+  var s = String(iso);
+  var d = new Date(s.indexOf('Z') === -1 && s.indexOf('+') === -1 ? s + 'Z' : s);
+  if (isNaN(d.getTime())) return '—';
+  return d.toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' }) + ' ' +
+         d.toLocaleTimeString('pt-BR', { timeZone: 'America/Sao_Paulo', hour: '2-digit', minute: '2-digit' });
+}
+
+function mostrarToast(msg, tipo) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast visivel' + (tipo === 'erro' ? ' erro' : '');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(function() { t.classList.remove('visivel'); }, 2800);
+}
+
+// ── CONFIRM ───────────────────────────────────────────────────────────────────
+
+function abrirConfirm(titulo, texto, cb) {
+  document.getElementById('confirm-titulo').textContent = titulo;
+  document.getElementById('confirm-texto').textContent  = texto;
+  confirmCallback = cb;
+  document.getElementById('confirm-overlay').classList.add('visivel');
+}
+
+function fecharConfirm() {
+  document.getElementById('confirm-overlay').classList.remove('visivel');
+  confirmCallback = null;
+}
+
+// ── FILTROS (event delegation) ────────────────────────────────────────────────
+
+document.querySelector('.filtros').addEventListener('click', function(e) {
+  var btn = e.target.closest('.btn-filtro');
+  if (!btn) return;
+  filtroAtual = btn.dataset.filtro;
+  document.querySelectorAll('.btn-filtro').forEach(function(b) { b.classList.remove('ativo'); });
+  btn.classList.add('ativo');
+  renderTabela();
+});
+
+// ── CARREGAR ──────────────────────────────────────────────────────────────────
+
+async function carregar() {
+  if (!adminKey()) {
+    document.getElementById('tabela-wrapper').innerHTML =
+      '<div class="empty">Informe a Admin Key antes de carregar.</div>';
+    return;
+  }
+  document.getElementById('tabela-wrapper').innerHTML = '<div class="loading">Carregando...</div>';
+  try {
+    var res = await fetch('/admin/solicitacoes-email', { headers: adminHeaders() });
+    if (res.status === 403) throw new Error('Acesso negado. Verifique a Admin Key.');
+    var dados = await res.json();
+    if (!res.ok) throw new Error(dados.erro || 'Erro ao carregar.');
+    todasSolicitacoes = dados.solicitacoes || [];
+    renderTabela();
+  } catch (e) {
+    document.getElementById('tabela-wrapper').innerHTML =
+      '<div class="empty">' + esc(e.message) + '</div>';
+  }
+}
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
+
+function renderTabela() {
+  var lista = filtroAtual
+    ? todasSolicitacoes.filter(function(s) { return s.status === filtroAtual; })
+    : todasSolicitacoes;
+
+  if (lista.length === 0) {
+    var label = filtroAtual ? ' ' + filtroAtual : '';
+    document.getElementById('tabela-wrapper').innerHTML =
+      '<div class="empty">Nenhuma solicitação' + label + '.</div>';
+    return;
+  }
+
+  var html = '<div style="overflow-x:auto;"><table class="tabela"><thead><tr>';
+  html += '<th>CRM</th><th>E-mail antigo</th><th>E-mail novo</th>';
+  html += '<th>Nome informado</th><th>Documento</th><th>Status</th>';
+  html += '<th>Criado em</th><th>Ações</th>';
+  html += '</tr></thead><tbody>';
+
+  lista.forEach(function(s) {
+    var isPendente = s.status === 'pendente';
+
+    // Status + auditoria discreta para decisões já tomadas
+    var statusHtml = '<span class="badge badge-' + esc(s.status) + '">' + esc(s.status) + '</span>';
+    if (!isPendente && (s.analisado_em || s.analisado_por)) {
+      statusHtml += '<div class="auditoria">';
+      if (s.analisado_em)  statusHtml += fmtData(s.analisado_em) + '<br>';
+      if (s.analisado_por) statusHtml += 'por <strong>' + esc(s.analisado_por) + '</strong>';
+      statusHtml += '</div>';
+    }
+
+    // Botões via data-attributes — sem onclick inline
+    var acoesHtml;
+    if (isPendente) {
+      acoesHtml =
+        '<div class="acoes">' +
+        '<button class="btn-aprovar" data-acao="aprovar" data-id="' + esc(s.id) +
+          '" data-crm="' + esc(s.crm) + '" data-email="' + esc(s.email_novo) + '">Aprovar</button>' +
+        '<button class="btn-negar"   data-acao="negar"   data-id="' + esc(s.id) +
+          '" data-crm="' + esc(s.crm) + '">Negar</button>' +
+        '</div>';
+    } else {
+      acoesHtml = '<span style="font-size:0.72rem;color:#bbb;">—</span>';
+    }
+
+    html += '<tr data-id="' + esc(s.id) + '">';
+    html += '<td class="crm-cell">'             + esc(s.crm)                 + '</td>';
+    html += '<td class="email-cell">'           + esc(s.email_antigo || '—') + '</td>';
+    html += '<td class="email-cell email-novo">'+ esc(s.email_novo)          + '</td>';
+    html += '<td class="nome-cell">'            + esc(s.nome_informado)      + '</td>';
+    html += '<td class="doc-cell">'             + esc(s.documento_informado) + '</td>';
+    html += '<td>'                              + statusHtml                 + '</td>';
+    html += '<td class="data-cell">'            + fmtData(s.criado_em)       + '</td>';
+    html += '<td>'                              + acoesHtml                  + '</td>';
+    html += '</tr>';
+  });
+
+  html += '</tbody></table></div>';
+  document.getElementById('tabela-wrapper').innerHTML = html;
+}
+
+// ── DELEGAÇÃO DE CLIQUES DA TABELA ────────────────────────────────────────────
+
+document.getElementById('tabela-wrapper').addEventListener('click', function(e) {
+  var btn = e.target.closest('[data-acao]');
+  if (!btn || btn.disabled) return;
+
+  var acao  = btn.dataset.acao;
+  var id    = btn.dataset.id;
+  var crm   = btn.dataset.crm;
+  var email = btn.dataset.email || '';
+
+  if (acao === 'aprovar') {
+    abrirConfirm(
+      'Confirmar aprovação',
+      'Aprovar troca de e-mail do CRM ' + crm + ' para ' + email + '? As sessões ativas serão invalidadas.',
+      function() { executarAcao('aprovar', id); }
+    );
+  } else if (acao === 'negar') {
+    abrirConfirm(
+      'Confirmar negação',
+      'Negar a solicitação do CRM ' + crm + '? Esta ação não pode ser desfeita.',
+      function() { executarAcao('negar', id); }
+    );
+  }
+});
+
+// ── EXECUTAR AÇÃO ─────────────────────────────────────────────────────────────
+
+async function executarAcao(acao, id) {
+  // Desabilitar botões da linha imediatamente — anti duplo clique
+  var linha = document.querySelector('tr[data-id="' + id + '"]');
+  var btns  = linha ? linha.querySelectorAll('[data-acao]') : [];
+  btns.forEach(function(b) { b.disabled = true; });
+
+  try {
+    var res = await fetch('/admin/solicitacao-email/' + acao, {
+      method:  'POST',
+      headers: adminHeaders({ 'Content-Type': 'application/json' }),
+      body:    JSON.stringify({ id: id })
+    });
+    var dados = await res.json();
+    if (res.status === 403) throw new Error('Acesso negado. Verifique a Admin Key.');
+    if (!res.ok) throw new Error(dados.erro || 'Erro ao processar.');
+
+    mostrarToast(acao === 'aprovar' ? 'E-mail atualizado com sucesso.' : 'Solicitação negada.');
+
+    // Atualizar estado local sem recarregar
+    var agora = new Date().toISOString();
+    todasSolicitacoes = todasSolicitacoes.map(function(s) {
+      if (s.id !== id) return s;
+      return Object.assign({}, s, {
+        status:        acao === 'aprovar' ? 'aprovado' : 'negado',
+        analisado_em:  agora,
+        analisado_por: 'admin'
+      });
+    });
+    renderTabela();
+
+  } catch (e) {
+    mostrarToast(e.message || 'Erro ao processar.', 'erro');
+    // Reabilitar botões se falhou
+    btns.forEach(function(b) { b.disabled = false; });
+  }
+}
+
+// ── BIND ESTÁTICO ─────────────────────────────────────────────────────────────
+
+document.getElementById('btn-carregar').addEventListener('click', carregar);
+
+document.getElementById('input-admin-key').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') carregar();
+});
+
+document.getElementById('btn-confirm-ok').addEventListener('click', function() {
+  fecharConfirm();
+  if (confirmCallback) confirmCallback();
+});
+
+document.getElementById('btn-confirm-cancel').addEventListener('click', fecharConfirm);
+
+document.getElementById('confirm-overlay').addEventListener('click', function(e) {
+  if (e.target === this) fecharConfirm();
+});
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+
+document.getElementById('tabela-wrapper').innerHTML =
+  '<div class="empty">Informe a Admin Key no topo e clique em Carregar.</div>';
+
+</script>
+</body>
+</html>
