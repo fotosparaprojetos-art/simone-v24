@@ -102,6 +102,23 @@ body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; color: #1a1a2e;
 .validacao-lista li:last-child { border-bottom: none; }
 .validacao-lista li::before { content: '·  '; color: #c0a87a; font-weight: 700; }
 
+/* ─── LINK TROCA E-MAIL ─── */
+.link-email { display: block; text-align: center; font-size: 0.75rem; color: #aaa; margin-top: 1.1rem; cursor: pointer; text-decoration: none; background: none; border: none; width: 100%; }
+.link-email:hover { color: #1a1a2e; text-decoration: underline; }
+
+/* ─── MODAL ─── */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 100; align-items: center; justify-content: center; }
+.modal-overlay.visivel { display: flex; }
+.modal-box { background: white; border-radius: 16px; padding: 1.75rem; width: 100%; max-width: 400px; margin: 1rem; box-shadow: 0 8px 32px rgba(0,0,0,0.18); }
+.modal-box h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.25rem; }
+.modal-box .modal-sub { font-size: 0.78rem; color: #999; margin-bottom: 1.25rem; line-height: 1.5; }
+.modal-footer { display: flex; gap: 0.6rem; margin-top: 1rem; }
+.modal-footer .btn-principal { margin-top: 0; }
+.btn-cancelar { flex-shrink: 0; background: #f0f2f5; color: #666; border: 1px solid #ddd; border-radius: 10px; padding: 0.7rem 1rem; font-size: 0.85rem; cursor: pointer; white-space: nowrap; }
+.btn-cancelar:hover { background: #e8e4de; }
+.aviso-pendente { font-size: 0.8rem; color: #e67e22; background: #fef3e2; border-radius: 8px; padding: 0.6rem 0.8rem; margin-top: 0.75rem; display: none; }
+.aviso-ok { font-size: 0.8rem; color: #27ae60; background: #eafaf1; border-radius: 8px; padding: 0.6rem 0.8rem; margin-top: 0.75rem; display: none; }
+
 /* ─── IMPRESSÃO A4 ─── */
 @media print {
   .topo,
@@ -176,6 +193,25 @@ body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; color: #1a1a2e;
     </div>
     <button class="btn-principal" id="btn-login" onclick="fazerLogin()">Entrar</button>
     <div class="erro-msg" id="erro-login"></div>
+    <button class="link-email" onclick="abrirModalEmail()">Não tem mais acesso ao e-mail? Solicitar atualização</button>
+  </div>
+</div>
+
+<!-- Modal: Solicitação de atualização de e-mail -->
+<div class="modal-overlay" id="modal-email">
+  <div class="modal-box">
+    <h3>Solicitar atualização de e-mail</h3>
+    <p class="modal-sub">Preencha os dados abaixo. A solicitação será analisada manualmente.<br>Nenhuma alteração é feita de forma automática.</p>
+    <div class="campo"><label>CRM</label><input type="text" id="me-crm" placeholder="Ex: 123456" autocomplete="off"></div>
+    <div class="campo"><label>Novo e-mail</label><input type="email" id="me-email" placeholder="novo@email.com" autocomplete="off"></div>
+    <div class="campo"><label>Nome completo</label><input type="text" id="me-nome" placeholder="Como consta no cadastro" autocomplete="off"></div>
+    <div class="campo"><label>CPF ou documento de identificação</label><input type="text" id="me-documento" placeholder="Somente números" autocomplete="off"></div>
+    <div class="aviso-pendente" id="me-aviso-pendente"></div>
+    <div class="aviso-ok" id="me-aviso-ok">Solicitação enviada. Aguarde o contato da administração.</div>
+    <div class="modal-footer" id="me-footer">
+      <button class="btn-cancelar" onclick="fecharModalEmail()">Cancelar</button>
+      <button class="btn-principal" id="btn-enviar-email" onclick="enviarSolicitacaoEmail()">Enviar solicitação</button>
+    </div>
   </div>
 </div>
 
@@ -621,6 +657,85 @@ function fmtDataCurta(iso) {
   if (isNaN(d.getTime())) return '—';
   return d.toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' });
 }
+
+// ─── MODAL: ATUALIZAÇÃO DE E-MAIL ─────────────────────────────────────────────
+
+function abrirModalEmail() {
+  document.getElementById('modal-email').classList.add('visivel');
+  document.getElementById('me-crm').focus();
+  // resetar estado
+  ['me-crm','me-email','me-nome','me-documento'].forEach(function(id) {
+    document.getElementById(id).value = '';
+    document.getElementById(id).disabled = false;
+  });
+  document.getElementById('me-aviso-pendente').style.display = 'none';
+  document.getElementById('me-aviso-ok').style.display       = 'none';
+  document.getElementById('me-footer').style.display         = 'flex';
+  document.getElementById('btn-enviar-email').disabled       = false;
+  document.getElementById('btn-enviar-email').textContent    = 'Enviar solicitação';
+}
+
+function fecharModalEmail() {
+  document.getElementById('modal-email').classList.remove('visivel');
+}
+
+async function enviarSolicitacaoEmail() {
+  var crm       = document.getElementById('me-crm').value.trim();
+  var email_novo = document.getElementById('me-email').value.trim();
+  var nome      = document.getElementById('me-nome').value.trim();
+  var documento = document.getElementById('me-documento').value.trim();
+  var avisoErr  = document.getElementById('me-aviso-pendente');
+  var avisoOk   = document.getElementById('me-aviso-ok');
+  var btn       = document.getElementById('btn-enviar-email');
+
+  avisoErr.style.display = 'none';
+  avisoOk.style.display  = 'none';
+
+  if (!crm || !email_novo || !nome || !documento) {
+    avisoErr.textContent   = 'Preencha todos os campos.';
+    avisoErr.style.display = 'block';
+    return;
+  }
+
+  btn.textContent = 'Enviando...';
+  btn.disabled    = true;
+
+  try {
+    var res = await fetch('/profissional/solicitar-atualizacao-email', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ crm: crm, email_novo: email_novo, nome: nome, documento: documento })
+    });
+
+    var dados = await res.json();
+
+    if (!res.ok) {
+      avisoErr.textContent   = dados.erro || 'Erro ao enviar solicitação.';
+      avisoErr.style.display = 'block';
+      btn.textContent = 'Enviar solicitação';
+      btn.disabled    = false;
+      return;
+    }
+
+    // Sucesso
+    ['me-crm','me-email','me-nome','me-documento'].forEach(function(id) {
+      document.getElementById(id).disabled = true;
+    });
+    document.getElementById('me-footer').style.display  = 'none';
+    avisoOk.style.display = 'block';
+
+  } catch (e) {
+    avisoErr.textContent   = 'Erro ao conectar. Tente novamente.';
+    avisoErr.style.display = 'block';
+    btn.textContent = 'Enviar solicitação';
+    btn.disabled    = false;
+  }
+}
+
+// Fechar modal clicando fora
+document.getElementById('modal-email').addEventListener('click', function(e) {
+  if (e.target === this) fecharModalEmail();
+});
 
 // ─── BIND DE EVENTOS ─────────────────────────────────────────────────────────
 
