@@ -3,759 +3,332 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SiMone · Painel Profissional</title>
+<title>SiMone V24</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;1,300&family=JetBrains+Mono:wght@300;400&family=Source+Sans+3:wght@300;400&display=swap" rel="stylesheet">
 <style>
-
 /* ─── BASE ─── */
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; color: #1a1a2e; min-height: 100vh; }
-
-/* ─── TOPO ─── */
-.topo { background: #1a1a2e; color: white; padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; }
-.topo-esq { display: flex; align-items: center; gap: 1rem; }
-.topo img { width: 80px; }
-.topo h1 { font-size: 0.9rem; font-weight: 600; letter-spacing: 0.05em; opacity: 0.9; }
-.topo-dir { display: flex; align-items: center; gap: 0.75rem; }
-.perfil-badge { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; background: rgba(255,255,255,0.12); border-radius: 6px; padding: 3px 8px; }
-.btn-topo { background: transparent; border: 1px solid rgba(255,255,255,0.3); color: white; border-radius: 8px; padding: 0.35rem 0.9rem; font-size: 0.78rem; cursor: pointer; }
-.btn-topo:hover { background: rgba(255,255,255,0.1); }
-
-/* ─── CONTAINER ─── */
-.container { max-width: 860px; margin: 0 auto; padding: 2rem 1.25rem; }
-
-/* ─── LOGIN ─── */
-.tela-login { max-width: 380px; margin: 5rem auto; background: white; border-radius: 16px; border: 1px solid #eee; padding: 2rem 1.75rem; }
-.tela-login h2 { font-size: 1rem; font-weight: 700; margin-bottom: 0.3rem; }
-.tela-login p { font-size: 0.82rem; color: #999; margin-bottom: 1.5rem; }
-
-/* ─── CAMPOS ─── */
-.campo { margin-bottom: 1rem; }
-.campo label { display: block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: #999; margin-bottom: 4px; }
-.campo input, .campo textarea { width: 100%; border: 1px solid #ddd; border-radius: 8px; padding: 0.55rem 0.8rem; font-size: 0.88rem; font-family: inherit; color: #1a1a2e; }
-.campo input:focus, .campo textarea:focus { outline: none; border-color: #1a1a2e; }
-.campo textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
-
-/* ─── BOTÕES ─── */
-.btn-principal { width: 100%; background: #1a1a2e; color: white; border: none; border-radius: 10px; padding: 0.7rem; font-size: 0.9rem; font-weight: 600; cursor: pointer; margin-top: 0.25rem; }
-.btn-principal:hover:not(:disabled) { background: #f5a623; color: #1a1a2e; }
-.btn-principal:disabled { opacity: 0.5; cursor: not-allowed; }
-.btn-secundario { background: #f0f2f5; color: #1a1a2e; border: 1px solid #ddd; border-radius: 8px; padding: 0.5rem 1rem; font-size: 0.82rem; cursor: pointer; white-space: nowrap; }
-.btn-secundario:hover { background: #e8e4de; }
-.btn-imprimir { background: #f0f2f5; color: #1a1a2e; border: 1px solid #ddd; border-radius: 8px; padding: 0.4rem 0.9rem; font-size: 0.78rem; cursor: pointer; }
-.btn-imprimir:hover { background: #e8e4de; }
-
-/* ─── MENSAGENS ─── */
-.erro-msg { font-size: 0.82rem; color: #c0392b; margin-top: 0.75rem; min-height: 1.2rem; }
-
-/* ─── PAINEL ─── */
-.painel { display: none; }
-.painel.visivel { display: block; }
-
-/* ─── CARDS ─── */
-.card { background: white; border-radius: 12px; border: 1px solid #eee; padding: 1.25rem; margin-bottom: 1rem; }
-.card-titulo { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #bbb; margin-bottom: 0.75rem; }
-
-/* ─── LISTA ─── */
-.q-lista { display: flex; flex-direction: column; gap: 0.5rem; }
-.q-item { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; background: #f7f7f5; border-radius: 10px; cursor: pointer; }
-.q-item:hover { background: #f0ede8; }
-.q-codigo { font-family: monospace; font-size: 0.88rem; font-weight: 600; color: #1a1a2e; }
-.q-data { font-size: 0.72rem; color: #aaa; }
-.q-seta { font-size: 0.8rem; color: #bbb; }
-.empty { text-align: center; color: #bbb; padding: 2rem; font-size: 0.85rem; }
-.loading { text-align: center; color: #aaa; padding: 1.5rem; font-size: 0.82rem; }
-
-/* ─── ACESSO MANUAL ─── */
-.acesso-linha { display: flex; gap: 0.75rem; align-items: flex-end; flex-wrap: wrap; }
-.acesso-linha .campo { flex: 1; min-width: 180px; margin-bottom: 0; }
-
-/* ─── DETALHE ─── */
-.detalhe { display: none; }
-.detalhe.visivel { display: block; }
-.detalhe-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.5rem; }
-.detalhe-header-esq { display: flex; align-items: center; gap: 0.75rem; }
-.btn-voltar { background: transparent; border: none; font-size: 0.85rem; color: #888; cursor: pointer; padding: 0; }
-.btn-voltar:hover { color: #1a1a2e; }
-.eixo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-bottom: 0.75rem; }
-.eixo-bloco { background: #f7f7f5; border-radius: 10px; padding: 0.75rem 1rem; }
-.eixo-label { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #bbb; margin-bottom: 3px; }
-.eixo-valor { font-size: 0.95rem; color: #1a1a2e; font-weight: 600; }
-.badge { display: inline-block; font-size: 0.58rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; padding: 2px 7px; border-radius: 99px; margin-left: 5px; }
-.badge-elevado { background: #fde8e8; color: #c0392b; }
-.badge-moderado { background: #fef3e2; color: #e67e22; }
-.badge-leve     { background: #eafaf1; color: #27ae60; }
-.hm-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 5px; }
-.hm-nome { font-size: 0.72rem; color: #666; width: 80px; flex-shrink: 0; }
-.hm-wrap { flex: 1; height: 7px; background: #eee; border-radius: 99px; }
-.hm-barra { height: 7px; border-radius: 99px; background: #f5a623; }
-.hm-pct { font-size: 0.65rem; color: #aaa; width: 28px; text-align: right; }
-.hist-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
-.hist-table th { background: #1a1a2e; color: white; padding: 5px 8px; text-align: left; }
-.hist-table td { padding: 5px 8px; border-bottom: 1px solid #f0f0f0; color: #444; }
-.long-texto { font-size: 0.78rem; color: #888; line-height: 1.6; }
-
-/* ─── VALIDAÇÃO PROFISSIONAL ─── */
-.card-validacao { background: #f9f7f4; border: 1px solid #e8e0d5; }
-.card-validacao .card-titulo { color: #c0a87a; }
-.validacao-lista { list-style: none; padding: 0; margin: 0; }
-.validacao-lista li { font-size: 0.78rem; color: #666; padding: 4px 0; border-bottom: 1px solid #f0ebe3; line-height: 1.5; }
-.validacao-lista li:last-child { border-bottom: none; }
-.validacao-lista li::before { content: '·  '; color: #c0a87a; font-weight: 700; }
-
-/* ─── LINK TROCA E-MAIL ─── */
-.link-email { display: block; text-align: center; font-size: 0.75rem; color: #aaa; margin-top: 1.1rem; cursor: pointer; text-decoration: none; background: none; border: none; width: 100%; }
-.link-email:hover { color: #1a1a2e; text-decoration: underline; }
-
-/* ─── MODAL ─── */
-.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 100; align-items: center; justify-content: center; }
-.modal-overlay.visivel { display: flex; }
-.modal-box { background: white; border-radius: 16px; padding: 1.75rem; width: 100%; max-width: 400px; margin: 1rem; box-shadow: 0 8px 32px rgba(0,0,0,0.18); }
-.modal-box h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.25rem; }
-.modal-box .modal-sub { font-size: 0.78rem; color: #999; margin-bottom: 1.25rem; line-height: 1.5; }
-.modal-footer { display: flex; gap: 0.6rem; margin-top: 1rem; }
-.modal-footer .btn-principal { margin-top: 0; }
-.btn-cancelar { flex-shrink: 0; background: #f0f2f5; color: #666; border: 1px solid #ddd; border-radius: 10px; padding: 0.7rem 1rem; font-size: 0.85rem; cursor: pointer; white-space: nowrap; }
-.btn-cancelar:hover { background: #e8e4de; }
-.aviso-pendente { font-size: 0.8rem; color: #e67e22; background: #fef3e2; border-radius: 8px; padding: 0.6rem 0.8rem; margin-top: 0.75rem; display: none; }
-.aviso-ok { font-size: 0.8rem; color: #27ae60; background: #eafaf1; border-radius: 8px; padding: 0.6rem 0.8rem; margin-top: 0.75rem; display: none; }
-
-/* ─── IMPRESSÃO A4 ─── */
-@media print {
-  .topo,
-  .btn-voltar,
-  .btn-imprimir,
-  .btn-topo,
-  .btn-sair,
-  #tela-lista,
-  .tela-login,
-  .card.secao-acesso,
-  .detalhe-header-esq button { display: none !important; }
-
-  /* observação técnica ENTRA na impressão — decisão consciente */
-  .card-observacao { display: block !important; }
-
-  body { background: white; color: black; font-size: 11pt; }
-  .container { max-width: 100%; padding: 0; }
-  .detalhe { display: block !important; }
-  .detalhe.visivel { display: block !important; }
-  .painel { display: block !important; }
-  .painel.visivel { display: block !important; }
-
-  .card {
-    border: 1px solid #ccc;
-    border-radius: 0;
-    margin-bottom: 0.5cm;
-    padding: 0.4cm;
-    break-inside: avoid;
-    page-break-inside: avoid;
-  }
-
-  .card-validacao { background: #f9f9f9 !important; }
-  .badge-elevado, .badge-moderado, .badge-leve {
-    background: #eee !important; color: black !important; border: 1px solid #aaa;
-  }
-  .hm-barra { background: #333 !important; }
-  .hm-wrap  { background: #ddd !important; }
-  .eixo-bloco { background: #f5f5f5 !important; }
-  .hist-table th { background: #333 !important; color: white !important; }
-  .detalhe-header { margin-bottom: 0.3cm; }
-
-  @page { size: A4; margin: 1.5cm; }
+:root {
+  --bg:        #F7F5F2;
+  --surface:   #FFFFFF;
+  --border:    #E2DDD8;
+  --ink:       #1E1C1A;
+  --ink-mid:   #5C5850;
+  --ink-dim:   #9C9890;
+  --mono:      'JetBrains Mono', monospace;
+  --serif:     'Fraunces', serif;
+  --sans:      'Source Sans 3', sans-serif;
+  --c0: #D6ECD8; --c1: #C8E6E0; --c2: #D6E8C0; --c3: #EDE8B0; --c4: #E8C8A0;
+  --c0-sel: #2A6B45; --c1-sel: #1A7060; --c2-sel: #5A7020; --c3-sel: #7A5520; --c4-sel: #8A4020;
 }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--ink); font-family: var(--sans); font-weight: 300; min-height: 100vh; }
 
+/* ─── HEADER ─── */
+.header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 20px 28px 16px; position: sticky; top: 0; z-index: 10; }
+.header-top { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px; }
+.header-titulo { font-family: var(--serif); font-size: 20px; font-weight: 300; color: var(--ink); }
+.header-subtitulo { font-family: var(--mono); font-size: 10px; color: var(--ink-dim); letter-spacing: 0.1em; text-transform: uppercase; }
+.header-periodo { font-family: var(--mono); font-size: 11px; color: var(--ink-mid); text-align: right; line-height: 1.6; }
+.progresso-wrap { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.progresso-fill { height: 100%; background: var(--ink); border-radius: 2px; transition: width 0.3s ease; width: 0%; }
+.progresso-label { font-family: var(--mono); font-size: 9px; color: var(--ink-dim); letter-spacing: 0.08em; margin-top: 5px; text-align: right; }
+
+/* ─── CONTEÚDO ─── */
+.conteudo { max-width: 760px; margin: 0 auto; padding: 32px 24px 80px; }
+.secao { margin-bottom: 40px; }
+.secao-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-dim); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+.item { margin-bottom: 28px; }
+.item-num { font-family: var(--mono); font-size: 10px; color: var(--ink-dim); margin-bottom: 5px; letter-spacing: 0.05em; }
+.item-pergunta { font-size: 15px; color: var(--ink); font-weight: 300; line-height: 1.5; margin-bottom: 10px; }
+.item-seta { color: var(--ink-dim); font-family: var(--mono); font-size: 11px; margin: 0 6px; }
+.item-resposta-atual { font-family: var(--mono); font-size: 11px; color: var(--ink-mid); font-style: italic; transition: opacity 0.2s; }
+.item-resposta-atual:empty { opacity: 0; }
+
+/* ─── ESCALA ─── */
+.escala { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-top: 8px; }
+.opcao { position: relative; cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent; }
+.opcao input[type="radio"] { position: absolute; opacity: 0; width: 0; height: 0; }
+.opcao-bloco { display: flex; align-items: center; justify-content: center; padding: 10px 6px; border-radius: 6px; border: 2px solid transparent; text-align: center; font-size: 11.5px; line-height: 1.4; font-family: var(--sans); font-weight: 300; transition: all 0.15s ease; min-height: 52px; cursor: pointer; }
+.v0 .opcao-bloco { background: var(--c0); color: var(--c0-sel); }
+.v1 .opcao-bloco { background: var(--c1); color: var(--c1-sel); }
+.v2 .opcao-bloco { background: var(--c2); color: var(--c2-sel); }
+.v3 .opcao-bloco { background: var(--c3); color: var(--c3-sel); }
+.v4 .opcao-bloco { background: var(--c4); color: var(--c4-sel); }
+.opcao:hover .opcao-bloco { filter: brightness(0.94); transform: translateY(-1px); }
+.opcao.selecionado .opcao-bloco { border-color: #333; font-weight: 600; box-shadow: 0 3px 10px rgba(0,0,0,0.25); transform: scale(1.05); }
+
+.ancoras { display: flex; justify-content: space-between; margin-top: 5px; }
+.ancora { font-family: var(--mono); font-size: 9px; color: var(--ink-dim); letter-spacing: 0.04em; }
+
+/* ─── RODAPÉ ─── */
+.rodape { position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 1px solid var(--border); padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; }
+.rodape-info { font-family: var(--mono); font-size: 10px; color: var(--ink-dim); }
+.btn-enviar { background: var(--ink); color: var(--bg); border: none; padding: 12px 28px; border-radius: 4px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: opacity 0.2s; }
+.btn-enviar:hover { opacity: 0.8; }
+.btn-enviar:disabled { opacity: 0.3; cursor: not-allowed; }
+
+/* ─── RESULTADO ─── */
+.resultado { display: none; max-width: 760px; margin: 40px auto; padding: 0 24px 80px; }
+.resultado-card { background: var(--surface); border: 1px solid var(--border); border-top: 3px solid var(--ink); border-radius: 6px; padding: 28px 32px; }
+.resultado-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-dim); margin-bottom: 12px; }
+.resultado-titulo { font-family: var(--serif); font-size: 22px; font-weight: 300; margin-bottom: 16px; line-height: 1.3; }
+.resultado-texto { font-size: 14px; color: var(--ink-mid); line-height: 1.75; margin-bottom: 12px; }
+.resultado-g { font-family: var(--mono); font-size: 11px; color: var(--ink-dim); margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); }
+.resultado-erro { color: #c0392b; font-family: var(--mono); font-size: 12px; padding: 16px; background: #fdf0ef; border-radius: 4px; margin-bottom: 16px; }
+
+/* ─── LOADING ─── */
+.loading { display: none; text-align: center; padding: 40px; font-family: var(--mono); font-size: 11px; color: var(--ink-dim); }
+
+/* ─── MOBILE ─── */
+@media (max-width: 560px) {
+  .escala { grid-template-columns: repeat(2, 1fr); gap: 4px; }
+  .opcao { font-size: 0.8rem; padding: 8px; }
+  .opcao.v4 { grid-column: span 2; }
+  .opcao-bloco { padding: 8px 3px; font-size: 10px; min-height: 48px; }
+  .header { padding: 14px 16px 12px; }
+  .conteudo { padding: 24px 16px 80px; }
+  .rodape { padding: 12px 16px; }
+}
 </style>
 </head>
 <body>
 
-<div class="topo">
-  <div class="topo-esq">
-    <img src="logo.png" alt="SiMone">
-    <h1>Painel Profissional</h1>
+<!-- HEADER -->
+<div class="header">
+  <div class="header-top">
+    <div>
+      <div class="header-titulo">SiMone V24</div>
+      <div class="header-subtitulo">Avaliação funcional</div>
+    </div>
+    <div class="header-periodo">
+      Ontem e hoje<br>
+      <span style="font-size:10px;color:var(--ink-dim)">Como esteve presente e quanto afetou</span>
+    </div>
   </div>
-  <div class="topo-dir">
-    <span class="perfil-badge" id="badge-perfil" style="display:none"></span>
-    <button class="btn-topo" id="btn-sair" style="display:none" onclick="sair()">Sair</button>
+  <div class="progresso-wrap"><div class="progresso-fill" id="progresso-fill"></div></div>
+  <div class="progresso-label" id="progresso-label">0 de 36</div>
+</div>
+
+<!-- CONTEÚDO -->
+<div class="conteudo" id="conteudo">
+
+  <div class="secao">
+    <div class="secao-label">S · Sentir — Corpo</div>
+    <div class="item"><div class="item-num">1</div><div class="item-pergunta">Tenho começado o dia sem energia no corpo<span class="item-seta">→</span><span class="item-resposta-atual" id="resp-s1_1"></span></div><div class="escala"><label class="opcao v0"><input type="radio" name="s1_1" value="0"><div class="opcao-bloco">não me afetou</div></label><label class="opcao v1"><input type="radio" name="s1_1" value="1"><div class="opcao-bloco">percebi, mas não atrapalhou</div></label><label class="opcao v2"><input type="radio" name="s1_1" value="2"><div class="opcao-bloco">já começou a me atrapalhar</div></label><label class="opcao v3"><input type="radio" name="s1_1" value="3"><div class="opcao-bloco">comprometeu partes do meu dia</div></label><label class="opcao v4"><input type="radio" name="s1_1" value="4"><div class="opcao-bloco">me travou</div></label></div><div class="ancoras"><span class="ancora">Não me afetou</span><span class="ancora">Me travou</span></div></div>
+    <div class="item"><div class="item-num">2</div><div class="item-pergunta">Meu corpo fica tenso ao longo do dia<span class="item-seta">→</span><span class="item-resposta-atual" id="resp-s1_2"></span></div><div class="escala"><label class="opcao v0"><input type="radio" name="s1_2" value="0"><div class="opcao-bloco">não me afetou</div></label><label class="opcao v1"><input type="radio" name="s1_2" value="1"><div class="opcao-bloco">percebi, mas não atrapalhou</div></label><label class="opcao v2"><input type="radio" name="s1_2" value="2"><div class="opcao-bloco">já começou a me atrapalhar</div></label><label class="opcao v3"><input type="radio" name="s1_2" value="3"><div class="opcao-bloco">comprometeu partes do meu dia</div></label><label class="opcao v4"><input type="radio" name="s1_2" value="4"><div class="opcao-bloco">me travou</div></label></div><div class="ancoras"><span class="ancora">Não me afetou</span><span class="ancora">Me travou</span></div></div>
+    <div class="item"><div class="item-num">3</div><div class="item-pergunta">Acordo sem me sentir descansado<span class="item-seta">→</span><span class="item-resposta-atual" id="resp-s1_3"></span></div><div class="escala"><label class="opcao v0"><input type="radio" name="s1_3" value="0"><div class="opcao-bloco">não me afetou</div></label><label class="opcao v1"><input type="radio" name="s1_3" value="1"><div class="opcao-bloco">percebi, mas não atrapalhou</div></label><label class="opcao v2"><input type="radio" name="s1_3" value="2"><div class="opcao-bloco">já começou a me atrapalhar</div></label><label class="opcao v3"><input type="radio" name="s1_3" value="3"><div class="opcao-bloco">comprometeu partes do meu dia</div></label><label class="opcao v4"><input type="radio" name="s1_3" value="4"><div class="opcao-bloco">me travou</div></label></div><div class="ancoras"><span class="ancora">Não me afetou</span><span class="ancora">Me travou</span></div></div>
+    <div class="item"><div class="item-num">4</div><div class="item-pergunta">Minha energia física vai caindo ao longo do dia<span class="item-seta">→</span><span class="item-resposta-atual" id="resp-s1_4"></span></div><div class="escala"><label class="opcao v0"><input type="radio" name="s1_4" value="0"><div class="opcao-bloco">não me afetou</div></label><label class="opcao v1"><input type="radio" name="s1_4" value="1"><div class="opcao-bloco">percebi, mas não atrapalhou</div></label><label class="opcao v2"><input type="radio" name="s1_4" value="2"><div class="opcao-bloco">já começou a me atrapalhar</div></label><label class="opcao v3"><input type="radio" name="s1_4" value="3"><div class="opcao-bloco">comprometeu partes do meu dia</div></label><label class="opcao v4"><input type="radio" name="s1_4" value="4"><div class="opcao-bloco">me travou</div></label></div><div class="ancoras"><span class="ancora">Não me afetou</span><span class="ancora">Me travou</span></div></div>
+    <div class="item"><div class="item-num">5</div><div class="item-pergunta">Tarefas simples me custam mais esforço do que deveriam<span class="item-seta">→</span><span class="item-resposta-atual" id="resp-s1_5"></span></div><div class="escala"><label class="opcao v0"><input type="radio" name="s1_5" value="0"><div class="opcao-bloco">não me afetou</div></label><label class="opcao v1"><input type="radio" name="s1_5" value="1"><div class="opcao-bloco">percebi, mas não atrapalhou</div></label><label class="opcao v2"><input type="radio" name="s1_5" value="2"><div class="opcao-bloco">já começou a me atrapalhar</div></label><label class="opcao v3"><input type="radio" name="s1_5" value="3"><div class="opcao-bloco">comprometeu partes do meu dia</div></label><label class="opcao v4"><input type="radio" name="s1_5" value="4"><div class="opcao-bloco">me travou</div></label></div><div class="ancoras"><span class="ancora">Não me afetou</span><span class="ancora">Me travou</span></div></div>
+    <div class="item"><div class="item-num">6</div><div class="item-pergunta">Meu corpo dá sinais de sobrecarga ao longo do dia<span class="item-seta">→</span><span class="item-resposta-atual" id="resp-s1_6"></span></div><div class="escala"><label class="opcao v0"><input type="radio" name="s1_6" value="0"><div class="opcao-bloco">não me afetou</div></label><label class="opcao v1"><input type="radio" name="s1_6" value="1"><div class="opcao-bloco">percebi, mas não atrapalhou</div></label><label class="opcao v2"><input type="radio" name="s1_6" value="2"><div class="opcao-bloco">já começou a me atrapalhar</div></label><label class="opcao v3"><input type="radio" name="s1_6" value="3"><div class="opcao-bloco">comprometeu partes do meu dia</div></label><label class="opcao v4"><input type="radio" name="s1_6" value="4"><div class="opcao-bloco">me travou</div></label></div><div class="ancoras"><span class="ancora">Não me afetou</span><span class="ancora">Me travou</span></div></div>
+  </div>
+
+  <div class="secao">
+    <div class="secao-label">S · Sentir — Emocional</div>
+    <div class="item"><div class="item-num">7</div><div class="item-pergunta">Tenho me irritado com facilidade<span class="item-seta">→</span><span class="item-resposta-atual" id="resp-s2_1"></span></div><div class="escala"><label class="opcao v0"><input type="radio" name="s2_1" value="0"><div class="opcao-bloco">não me afetou</div></label><label class="opcao v1"><input type="radio" name="s2_1" value="1"><div class="opcao-bloco">percebi, mas não atrapalhou</div></label><label class="opcao v2"><input type="radio" name="s2_1" value="2"><div class="opcao-bloco">já começou a me atrapalhar</div></label><label class="opcao v3"><input type="radio" name="s2_1" value="3"><div class="opcao-bloco">comprometeu partes do meu dia</div></label><label class="opcao v4"><input type="radio" name="s2_1" value="4"><div class="opcao-bloco">me travou</div></label></div><div class="ancoras"><span class="ancora">Não me afetou</span><span class="ancora">Me travou</span></div></div>
+    <div class="item"><div class="item-num">8</div><div class="item-pergunta">Sinto inquietação ao longo do dia<span class="item-seta">→</span><span class="item-resposta-atual" id="resp-s2_2"></span></div><div class="escala"><label class="opcao v0"><input type="radio" name="s2_2" value="0"><div class="opcao-bloco">não me afetou</div></label><label class="opcao v1"><input type="radio" name="s2_2" value="1"><div class="opcao-bloco">percebi, mas não atrapalhou</div></label><label class="opcao v2"><input type="radio" name="s2_2" value="2"><div class="opcao-bloco">já começou a me atrapalhar</div></label><label class="opcao v3"><input type="radio" name="s2_2" value="3"><div class="opcao-bloco">comprometeu partes do meu dia</div></label><label class="opcao v4"><input type="radio" name="s2_2" value="4"><div class="opcao-bloco">me travou</div></label></div><div class="ancoras"><span class="ancora">Não me afetou</span><span class="ancora">Me travou</span></div></div>
+    <div class="item"><div class="item-num">9</div><div class="item-pergunta">Reagi de forma mais intensa do que o normal<span class="item-seta">→</span><span class="item-resposta-atual" id="resp-s2_3"></span></div><div class="escala"><label class="opcao v0"><input type="radio" name="s2_3" value="0"><div class="opcao-bloco">não me afetou</div></label><label class="opcao v1"><input type="radio" name="s2_3" value="1"><div class="opcao-bloco">percebi, mas não atrapalhou</div></label><label class="opcao v2"><input type="radio" name="s2_3" value="2"><div class="opcao-bloco">já começou a me atrapalhar</div></label><label class="opcao v3"><input type="radio" name="s2_3" value="3"><div class="opcao-bloco">comprometeu partes do meu dia</div></label><label class="opcao v4"><input type="radio" name="s2_3" value="4"><div class="opcao-bloco">me travou</div></label></div><div class="ancoras"><span class="ancora">Não me afetou</span><span class="ancora">Me travou</span></div></div>
+    <div class="item"><div class="item-num">10</div><div class="item-pergunta">O peso emocional do dia tem me deixado esgotado<span class="item-seta">→</span><span class="item-resposta-atual" id="resp-s2_4"></span></div><div class="escala"><label class="opcao v0"><input type="radio" name="s2_4" value="0"><div class="opcao-bloco">não me afetou</div></label><label class="opcao v1"><input type="radio" name="s2_4" value="1"><div class="opcao-bloco">percebi, mas não atrapalhou</div></label><label class="opcao v2"><input type="radio" name="s2_4" value="2"><div class="opcao-bloco">já começou a me atrapalhar</div></label><label class="opcao v3"><input type="radio" name="s2_4" value="3"><div class="opcao-bloco">comprometeu partes do meu dia</div></label><label class="opcao v4"><input type="radio" name="s2_4" value="4"><div class="opcao-bloco">me travou</div></label></div><div class="ancoras"><span class="ancora">Não me afetou</span><span class="ancora">Me travou</span></div></div>
+    <div class="item"><div class="item-num">11</div><div class="item-pergunta">Quando me abalo, demoro para me recuperar<span class="item-seta">→</span><span class="item-resposta-atual" id="resp-s2_5"></span></div><div class="escala"><label class="opcao v0"><input type="radio" name="s2_5" value="0"><div class="opcao-bloco">não me afetou</div></label><label class="opcao v1"><input type="radio" name="s2_5" value="1"><div class="opcao-bloco">percebi, mas não atrapalhou</div></label><label class="opcao v2"><input type="radio" name="s2_5" value="2"><div class="opcao-bloco">já começou a me atrapalhar</div></label><label class="opcao v3"><input type="radio" name="s2_5" value="3"><div class="opcao-bloco">comprometeu partes do meu dia</div></label><label class="opcao v4"><input type="radio" name="s2_5" value="4"><div class="opcao-bloco">me travou</div></label></div><div class="ancoras"><span class="ancora">Não me afetou</span><span class="ancora">Me travou</span></div></div>
+    <div class="item"><div class="item-num">12</div><div class="item-pergunta">O que estou sentindo interfere no que preciso fazer<span class="item-seta">→</span><span class="item-resposta-atual" id="resp-s2_6"></span></div><div class="escala"><label class="opcao v0"><input type="radio" name="s2_6" value="0"><div class="opcao-bloco">não me afetou</div></label><label class="opcao v1"><input type="radio" name="s2_6" value="1"><div class="opcao-bloco">percebi, mas não atrapalhou</div></label><label class="opcao v2"><input type="radio" name="s2_6" value="2"><div class="opcao-bloco">já começou a me atrapalhar</div></label><label class="opcao v3"><input type="radio" name="s2_6" value="3"><div class="opcao-bloco">comprometeu partes do meu dia</div></label><label class="opcao v4"><input type="radio" name="s2_6" value="4"><div class="opcao-bloco">me travou</div></label></div><div class="ancoras"><span class="ancora">Não me afetou</span><span class="ancora">Me travou</span></div></div>
+  </div>
+
+  <div class="secao">
+    <div class="secao-label">O · Organizar — Clareza mental</div>
+    <div class="item"><div class="item-num">13</div><div class="item-pergunta">Minha mente tem ficado lenta para entender as coisas<span class="item-seta">→</span><span class="item-resposta-atual" id="resp-o1_1"></span></div><div class="escala"><label class="opcao v0"><input type="radio" name="o1_1" value="0"><div class="opcao-bloco">não me afetou</div></label><label class="opcao v1"><input type="radio" name="o1_1" value="1"><div class="opcao-bloco">percebi, mas não atrapalhou</div></label><label class="opcao v2"><input type="radio" name="o1_1" value="2"><div class="opcao-bloco">já começou a me atrapalhar</div></label><label class="opcao v3"><input type="radio" name="o1_1" value="3"><div class="opcao-bloco">comprometeu partes do meu dia</div></label><label class="opcao v4"><input type="radio" name="o1_1" value="4"><div class="opcao-bloco">me travou</div></label></div><div class="ancoras"><span class="ancora">Não me afetou</span><span class="ancora">Me travou</span></div></div>
+    <div class="item"><div class="item-num">14</div><div class="item-pergunta">Minhas ideias têm ficado embaralhadas<span class="item-seta">→</span><span class="item-resposta-atual" id="resp-o1_2"></span></div><div class="escala"><label class="opcao v0"><input type="radio" name="o1_2" value="0"><div class="opcao-bloco">não me afetou</div></label><label class="opcao v1"><input type="radio" name="o1_2" value="1"><div class="opcao-bloco">percebi, mas não atrapalhou</div></label><label class="opcao v2"><input type="radio" name="o1_2" value="2"><div class="opcao-bloco">já começou a me atrapalhar</div></label><label class="opcao v3"><input type="radio" name="o1_2" value="3"><div class="opcao-bloco">comprometeu partes do meu dia</div></label><label class="opcao v4"><input type="radio" name="o1_2" value="4"><div class="opcao-bloco">me travou</div></label></div><div class="ancoras"><span class="ancora">Não me afetou</span><span class="ancora">Me travou</span></div></div>
+    <div class="item"><div class="item-num">15</div><div class="item-pergunta">Tenho ficado preso nos mesmos pensamentos<span class="item-seta">→</span><span class="item-resposta-atual" id="resp-o1_3"></span></div><div class="escala"><label class="opcao v0"><input type="radio" name="o1_3" value="0"><div class="opcao-bloco">não me afetou</div></label><label class="opcao v1"><input type="radio" name="o1_3" value="1"><div class="opcao-bloco">percebi, mas não atrapalhou</div></label><label class="opcao v2"><input type="radio" name="o1_3" value="2"><div class="opcao-bloco">já começou a me atrapalhar</div></label><label class="opcao v3"><input type="radio" name="o1_3" value="3"><div class="opcao-bloco">comprometeu partes do meu dia</div></label><label class="opcao v4"><input type="radio" name="o1_3" value="4"><div class="opcao-bloco">me travou</div></label></div><div class="ancoras"><span class="ancora">Não me afetou</span><span class="ancora">Me travou</span></div></div>
+    <div class="item"><div class="item-num">16</div><div class="item-pergunta">Minha atenção tem se dispersado com facilidade<span class="item-seta">→</span><span class="item-resposta-atual" id="resp-o1_4"></span></div><div class="escala"><label class="opcao v0"><input type="radio" name="o1_4" value="0"><div class="opcao-bloco">não me afetou</div></label><label class="opcao v1"><input type="radio" name="o1_4" value="1"><div class="opcao-bloco">percebi, mas não atrapalhou</div></label><label class="opcao v2"><input type="radio" name="o1_4" value="2"><div class="opcao-bloco">já começou a me atrapalhar</div></label><label class="opcao v3"><input type="radio" name="o1_4" value="3"><div class="opcao-bloco">comprometeu partes do meu dia</div></label><label class="opcao v4"><input type="radio" name="o1_4" value="4"><div class="opcao-bloco">me travou</div></label></div><div class="ancoras"><span class="ancora">Não me afetou</span><span class="ancora">Me travou</span></div></div>
+    <div class="item"><div class="item-num">17</div><div class="item-pergunta">Minha cabeça tem ficado acelerada<span class="item-seta">→</span><span class="item-resposta-atual" id="resp-o1_5"></span></div><div class="escala"><label class="opcao v0"><input type="radio" name="o1_5" value="0"><div class="opcao-bloco">não me afetou</div></label><label class="opcao v1"><input type="radio" name="o1_5" value="1"><div class="opcao-bloco">percebi, mas não atrapalhou</div></label><label class="opcao v2"><input type="radio" name="o1_5" value="2"><div class="opcao-bloco">já começou a me atrapalhar</div></label><label class="opcao v3"><input type="radio" name="o1_5" value="3"><div class="opcao-bloco">comprometeu partes do meu dia</div></label><label class="opcao v4"><input type="radio" name="o1_5" value="4"><div class="opcao-bloco">me travou</div></label></div><div class="ancoras"><span class="ancora">Não me afetou</span><span class="ancora">Me travou</span></div></div>
+  </div>
+
+  <div class="secao">
+    <div class="secao-label">O · Organizar — Organização</div>
+    <div class="item"><div class="item-num">18</div><div class="item-pergunta">Tenho tido dificuldade de organizar o que preciso fazer<span class="item-seta">→</span><span class="item-resposta-atual" id="resp-o2_1"></span></div><div class="escala"><label class="opcao v0"><input type="radio" name="o2_1" value="0"><div class="opcao-bloco">não me afetou</div></label><label class="opcao v1"><input type="radio" name="o2_1" value="1"><div class="opcao-bloco">percebi, mas não atrapalhou</div></label><label class="opcao v2"><input type="radio" name="o2_1" value="2"><div class="opcao-bloco">já começou a me atrapalhar</div></label><label class="opcao v3"><input type="radio" name="o2_1" value="3"><div class="opcao-bloco">comprometeu partes do meu dia</div></label><label class="opcao v4"><input type="radio" name="o2_1" value="4"><div class="opcao-bloco">me travou</div></label></div><div class="ancoras"><span class="ancora">Não me afetou</span><span class="ancora">Me travou</span></div></div>
+    <div class="item"><div class="item-num">19</div><div class="item-pergunta">Tenho dificuldade de definir o que fazer primeiro<span class="item-seta">→</span><span class="item-resposta-atual" id="resp-o2_2"></span></div><div class="escala"><label class="opcao v0"><input type="radio" name="o2_2" value="0"><div class="opcao-bloco">não me afetou</div></label><label class="opcao v1"><input type="radio" name="o2_2" value="1"><div class="opcao-bloco">percebi, mas não atrapalhou</div></label><label class="opcao v2"><input type="radio" name="o2_2" value="2"><div class="opcao-bloco">já começou a me atrapalhar</div></label><label class="opcao v3"><input type="radio" name="o2_2" value="3"><div class="opcao-bloco">comprometeu partes do meu dia</div></label><label class="opcao v4"><input type="radio" name="o2_2" value="4"><div class="opcao-bloco">me travou</div></label></div><div class="ancoras"><span class="ancora">Não me afetou</span><span class="ancora">Me travou</span></div></div>
+    <div class="item"><div class="item-num">20</div><div class="item-pergunta">Fico organizando mas não avanço nas tarefas<span class="item-seta">→</span><span class="item-resposta-atual" id="resp-o2_3"></span></div><div class="escala"><label class="opcao v0"><input type="radio" name="o2_3" value="0"><div class="opcao-bloco">não me afetou</div></label><label class="opcao v1"><input type="radio" name="o2_3" value="1"><div class="opcao-bloco">percebi, mas não atrapalhou</div></label><label class="opcao v2"><input type="radio" name="o2_3" value="2"><div class="opcao-bloco">já começou a me atrapalhar</div></label><label class="opcao v3"><input type="radio" name="o2_3" value="3"><div class="opcao-bloco">comprometeu partes do meu dia</div></label><label class="opcao v4"><input type="radio" name="o2_3" value="4"><div class="opcao-bloco">me travou</div></label></div><div class="ancoras"><span class="ancora">Não me afetou</span><span class="ancora">Me travou</span></div></div>
+    <div class="item"><div class="item-num">21</div><div class="item-pergunta">Quando as demandas aumentam, perco a organização<span class="item-seta">→</span><span class="item-resposta-atual" id="resp-o2_4"></span></div><div class="escala"><label class="opcao v0"><input type="radio" name="o2_4" value="0"><div class="opcao-bloco">não me afetou</div></label><label class="opcao v1"><input type="radio" name="o2_4" value="1"><div class="opcao-bloco">percebi, mas não atrapalhou</div></label><label class="opcao v2"><input type="radio" name="o2_4" value="2"><div class="opcao-bloco">já começou a me atrapalhar</div></label><label class="opcao v3"><input type="radio" name="o2_4" value="3"><div class="opcao-bloco">comprometeu partes do meu dia</div></label><label class="opcao v4"><input type="radio" name="o2_4" value="4"><div class="opcao-bloco">me travou</div></label></div><div class="ancoras"><span class="ancora">Não me afetou</span><span class="ancora">Me travou</span></div></div>
+    <div class="item"><div class="item-num">22</div><div class="item-pergunta">Tenho misturado o que é urgente com o que pode esperar<span class="item-seta">→</span><span class="item-resposta-atual" id="resp-o2_5"></span></div><div class="escala"><label class="opcao v0"><input type="radio" name="o2_5" value="0"><div class="opcao-bloco">não me afetou</div></label><label class="opcao v1"><input type="radio" name="o2_5" value="1"><div class="opcao-bloco">percebi, mas não atrapalhou</div></label><label class="opcao v2"><input type="radio" name="o2_5" value="2"><div class="opcao-bloco">já começou a me atrapalhar</div></label><label class="opcao v3"><input type="radio" name="o2_5" value="3"><div class="opcao-bloco">comprometeu partes do meu dia</div></label><label class="opcao v4"><input type="radio" name="o2_5" value="4"><div class="opcao-bloco">me travou</div></label></div><div class="ancoras"><span class="ancora">Não me afetou</span><span class="ancora">Me travou</span></div></div>
+    <div class="item"><div class="item-num">23</div><div class="item-pergunta">A ordem das tarefas fica confusa<span class="item-seta">→</span><span class="item-resposta-atual" id="resp-o2_6"></span></div><div class="escala"><label class="opcao v0"><input type="radio" name="o2_6" value="0"><div class="opcao-bloco">não me afetou</div></label><label class="opcao v1"><input type="radio" name="o2_6" value="1"><div class="opcao-bloco">percebi, mas não atrapalhou</div></label><label class="opcao v2"><input type="radio" name="o2_6" value="2"><div class="opcao-bloco">já começou a me atrapalhar</div></label><label class="opcao v3"><input type="radio" name="o2_6" value="3"><div class="opcao-bloco">comprometeu partes do meu dia</div></label><label class="opcao v4"><input type="radio" name="o2_6" value="4"><div class="opcao-bloco">me travou</div></label></div><div class="ancoras"><span class="ancora">Não me afetou</span><span class="ancora">Me travou</span></div></div>
+  </div>
+
+  <div class="secao">
+    <div class="secao-label">A · Agir — Início</div>
+    <div class="item"><div class="item-num">24</div><div class="item-pergunta">Tenho tido dificuldade de começar as tarefas<span class="item-seta">→</span><span class="item-resposta-atual" id="resp-a1_1"></span></div><div class="escala"><label class="opcao v0"><input type="radio" name="a1_1" value="0"><div class="opcao-bloco">não me afetou</div></label><label class="opcao v1"><input type="radio" name="a1_1" value="1"><div class="opcao-bloco">percebi, mas não atrapalhou</div></label><label class="opcao v2"><input type="radio" name="a1_1" value="2"><div class="opcao-bloco">já começou a me atrapalhar</div></label><label class="opcao v3"><input type="radio" name="a1_1" value="3"><div class="opcao-bloco">comprometeu partes do meu dia</div></label><label class="opcao v4"><input type="radio" name="a1_1" value="4"><div class="opcao-bloco">me travou</div></label></div><div class="ancoras"><span class="ancora">Não me afetou</span><span class="ancora">Me travou</span></div></div>
+    <div class="item"><div class="item-num">25</div><div class="item-pergunta">Tenho adiado tarefas que sei que preciso fazer<span class="item-seta">→</span><span class="item-resposta-atual" id="resp-a1_2"></span></div><div class="escala"><label class="opcao v0"><input type="radio" name="a1_2" value="0"><div class="opcao-bloco">não me afetou</div></label><label class="opcao v1"><input type="radio" name="a1_2" value="1"><div class="opcao-bloco">percebi, mas não atrapalhou</div></label><label class="opcao v2"><input type="radio" name="a1_2" value="2"><div class="opcao-bloco">já começou a me atrapalhar</div></label><label class="opcao v3"><input type="radio" name="a1_2" value="3"><div class="opcao-bloco">comprometeu partes do meu dia</div></label><label class="opcao v4"><input type="radio" name="a1_2" value="4"><div class="opcao-bloco">me travou</div></label></div><div class="ancoras"><span class="ancora">Não me afetou</span><span class="ancora">Me travou</span></div></div>
+    <div class="item"><div class="item-num">26</div><div class="item-pergunta">Tenho evitado iniciar tarefas mesmo sabendo que preciso<span class="item-seta">→</span><span class="item-resposta-atual" id="resp-a1_3"></span></div><div class="escala"><label class="opcao v0"><input type="radio" name="a1_3" value="0"><div class="opcao-bloco">não me afetou</div></label><label class="opcao v1"><input type="radio" name="a1_3" value="1"><div class="opcao-bloco">percebi, mas não atrapalhou</div></label><label class="opcao v2"><input type="radio" name="a1_3" value="2"><div class="opcao-bloco">já começou a me atrapalhar</div></label><label class="opcao v3"><input type="radio" name="a1_3" value="3"><div class="opcao-bloco">comprometeu partes do meu dia</div></label><label class="opcao v4"><input type="radio" name="a1_3" value="4"><div class="opcao-bloco">me travou</div></label></div><div class="ancoras"><span class="ancora">Não me afetou</span><span class="ancora">Me travou</span></div></div>
+    <div class="item"><div class="item-num">27</div><div class="item-pergunta">Preciso de muito esforço para dar o primeiro passo<span class="item-seta">→</span><span class="item-resposta-atual" id="resp-a1_4"></span></div><div class="escala"><label class="opcao v0"><input type="radio" name="a1_4" value="0"><div class="opcao-bloco">não me afetou</div></label><label class="opcao v1"><input type="radio" name="a1_4" value="1"><div class="opcao-bloco">percebi, mas não atrapalhou</div></label><label class="opcao v2"><input type="radio" name="a1_4" value="2"><div class="opcao-bloco">já começou a me atrapalhar</div></label><label class="opcao v3"><input type="radio" name="a1_4" value="3"><div class="opcao-bloco">comprometeu partes do meu dia</div></label><label class="opcao v4"><input type="radio" name="a1_4" value="4"><div class="opcao-bloco">me travou</div></label></div><div class="ancoras"><span class="ancora">Não me afetou</span><span class="ancora">Me travou</span></div></div>
+    <div class="item"><div class="item-num">28</div><div class="item-pergunta">Resisto a tarefas que exigem fazer algo diferente do que já conheço<span class="item-seta">→</span><span class="item-resposta-atual" id="resp-a1_5"></span></div><div class="escala"><label class="opcao v0"><input type="radio" name="a1_5" value="0"><div class="opcao-bloco">não me afetou</div></label><label class="opcao v1"><input type="radio" name="a1_5" value="1"><div class="opcao-bloco">percebi, mas não atrapalhou</div></label><label class="opcao v2"><input type="radio" name="a1_5" value="2"><div class="opcao-bloco">já começou a me atrapalhar</div></label><label class="opcao v3"><input type="radio" name="a1_5" value="3"><div class="opcao-bloco">comprometeu partes do meu dia</div></label><label class="opcao v4"><input type="radio" name="a1_5" value="4"><div class="opcao-bloco">me travou</div></label></div><div class="ancoras"><span class="ancora">Não me afetou</span><span class="ancora">Me travou</span></div></div>
+  </div>
+
+  <div class="secao">
+    <div class="secao-label">A · Agir — Sustentação</div>
+    <div class="item"><div class="item-num">29</div><div class="item-pergunta">Tenho dificuldade de manter o que estou fazendo<span class="item-seta">→</span><span class="item-resposta-atual" id="resp-a2_1"></span></div><div class="escala"><label class="opcao v0"><input type="radio" name="a2_1" value="0"><div class="opcao-bloco">não me afetou</div></label><label class="opcao v1"><input type="radio" name="a2_1" value="1"><div class="opcao-bloco">percebi, mas não atrapalhou</div></label><label class="opcao v2"><input type="radio" name="a2_1" value="2"><div class="opcao-bloco">já começou a me atrapalhar</div></label><label class="opcao v3"><input type="radio" name="a2_1" value="3"><div class="opcao-bloco">comprometeu partes do meu dia</div></label><label class="opcao v4"><input type="radio" name="a2_1" value="4"><div class="opcao-bloco">me travou</div></label></div><div class="ancoras"><span class="ancora">Não me afetou</span><span class="ancora">Me travou</span></div></div>
+    <div class="item"><div class="item-num">30</div><div class="item-pergunta">Tenho parado tarefas antes de terminar<span class="item-seta">→</span><span class="item-resposta-atual" id="resp-a2_2"></span></div><div class="escala"><label class="opcao v0"><input type="radio" name="a2_2" value="0"><div class="opcao-bloco">não me afetou</div></label><label class="opcao v1"><input type="radio" name="a2_2" value="1"><div class="opcao-bloco">percebi, mas não atrapalhou</div></label><label class="opcao v2"><input type="radio" name="a2_2" value="2"><div class="opcao-bloco">já começou a me atrapalhar</div></label><label class="opcao v3"><input type="radio" name="a2_2" value="3"><div class="opcao-bloco">comprometeu partes do meu dia</div></label><label class="opcao v4"><input type="radio" name="a2_2" value="4"><div class="opcao-bloco">me travou</div></label></div><div class="ancoras"><span class="ancora">Não me afetou</span><span class="ancora">Me travou</span></div></div>
+    <div class="item"><div class="item-num">31</div><div class="item-pergunta">Perco o ritmo no meio das tarefas<span class="item-seta">→</span><span class="item-resposta-atual" id="resp-a2_3"></span></div><div class="escala"><label class="opcao v0"><input type="radio" name="a2_3" value="0"><div class="opcao-bloco">não me afetou</div></label><label class="opcao v1"><input type="radio" name="a2_3" value="1"><div class="opcao-bloco">percebi, mas não atrapalhou</div></label><label class="opcao v2"><input type="radio" name="a2_3" value="2"><div class="opcao-bloco">já começou a me atrapalhar</div></label><label class="opcao v3"><input type="radio" name="a2_3" value="3"><div class="opcao-bloco">comprometeu partes do meu dia</div></label><label class="opcao v4"><input type="radio" name="a2_3" value="4"><div class="opcao-bloco">me travou</div></label></div><div class="ancoras"><span class="ancora">Não me afetou</span><span class="ancora">Me travou</span></div></div>
+    <div class="item"><div class="item-num">32</div><div class="item-pergunta">Termino o dia com tarefas importantes por fazer<span class="item-seta">→</span><span class="item-resposta-atual" id="resp-a2_4"></span></div><div class="escala"><label class="opcao v0"><input type="radio" name="a2_4" value="0"><div class="opcao-bloco">não me afetou</div></label><label class="opcao v1"><input type="radio" name="a2_4" value="1"><div class="opcao-bloco">percebi, mas não atrapalhou</div></label><label class="opcao v2"><input type="radio" name="a2_4" value="2"><div class="opcao-bloco">já começou a me atrapalhar</div></label><label class="opcao v3"><input type="radio" name="a2_4" value="3"><div class="opcao-bloco">comprometeu partes do meu dia</div></label><label class="opcao v4"><input type="radio" name="a2_4" value="4"><div class="opcao-bloco">me travou</div></label></div><div class="ancoras"><span class="ancora">Não me afetou</span><span class="ancora">Me travou</span></div></div>
+  </div>
+
+  <div class="secao">
+    <div class="secao-label">P · Propósito</div>
+    <div class="item"><div class="item-num">33</div><div class="item-pergunta">O que tenho feito parece sem sentido<span class="item-seta">→</span><span class="item-resposta-atual" id="resp-p_1"></span></div><div class="escala"><label class="opcao v0"><input type="radio" name="p_1" value="0"><div class="opcao-bloco">não me afetou</div></label><label class="opcao v1"><input type="radio" name="p_1" value="1"><div class="opcao-bloco">percebi, mas não atrapalhou</div></label><label class="opcao v2"><input type="radio" name="p_1" value="2"><div class="opcao-bloco">já começou a me atrapalhar</div></label><label class="opcao v3"><input type="radio" name="p_1" value="3"><div class="opcao-bloco">comprometeu partes do meu dia</div></label><label class="opcao v4"><input type="radio" name="p_1" value="4"><div class="opcao-bloco">me travou</div></label></div><div class="ancoras"><span class="ancora">Não me afetou</span><span class="ancora">Me travou</span></div></div>
+    <div class="item"><div class="item-num">34</div><div class="item-pergunta">O que tenho feito não combina comigo<span class="item-seta">→</span><span class="item-resposta-atual" id="resp-p_2"></span></div><div class="escala"><label class="opcao v0"><input type="radio" name="p_2" value="0"><div class="opcao-bloco">não me afetou</div></label><label class="opcao v1"><input type="radio" name="p_2" value="1"><div class="opcao-bloco">percebi, mas não atrapalhou</div></label><label class="opcao v2"><input type="radio" name="p_2" value="2"><div class="opcao-bloco">já começou a me atrapalhar</div></label><label class="opcao v3"><input type="radio" name="p_2" value="3"><div class="opcao-bloco">comprometeu partes do meu dia</div></label><label class="opcao v4"><input type="radio" name="p_2" value="4"><div class="opcao-bloco">me travou</div></label></div><div class="ancoras"><span class="ancora">Não me afetou</span><span class="ancora">Me travou</span></div></div>
+    <div class="item"><div class="item-num">35</div><div class="item-pergunta">Não vejo motivo no que estou fazendo<span class="item-seta">→</span><span class="item-resposta-atual" id="resp-p_3"></span></div><div class="escala"><label class="opcao v0"><input type="radio" name="p_3" value="0"><div class="opcao-bloco">não me afetou</div></label><label class="opcao v1"><input type="radio" name="p_3" value="1"><div class="opcao-bloco">percebi, mas não atrapalhou</div></label><label class="opcao v2"><input type="radio" name="p_3" value="2"><div class="opcao-bloco">já começou a me atrapalhar</div></label><label class="opcao v3"><input type="radio" name="p_3" value="3"><div class="opcao-bloco">comprometeu partes do meu dia</div></label><label class="opcao v4"><input type="radio" name="p_3" value="4"><div class="opcao-bloco">me travou</div></label></div><div class="ancoras"><span class="ancora">Não me afetou</span><span class="ancora">Me travou</span></div></div>
+    <div class="item"><div class="item-num">36</div><div class="item-pergunta">Tenho sentido que o esforço que faço não vale o que produzo<span class="item-seta">→</span><span class="item-resposta-atual" id="resp-p_4"></span></div><div class="escala"><label class="opcao v0"><input type="radio" name="p_4" value="0"><div class="opcao-bloco">não me afetou</div></label><label class="opcao v1"><input type="radio" name="p_4" value="1"><div class="opcao-bloco">percebi, mas não atrapalhou</div></label><label class="opcao v2"><input type="radio" name="p_4" value="2"><div class="opcao-bloco">já começou a me atrapalhar</div></label><label class="opcao v3"><input type="radio" name="p_4" value="3"><div class="opcao-bloco">comprometeu partes do meu dia</div></label><label class="opcao v4"><input type="radio" name="p_4" value="4"><div class="opcao-bloco">me travou</div></label></div><div class="ancoras"><span class="ancora">Não me afetou</span><span class="ancora">Me travou</span></div></div>
+  </div>
+
+</div>
+
+<!-- LOADING -->
+<div class="loading" id="loading">Processando avaliação…</div>
+
+<!-- RESULTADO -->
+<div class="resultado" id="resultado">
+  <div class="resultado-card">
+    <div class="resultado-label">Leitura funcional · sessão atual</div>
+    <div class="resultado-erro" id="res-erro" style="display:none"></div>
+    <div class="resultado-titulo" id="res-titulo"></div>
+    <div class="resultado-texto" id="res-resumo"></div>
+    <div class="resultado-texto" id="res-leitura"></div>
+    <div class="resultado-texto" id="res-direcao"></div>
+    <div class="resultado-g" id="res-g"></div>
   </div>
 </div>
 
-<!-- Login — campo CRM mantido por compatibilidade com backend -->
-<div id="tela-login">
-  <div class="tela-login">
-    <h2>Acesso profissional</h2>
-    <p>Entre com seu CRM e senha para acessar o painel.</p>
-    <div class="campo">
-      <label>CRM</label>
-      <input type="text" id="l-crm" placeholder="Ex: 123456" autocomplete="off">
-    </div>
-    <div class="campo">
-      <label>Senha</label>
-      <input type="password" id="l-senha" placeholder="Sua senha" autocomplete="current-password">
-    </div>
-    <button class="btn-principal" id="btn-login" onclick="fazerLogin()">Entrar</button>
-    <div class="erro-msg" id="erro-login"></div>
-    <button class="link-email" onclick="abrirModalEmail()">Não tem mais acesso ao e-mail? Solicitar atualização</button>
-  </div>
-</div>
-
-<!-- Modal: Solicitação de atualização de e-mail -->
-<div class="modal-overlay" id="modal-email">
-  <div class="modal-box">
-    <h3>Solicitar atualização de e-mail</h3>
-    <p class="modal-sub">Preencha os dados abaixo. A solicitação será analisada manualmente.<br>Nenhuma alteração é feita de forma automática.</p>
-    <div class="campo"><label>CRM</label><input type="text" id="me-crm" placeholder="Ex: 123456" autocomplete="off"></div>
-    <div class="campo"><label>Novo e-mail</label><input type="email" id="me-email" placeholder="novo@email.com" autocomplete="off"></div>
-    <div class="campo"><label>Nome completo</label><input type="text" id="me-nome" placeholder="Como consta no cadastro" autocomplete="off"></div>
-    <div class="campo"><label>CPF ou documento de identificação</label><input type="text" id="me-documento" placeholder="Somente números" autocomplete="off"></div>
-    <div class="aviso-pendente" id="me-aviso-pendente"></div>
-    <div class="aviso-ok" id="me-aviso-ok">Solicitação enviada. Aguarde o contato da administração.</div>
-    <div class="modal-footer" id="me-footer">
-      <button class="btn-cancelar" onclick="fecharModalEmail()">Cancelar</button>
-      <button class="btn-principal" id="btn-enviar-email" onclick="enviarSolicitacaoEmail()">Enviar solicitação</button>
-    </div>
-  </div>
-</div>
-
-<!-- Painel -->
-<div id="painel" class="painel">
-  <div class="container">
-
-    <!-- Lista -->
-    <div id="tela-lista">
-      <div class="card">
-        <div class="card-titulo">Questionados autorizados</div>
-        <div id="q-lista-conteudo"><div class="loading">Carregando...</div></div>
-      </div>
-
-      <div class="card secao-acesso">
-        <button id="btn-toggle-manual"
-          style="font-size:0.78rem;color:#aaa;border:none;background:transparent;padding:0;cursor:pointer;">
-          + Acessar com código manual (avançado)
-        </button>
-        <div id="painel-acesso-manual" style="display:none;margin-top:1rem;">
-          <div class="acesso-linha">
-            <div class="campo">
-              <label>Código do questionado</label>
-              <input type="text" id="a-codigo" placeholder="Ex: XY4R2WP" autocomplete="off">
-            </div>
-            <div class="campo">
-              <label>Token de autorização</label>
-              <input type="text" id="a-token" placeholder="Token fornecido pelo questionado" autocomplete="off">
-            </div>
-            <button id="btn-acessar-token" class="btn-secundario">Acessar</button>
-          </div>
-          <div class="erro-msg" id="erro-acesso"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Detalhe -->
-    <div id="tela-detalhe" class="detalhe">
-      <div class="detalhe-header">
-        <div class="detalhe-header-esq">
-          <button class="btn-voltar" id="btn-voltar">← Voltar</button>
-          <span id="detalhe-codigo" style="font-family:monospace;font-size:0.9rem;color:#1a1a2e;font-weight:600;"></span>
-        </div>
-        <button class="btn-imprimir" onclick="window.print()">⎙ Imprimir relatório</button>
-      </div>
-
-      <div id="detalhe-conteudo"><div class="loading">Carregando...</div></div>
-
-      <div class="card card-validacao" id="card-validacao" style="display:none">
-        <div class="card-titulo">Nota de validação do instrumento</div>
-        <ul class="validacao-lista">
-          <li>Ferramenta de leitura funcional — não diagnóstica.</li>
-          <li>Os resultados indicam padrões de custo energético e funcionalidade, não patologia.</li>
-          <li>A leitura depende de contexto clínico e longitudinal para interpretação adequada.</li>
-          <li>Não substitui avaliação clínica, psicológica ou médica.</li>
-          <li>Dados baseados em autorrelato, sujeitos a variação de percepção e estado momentâneo.</li>
-        </ul>
-      </div>
-
-      <div class="card card-observacao" id="card-observacao" style="display:none">
-        <div class="card-titulo">Observação técnica</div>
-        <div class="campo">
-          <textarea id="obs-texto"
-            placeholder="Registrar observações clínicas, limites da leitura e conduta sugerida."></textarea>
-        </div>
-      </div>
-
-    </div>
-  </div>
+<!-- RODAPÉ -->
+<div class="rodape">
+  <div class="rodape-info" id="rodape-info">0 de 36 respondidas</div>
+  <button class="btn-enviar" id="btn-enviar" disabled>Calcular</button>
 </div>
 
 <script>
+// ─── CONFIGURAÇÃO ─────────────────────────────────────────────────────────────
+// Apontar para o endpoint real em produção
+var API_URL = '/avaliar';
 
-// ─── ESCAPE DE HTML ───────────────────────────────────────────────────────────
+var ITENS = [
+  's1_1','s1_2','s1_3','s1_4','s1_5','s1_6',
+  's2_1','s2_2','s2_3','s2_4','s2_5','s2_6',
+  'o1_1','o1_2','o1_3','o1_4','o1_5',
+  'o2_1','o2_2','o2_3','o2_4','o2_5','o2_6',
+  'a1_1','a1_2','a1_3','a1_4','a1_5',
+  'a2_1','a2_2','a2_3','a2_4',
+  'p_1','p_2','p_3','p_4'
+];
 
-function esc(valor) {
-  return String(valor == null ? '' : valor)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
+var LABELS = [
+  'não me afetou',
+  'percebi, mas não atrapalhou',
+  'já começou a me atrapalhar',
+  'comprometeu partes do meu dia',
+  'me travou'
+];
 
-// ─── SESSÃO ───────────────────────────────────────────────────────────────────
-
-function salvarSessao(dados) {
-  sessionStorage.setItem('pro_token',  dados.session_token);
-  sessionStorage.setItem('pro_id',     dados.profissional_id);
-  sessionStorage.setItem('pro_perfil', dados.perfil || 'profissional');
-}
-
-function obterToken() {
-  return sessionStorage.getItem('pro_token');
-}
-
-function perfilAtual() {
-  return sessionStorage.getItem('pro_perfil') || 'profissional';
-}
-
-function limparSessao() {
-  sessionStorage.removeItem('pro_token');
-  sessionStorage.removeItem('pro_id');
-  sessionStorage.removeItem('pro_perfil');
-}
-
-async function sair() {
-  var token = obterToken();
-  if (token) {
-    await fetch('/profissional/logout', {
-      method:  'POST',
-      headers: { 'x-session-token': token }
-    }).catch(function() {});
-  }
-  limparSessao();
-  mostrarLogin();
-}
-
-// ─── NAVEGAÇÃO ────────────────────────────────────────────────────────────────
-
-function mostrarLogin() {
-  document.getElementById('tela-login').style.display = '';
-  document.getElementById('painel').classList.remove('visivel');
-  document.getElementById('btn-sair').style.display = 'none';
-  document.getElementById('badge-perfil').style.display = 'none';
-}
-
-function mostrarPainel() {
-  document.getElementById('tela-login').style.display = 'none';
-  document.getElementById('painel').classList.add('visivel');
-  document.getElementById('btn-sair').style.display = '';
-
-  var badge = document.getElementById('badge-perfil');
-  badge.style.display = '';
-  badge.textContent = perfilAtual();
-
-  document.getElementById('tela-lista').style.display = '';
-  document.getElementById('tela-detalhe').classList.remove('visivel');
-  carregarQuestionados();
-}
-
-function voltarLista() {
-  document.getElementById('tela-lista').style.display = '';
-  document.getElementById('tela-detalhe').classList.remove('visivel');
-  document.getElementById('card-validacao').style.display = 'none';
-  document.getElementById('card-observacao').style.display = 'none';
-  document.getElementById('obs-texto').value = '';
-}
-
-// ─── LOGIN ────────────────────────────────────────────────────────────────────
-// Nota: validação de força de senha aplicada apenas no cadastro/redefinição,
-// não no login — para não bloquear contas com senha anterior ao enforcement.
-
-async function fazerLogin() {
-  var crm    = document.getElementById('l-crm').value.trim();
-  var senha  = document.getElementById('l-senha').value;
-  var erroEl = document.getElementById('erro-login');
-  var btn    = document.getElementById('btn-login');
-
-  erroEl.textContent = '';
-
-  if (!crm || !senha) {
-    erroEl.textContent = 'Preencha CRM e senha.';
-    return;
-  }
-
-  btn.textContent = 'Entrando...';
-  btn.disabled = true;
-
-  try {
-    var res = await fetch('/profissional/login', {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ crm: crm, senha: senha })
+// ─── SELEÇÃO ─────────────────────────────────────────────────────────────────
+document.querySelectorAll('.opcao').forEach(function(opcao) {
+  opcao.addEventListener('click', function() {
+    var input = this.querySelector('input[type="radio"]');
+    if (!input) return;
+    var nome = input.name;
+    document.querySelectorAll('input[name="' + nome + '"]').forEach(function(el) {
+      el.closest('.opcao').classList.remove('selecionado');
     });
-
-    var dados = await res.json();
-
-    if (!res.ok) {
-      erroEl.textContent = dados.erro || 'Credenciais inválidas.';
-      return;
-    }
-
-    salvarSessao(dados);
-    mostrarPainel();
-
-  } catch (e) {
-    erroEl.textContent = 'Erro ao conectar. Tente novamente.';
-  } finally {
-    btn.textContent = 'Entrar';
-    btn.disabled = false;
-  }
-}
-
-// ─── LISTA DE QUESTIONADOS ────────────────────────────────────────────────────
-
-async function carregarQuestionados() {
-  var el = document.getElementById('q-lista-conteudo');
-  el.innerHTML = '<div class="loading">Carregando...</div>';
-
-  var token = obterToken();
-  if (!token) { limparSessao(); mostrarLogin(); return; }
-
-  try {
-    var res = await fetch('/profissional/questionados', {
-      headers: {
-        'x-session-token': token,
-        'x-perfil':        perfilAtual()
-      }
-    });
-
-    if (res.status === 401) { limparSessao(); mostrarLogin(); return; }
-
-    var dados = await res.json();
-
-    if (!dados.questionados || dados.questionados.length === 0) {
-      el.innerHTML = '<div class="empty">Nenhum questionado autorizado ainda.</div>';
-      return;
-    }
-
-    var lista = document.createElement('div');
-    lista.className = 'q-lista';
-
-    dados.questionados.forEach(function(q, idx) {
-      var item = document.createElement('div');
-      item.className = 'q-item';
-      item.innerHTML =
-        '<span class="q-codigo">' + esc(q.codigo_questionado) + '</span>' +
-        '<span class="q-data">'   + fmtDataCurta(q.criado_em || q.created_at) + '</span>' +
-        '<span class="q-seta">›</span>';
-      item.addEventListener('click', function() {
-        abrirDetalhe(dados.questionados[idx].id, dados.questionados[idx].codigo_questionado);
-      });
-      lista.appendChild(item);
-    });
-
-    el.innerHTML = '';
-    el.appendChild(lista);
-
-  } catch (e) {
-    el.innerHTML = '<div class="empty">Erro ao carregar.</div>';
-  }
-}
-
-// ─── ACESSO MANUAL ────────────────────────────────────────────────────────────
-
-function toggleAcessoManual() {
-  var painel = document.getElementById('painel-acesso-manual');
-  var btn    = document.getElementById('btn-toggle-manual');
-  if (painel.style.display === 'none') {
-    painel.style.display = '';
-    btn.textContent = '− Fechar acesso manual';
-  } else {
-    painel.style.display = 'none';
-    btn.textContent = '+ Acessar com código manual (avançado)';
-  }
-}
-
-async function acessarComToken() {
-  var codigo     = document.getElementById('a-codigo').value.trim();
-  var tokenAcesso = document.getElementById('a-token').value.trim();
-  var erroEl     = document.getElementById('erro-acesso');
-
-  erroEl.textContent = '';
-
-  if (!codigo || !tokenAcesso) {
-    erroEl.textContent = 'Preencha código e token.';
-    return;
-  }
-
-  var sessaoToken = obterToken();
-  if (!sessaoToken) { limparSessao(); mostrarLogin(); return; }
-
-  try {
-    var res = await fetch('/profissional/validar-acesso', {
-      method:  'POST',
-      headers: {
-        'Content-Type':    'application/json',
-        'x-session-token': sessaoToken
-      },
-      body: JSON.stringify({
-        codigo_questionado: codigo,
-        token_autorizacao:  tokenAcesso,
-        _via_sessao:        true
-      })
-    });
-
-    var dados = await res.json();
-
-    if (!res.ok || !dados.autorizado) {
-      erroEl.textContent = dados.erro || 'Acesso não autorizado.';
-      return;
-    }
-
-    document.getElementById('a-codigo').value = '';
-    document.getElementById('a-token').value  = '';
-
-    await carregarQuestionados();
-    await abrirDetalhe(dados.questionado_id, codigo);
-
-  } catch (e) {
-    erroEl.textContent = 'Erro ao conectar. Tente novamente.';
-  }
-}
-
-// ─── DETALHE ──────────────────────────────────────────────────────────────────
-
-async function abrirDetalhe(questionadoId, codigo) {
-  var token = obterToken();
-  if (!token) { limparSessao(); mostrarLogin(); return; }
-
-  document.getElementById('tela-lista').style.display = 'none';
-  document.getElementById('tela-detalhe').classList.add('visivel');
-  document.getElementById('detalhe-codigo').textContent = esc(codigo);
-  document.getElementById('card-validacao').style.display = 'none';
-  document.getElementById('card-observacao').style.display = 'none';
-  document.getElementById('obs-texto').value = '';
-
-  var el = document.getElementById('detalhe-conteudo');
-  el.innerHTML = '<div class="loading">Carregando...</div>';
-
-  try {
-    var res = await fetch('/profissional/questionado/' + encodeURIComponent(questionadoId), {
-      headers: { 'x-session-token': token }
-    });
-
-    if (res.status === 401) { limparSessao(); mostrarLogin(); return; }
-    if (res.status === 403) {
-      el.innerHTML = '<div class="empty">Acesso não autorizado para este questionado.</div>';
-      return;
-    }
-
-    var dados = await res.json();
-
-    if (!dados.resultados || dados.resultados.length === 0) {
-      el.innerHTML = '<div class="empty">Nenhum resultado disponível.</div>';
-      return;
-    }
-
-    renderDetalhe(dados, el);
-    document.getElementById('card-validacao').style.display = '';
-    document.getElementById('card-observacao').style.display = '';
-
-  } catch (e) {
-    el.innerHTML = '<div class="empty">Erro ao carregar dados.</div>';
-  }
-}
-
-function renderDetalhe(dados, el) {
-  var ultimo = dados.resultados[0];
-  var eixos  = ultimo.eixos || {};
-  var html   = '';
-
-  html += '<div class="card">';
-  html += '<div class="card-titulo">Último resultado — ' + fmtData(ultimo.criado_em || ultimo.created_at) + '</div>';
-  html += '<div class="eixo-grid">';
-  ['S','O','A','P'].forEach(function(k) {
-    if (eixos[k] != null) {
-      html += '<div class="eixo-bloco"><div class="eixo-label">' + esc(nomeEixo(k)) + '</div>';
-      html += '<div class="eixo-valor">' + Number(eixos[k]).toFixed(1) + '</div></div>';
-    }
+    input.checked = true;
+    this.classList.add('selecionado');
+    var span = document.getElementById('resp-' + nome);
+    if (span) span.textContent = LABELS[Number(input.value)];
+    atualizarProgresso();
   });
-  html += '</div>';
-
-  if (eixos.G != null) {
-    html += '<div class="eixo-bloco" style="margin-bottom:0.75rem;">';
-    html += '<div class="eixo-label">G — Carga global</div>';
-    html += '<div class="eixo-valor">' + Number(eixos.G).toFixed(1);
-    if (ultimo.gravidade) {
-      var g = esc(ultimo.gravidade);
-      html += '<span class="badge badge-' + g + '">' + g + '</span>';
-    }
-    html += '</div></div>';
-  }
-
-  html += '<div class="eixo-bloco"><div class="eixo-label">Intensidade por eixo</div>';
-  ['S','O','A','P'].forEach(function(k) {
-    if (eixos[k] != null) {
-      var pct = Math.round((eixos[k] / 4) * 100);
-      html += '<div class="hm-row"><div class="hm-nome">' + esc(nomeEixo(k)) + '</div>';
-      html += '<div class="hm-wrap"><div class="hm-barra" style="width:' + pct + '%"></div></div>';
-      html += '<div class="hm-pct">' + pct + '%</div></div>';
-    }
-  });
-  html += '</div>';
-
-  if (ultimo.assinatura) {
-    html += '<div class="eixo-bloco" style="margin-top:0.75rem;"><div class="eixo-label">Assinatura</div>';
-    html += '<div style="font-size:0.82rem;color:#444;">' + esc(ultimo.assinatura) + '</div></div>';
-  }
-
-  if (ultimo.flags && Array.isArray(ultimo.flags) && ultimo.flags.length > 0) {
-    html += '<div class="eixo-bloco" style="margin-top:0.5rem;"><div class="eixo-label">Flags de coerência</div>';
-    html += '<div style="font-size:0.78rem;color:#888;">' + esc(ultimo.flags.join(', ')) + '</div></div>';
-  }
-
-  html += '</div>';
-
-  if (dados.resultados.length > 1) {
-    html += '<div class="card"><div class="card-titulo">Histórico (' + dados.resultados.length + ' medições)</div>';
-    html += '<div style="overflow-x:auto;">';
-    html += '<table class="hist-table"><thead><tr>';
-    html += '<th>Data</th><th>S</th><th>O</th><th>A</th><th>P</th><th>G</th><th>Gravidade</th>';
-    html += '</tr></thead><tbody>';
-    dados.resultados.forEach(function(r) {
-      var ex = r.eixos || {};
-      html += '<tr><td>' + fmtDataCurta(r.criado_em || r.created_at) + '</td>';
-      ['S','O','A','P','G'].forEach(function(k) {
-        html += '<td style="text-align:center;">' + (ex[k] != null ? Number(ex[k]).toFixed(1) : '—') + '</td>';
-      });
-      html += '<td>' + esc(r.gravidade || '—') + '</td></tr>';
-    });
-    html += '</tbody></table></div></div>';
-  }
-
-  if (dados.longitudinal) {
-    html += '<div class="card"><div class="card-titulo">Leitura longitudinal</div>';
-    html += '<div class="long-texto">' + esc(dados.longitudinal.texto || '—') + '</div></div>';
-  }
-
-  el.innerHTML = html;
-}
-
-// ─── HELPERS ─────────────────────────────────────────────────────────────────
-
-function nomeEixo(k) {
-  return { S: 'Sentir', O: 'Organizar', A: 'Agir', P: 'Propósito' }[k] || k;
-}
-
-function fmtData(iso) {
-  if (!iso) return '—';
-  var s = String(iso);
-  var d = new Date(s.indexOf('Z') === -1 && s.indexOf('+') === -1 ? s + 'Z' : s);
-  if (isNaN(d.getTime())) return '—';
-  return d.toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' }) + ' ' +
-         d.toLocaleTimeString('pt-BR', { timeZone: 'America/Sao_Paulo', hour: '2-digit', minute: '2-digit' });
-}
-
-function fmtDataCurta(iso) {
-  if (!iso) return '—';
-  var s = String(iso);
-  var d = new Date(s.indexOf('Z') === -1 && s.indexOf('+') === -1 ? s + 'Z' : s);
-  if (isNaN(d.getTime())) return '—';
-  return d.toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' });
-}
-
-// ─── MODAL: ATUALIZAÇÃO DE E-MAIL ─────────────────────────────────────────────
-
-function abrirModalEmail() {
-  document.getElementById('modal-email').classList.add('visivel');
-  document.getElementById('me-crm').focus();
-  // resetar estado
-  ['me-crm','me-email','me-nome','me-documento'].forEach(function(id) {
-    document.getElementById(id).value = '';
-    document.getElementById(id).disabled = false;
-  });
-  document.getElementById('me-aviso-pendente').style.display = 'none';
-  document.getElementById('me-aviso-ok').style.display       = 'none';
-  document.getElementById('me-footer').style.display         = 'flex';
-  document.getElementById('btn-enviar-email').disabled       = false;
-  document.getElementById('btn-enviar-email').textContent    = 'Enviar solicitação';
-}
-
-function fecharModalEmail() {
-  document.getElementById('modal-email').classList.remove('visivel');
-}
-
-async function enviarSolicitacaoEmail() {
-  var crm       = document.getElementById('me-crm').value.trim();
-  var email_novo = document.getElementById('me-email').value.trim();
-  var nome      = document.getElementById('me-nome').value.trim();
-  var documento = document.getElementById('me-documento').value.trim();
-  var avisoErr  = document.getElementById('me-aviso-pendente');
-  var avisoOk   = document.getElementById('me-aviso-ok');
-  var btn       = document.getElementById('btn-enviar-email');
-
-  avisoErr.style.display = 'none';
-  avisoOk.style.display  = 'none';
-
-  if (!crm || !email_novo || !nome || !documento) {
-    avisoErr.textContent   = 'Preencha todos os campos.';
-    avisoErr.style.display = 'block';
-    return;
-  }
-
-  btn.textContent = 'Enviando...';
-  btn.disabled    = true;
-
-  try {
-    var res = await fetch('/profissional/solicitar-atualizacao-email', {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ crm: crm, email_novo: email_novo, nome: nome, documento: documento })
-    });
-
-    var dados = await res.json();
-
-    if (!res.ok) {
-      avisoErr.textContent   = dados.erro || 'Erro ao enviar solicitação.';
-      avisoErr.style.display = 'block';
-      btn.textContent = 'Enviar solicitação';
-      btn.disabled    = false;
-      return;
-    }
-
-    // Sucesso
-    ['me-crm','me-email','me-nome','me-documento'].forEach(function(id) {
-      document.getElementById(id).disabled = true;
-    });
-    document.getElementById('me-footer').style.display  = 'none';
-    avisoOk.style.display = 'block';
-
-  } catch (e) {
-    avisoErr.textContent   = 'Erro ao conectar. Tente novamente.';
-    avisoErr.style.display = 'block';
-    btn.textContent = 'Enviar solicitação';
-    btn.disabled    = false;
-  }
-}
-
-// Fechar modal clicando fora
-document.getElementById('modal-email').addEventListener('click', function(e) {
-  if (e.target === this) fecharModalEmail();
 });
 
-// ─── BIND DE EVENTOS ─────────────────────────────────────────────────────────
+function atualizarProgresso() {
+  var respondidas = 0;
+  ITENS.forEach(function(id) {
+    if (document.querySelector('input[name="' + id + '"]:checked')) respondidas++;
+  });
+  var pct = Math.round((respondidas / 36) * 100);
+  document.getElementById('progresso-fill').style.width = pct + '%';
+  document.getElementById('progresso-label').textContent = respondidas + ' de 36';
+  document.getElementById('rodape-info').textContent = respondidas + ' de 36 respondidas';
+  document.getElementById('btn-enviar').disabled = respondidas < 36;
+}
 
-document.getElementById('btn-voltar').addEventListener('click', voltarLista);
-document.getElementById('btn-toggle-manual').addEventListener('click', toggleAcessoManual);
-document.getElementById('btn-acessar-token').addEventListener('click', acessarComToken);
-document.getElementById('l-senha').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') fazerLogin();
+// ─── COLETA ──────────────────────────────────────────────────────────────────
+function coletarRespostas() {
+  var r = {};
+  ITENS.forEach(function(id) {
+    var sel = document.querySelector('input[name="' + id + '"]:checked');
+    r[id] = sel ? Number(sel.value) : null;
+  });
+  return r;
+}
+
+// ─── ENVIO PARA API ───────────────────────────────────────────────────────────
+document.getElementById('btn-enviar').addEventListener('click', function() {
+  var respostas = coletarRespostas();
+
+  // Validação client-side (secundária — motor valida no servidor)
+  for (var k in respostas) {
+    if (respostas[k] === null) {
+      alert('Responda todas as perguntas antes de calcular.');
+      return;
+    }
+  }
+
+  // UI: loading
+  document.getElementById('conteudo').style.display = 'none';
+  document.getElementById('loading').style.display = 'block';
+  document.getElementById('btn-enviar').disabled = true;
+
+  fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ respostas: respostas })
+  })
+  .then(function(res) { return res.json(); })
+  .then(function(data) {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('resultado').style.display = 'block';
+    renderizarResultado(data);
+  })
+  .catch(function(err) {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('resultado').style.display = 'block';
+    document.getElementById('res-erro').style.display = 'block';
+    document.getElementById('res-erro').textContent = 'Erro ao processar avaliação. Tente novamente.';
+    console.error(err);
+  });
 });
 
-// ─── INICIALIZAÇÃO ────────────────────────────────────────────────────────────
-
-(function init() {
-  if (obterToken()) {
-    mostrarPainel();
-  } else {
-    mostrarLogin();
+// ─── RENDERIZAÇÃO ─────────────────────────────────────────────────────────────
+// O front-end só exibe o que a API entrega.
+// Nenhuma lógica clínica aqui.
+function renderizarResultado(data) {
+  if (data.erro) {
+    document.getElementById('res-erro').style.display = 'block';
+    document.getElementById('res-erro').textContent = data.erro;
+    return;
   }
-})();
 
+  var dev = data.devolutiva;
+
+  if (dev && dev.usuario) {
+    document.getElementById('res-titulo').textContent  = dev.usuario.titulo  || '—';
+    document.getElementById('res-leitura').textContent = dev.usuario.texto   || '—';
+    document.getElementById('res-direcao').textContent = dev.usuario.direcao || '—';
+  }
+
+  // Síntese estrutural (sempre disponível)
+  var g  = data.global;
+  document.getElementById('res-resumo').textContent =
+    'G = ' + g.G + ' (' + g.classificacoes.G + ')'
+    + ' · Δa = ' + g.Da + ' (' + g.classificacoes.Da + ')'
+    + ' · Δd = ' + g.Dd + ' (' + g.classificacoes.Dd + ')'
+    + ' · Dominante: ' + g.eixoDominante;
+
+  document.getElementById('res-g').textContent =
+    'SiMone V24 · avaliação funcional · não diagnóstica'
+    + (data.coerencia.nivel !== 'coerente' ? ' · ' + data.coerencia.nivel : '');
+}
 </script>
 </body>
 </html>
