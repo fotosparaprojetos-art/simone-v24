@@ -457,7 +457,7 @@ function calcularResultado(respostas) {
 // no cockpit — aqui apenas marcamos a posição inicial do novo registro.
 // fora_fluxo = true quando data_prevista foi enviada e a diferença excede 15 dias.
 
-function calcularPosicaoJanela(countRegistrosAnteriores) {
+function calcularPosicaoJanela() {
   // Novo registro é sempre D0 no momento do INSERT.
   // Os anteriores são consultados com offset no cockpit.
   return 'D0';
